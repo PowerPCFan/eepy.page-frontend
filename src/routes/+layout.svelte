@@ -25,7 +25,7 @@
 	let { children } = $props();
 	let localSponsorHidden = $state(false);
 	let innerWidth = $state(0);
-	let adsVisible = $state(true);
+	let adsVisible = $state(false);
 	let towerAdsVisible = $state(false);
 	let navigationTrigger = $state(0);
 

@@ -296,7 +296,7 @@
 
 <Loader bind:this={loader} />
 
-<div class="domain-holder bg-card max-w-8xl mt-16 mr-auto ml-auto w-11/12 rounded-2xl p-6">
+<div class="domain-holder bg-card max-w-8xl sentry-unmask mt-16 mr-auto ml-auto w-11/12 rounded-2xl p-6">
 	<h1 class="text-3xl font-semibold">{m.dashboard_your_domains()}</h1>
 	<p>{m.dashboard_domain_explanation()}</p>
 
@@ -409,7 +409,7 @@
 	</div>
 </div>
 
-<div class="registrar bg-card max-w-8xl mt-8 mr-auto mb-8 ml-auto w-11/12 rounded-2xl p-6">
+<div class="registrar bg-card max-w-8xl mt-8 mr-auto mb-8 ml-auto w-11/12 rounded-2xl p-6 sentry-unmask">
 	<InlineAlert
 		variant={"error"}
 		title={registerErrorTitle}

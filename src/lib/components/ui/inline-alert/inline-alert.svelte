@@ -25,7 +25,7 @@
 
 {#if !closed}
 	<div
-		class={`alert mt-4 min-h-24 rounded-lg border-2 p-4 ${variant === "error" ? "bg-alert" : "bg-note"} ${className}`}
+		class={`alert mt-4 min-h-24 rounded-lg border-2 p-4 sentry-unmask ${variant === "error" ? "bg-alert" : "bg-note"} ${className}`}
 		transition:fade={{ duration: 100 }}>
 		<div class="flex justify-between">
 			<div class="text flex items-center">

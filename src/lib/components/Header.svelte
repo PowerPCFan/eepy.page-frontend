@@ -57,7 +57,7 @@
 
 <header
 	id="header"
-	class="bg-card flex h-full w-screen max-w-screen items-center space-x-6 pt-1 pr-4 pb-1 pl-4">
+	class="bg-card flex h-full w-screen max-w-screen items-center space-x-6 pt-1 pr-4 pb-1 pl-4 sentry-unmask">
 	<button
 		id="popout-toggle"
 		class="relative hidden h-12 w-12"
