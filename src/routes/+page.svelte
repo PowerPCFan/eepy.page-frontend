@@ -11,7 +11,6 @@
 	import { fade } from "svelte/transition";
 	import MaterialSymbolsCheckCircleRounded from "~icons/material-symbols/check-circle-rounded";
 	import MaterialSymbolsKeyboardArrowDownRounded from "~icons/material-symbols/keyboard-arrow-down-rounded";
-	import { localizeHref } from "../paraglide/runtime.js";
 
 	let placeholderMessages = ["project", "username", "something-cool", "important", "personal"];
 
@@ -83,11 +82,11 @@
 				</div>
 			</div>
 			<div class="actions mt-auto mb-0 flex justify-between">
-				<Button onclick={_ => goto(localizeHref("/login?register=true"))} class="w-[49%]"
+				<Button onclick={_ => goto("/login?register=true")} class="w-[49%]"
 					>Sign up now</Button>
 				<Button
 					variant={"secondary"}
-					onclick={_ => goto(localizeHref("/dashboard"))}
+					onclick={_ => goto("/dashboard")}
 					class="w-[49%]">Go to the dashboard</Button>
 			</div>
 		</div>
@@ -132,7 +131,7 @@
 							</h1>
 							<Button
 								class="mt-2 w-full"
-								onclick={_ => goto(localizeHref("/login?register=true"))}
+								onclick={_ => goto("/login?register=true")}
 								>Sign up now</Button>
 						{:else}
 							<h1>
@@ -255,10 +254,6 @@
 		.description h1 {
 			margin-left: auto;
 			margin-right: auto;
-		}
-
-		.selling-point-dreams {
-			margin-top: 12rem;
 		}
 
 		.visual {

@@ -25,7 +25,6 @@
 	import { toast } from "svelte-sonner";
 	import { UAParser } from "ua-parser-js";
 	import type { components } from "../../../api";
-	import { getLocale } from "../../../paraglide/runtime";
 	// You can create a type alias for easier use
 	type AccountData = components["schemas"]["AccountData"];
 
@@ -51,7 +50,7 @@
 	let tldLoading = $state(false);
 
 	onMount(() => {
-		serverContactor = new ServerContactor(getAuthToken());
+		serverContactor = new ServerContactor(getAuthToken() ?? null);
 		serverContactor
 			.canUseAdminPanel()
 			.catch(error => {
@@ -370,7 +369,7 @@
 												({"user-agent" in session ? "Old" : "New"})
 												{ua.getBrowser().name}
 												{ua.getDevice().vendor}
-												{date.toLocaleString(getLocale())}
+												{date.toLocaleString()}
 											</Accordion.Trigger>
 											<Accordion.Content>
 												{#if "user-agent" in session}
@@ -380,7 +379,7 @@
 													<p>
 														Created: {new Date(
 															session.created * 1000
-														).toLocaleString(getLocale())}
+														).toLocaleString()}
 													</p>
 												{/if}
 												<p>ip: {session.ip}</p>

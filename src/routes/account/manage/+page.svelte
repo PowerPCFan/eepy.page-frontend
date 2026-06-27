@@ -31,12 +31,11 @@
 	import { fade } from "svelte/transition";
 	import { UAParser } from "ua-parser-js";
 	import MaterialSymbolsDesktopMac from "~icons/material-symbols/desktop-mac";
-	import { localizeHref } from "../../../paraglide/runtime";
 
 	let serverContactor: ServerContactor;
 
 	let { data } = $props();
-	let sessions: Session[] = $state(data.sessions);
+	let sessions: Session[] | undefined = $state(data.sessions);
 
 	let mfaIsVerified: boolean = $state(false);
 	let backupCodes: string[] = $state([]);
@@ -202,7 +201,7 @@
 					redirectToLogin(200);
 				} else {
 					session.loading = false;
-					sessions = sessions.filter(sess => {
+					sessions = sessions?.filter(sess => {
 						return sess.hash !== session.hash;
 					});
 				}
@@ -456,7 +455,7 @@
 				</Dialog.Content>
 			</Dialog.Root>
 			{#if data.permissions?.get("admin") === true}
-				<Button onclick={_ => goto(localizeHref("/account/admin"))}>Admin dashboard</Button>
+				<Button onclick={_ => goto("/account/admin")}>Admin dashboard</Button>
 			{/if}
 			{#if !data.googleLinked}
 				<Button
@@ -534,7 +533,7 @@
 				</Dialog.Root>
 			{/if}
 			<Button onclick={_ => gpdrData()}>Download your data</Button>
-			<Button onclick={_ => goto(localizeHref("/api/dashboard"))}
+			<Button onclick={_ => goto("/api/dashboard")}
 				>Manage your API keys</Button>
 			<Button variant={"secondary"} onclick={_ => logOut()}>Log out</Button>
 		</div>

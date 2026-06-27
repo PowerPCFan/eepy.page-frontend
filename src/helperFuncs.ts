@@ -2,7 +2,6 @@ import { dev } from "$app/environment";
 import { activeTheme } from "$lib/store";
 import consola from "consola";
 import Cookies from "js-cookie";
-import { localizeHref } from "./paraglide/runtime";
 
 export function redirectToLogin(
 	code: number = 0,
@@ -20,13 +19,11 @@ export function redirectToLogin(
 		});
 
 		if (code === 461) {
-			window.location.href = localizeHref(`/account/warn?reason=permission`);
+			window.location.href = `/account/warn?reason=permission`;
 		} else if (code === 462) {
-			window.location.href = localizeHref(`/account/warn?reason=feature`);
+			window.location.href = `/account/warn?reason=feature`;
 		} else {
-			window.location.href = localizeHref(
-				`/login?r=${no_reroute ? "/" : window.location.pathname}&c=${code}`
-			);
+			window.location.href = `/login?r=${no_reroute ? "/" : window.location.pathname}&c=${code}`;
 		}
 	}, timeoutSeconds * 1000);
 }

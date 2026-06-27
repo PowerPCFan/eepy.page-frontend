@@ -19,7 +19,6 @@
 	import Button from "$lib/components/ui/button/button.svelte";
 	import { isBrowser } from "@sentry/core";
 	import "../app.css";
-	import { localizeHref } from "../paraglide/runtime";
 
 	let { children } = $props();
 	let localSponsorHidden = $state(false);
@@ -63,25 +62,25 @@
 <Toaster />
 
 <Header>
-	{@render navbarLink(MaterialSymbolsHomeRounded, localizeHref("/"), "Home")}
+	{@render navbarLink(MaterialSymbolsHomeRounded, "/", "Home")}
 	{@render navbarLink(
 		MaterialSymbolsTeamDashboard,
-		localizeHref("/dashboard"),
+		"/dashboard",
 		"Dashboard",
 		false
 	)}
 	{@render navbarLink(
 		MaterialSymbolsAccountCircle,
-		localizeHref("/account/manage"),
+		"/account/manage",
 		"Account",
 		false
 	)}
 	{@render navbarLink(
 		MaterialSymbolsCollectionsBookmarkOutlineRounded,
-		localizeHref("/blogs"),
+		"/blogs",
 		"Blogs"
 	)}
-	{@render navbarLink(MaterialSymbolsFlagRounded, localizeHref("/report"), "Report")}
+	{@render navbarLink(MaterialSymbolsFlagRounded, "/report", "Report")}
 	{@render navbarLink(
 		MaterialSymbolsMenuBookRounded,
 		"https://guides.frii.site",

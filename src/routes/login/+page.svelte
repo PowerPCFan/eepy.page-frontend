@@ -29,7 +29,6 @@
 	import Cookies from "js-cookie";
 	import { onMount } from "svelte";
 	import { fade } from "svelte/transition";
-	import { localizeHref } from "../../paraglide/runtime";
 
 	let { data } = $props();
 
@@ -310,8 +309,7 @@
 					class="mt-4 w-full">Sign in</Button>
 			</form>
 
-			<a class="text-sm" href={localizeHref("/account/recover/2fa")}
-				>Disable two-factor authentication with a backup code</a>
+			<a class="text-sm" href="/account/recover/2fa">Disable two-factor authentication with a backup code</a>
 		</div>
 	{:else}
 		<form class="mt-6">
@@ -341,7 +339,7 @@
 							<a
 								tabindex="-1"
 								transition:fade={{ duration: 100 }}
-								href={localizeHref("/account/recover/")}
+								href="/account/recover/"
 								class="ml-auto inline-block text-sm underline-offset-4 hover:underline">
 								Forgot your password?
 							</a>

@@ -1,7 +1,6 @@
 // /src/routes/sitemap.xml/+server.ts
 import { type RequestHandler } from "@sveltejs/kit";
 import * as sitemap from "super-sitemap";
-import { locales, localizeHref } from "../../paraglide/runtime";
 
 export const prerender = true; // optional
 
@@ -24,19 +23,10 @@ export const GET: RequestHandler = async () => {
 		sort: "alpha",
 		processPaths: paths => {
 			return paths.map(({ path, ...rest }) => {
-				const alternatives = [];
-
-				for (const locale of locales) {
-					alternatives.push({
-						lang: locale,
-						path: localizeHref(path, { locale: locale })
-					});
-				}
 				return {
 					...rest,
 					path: path,
-					priority: Priorities[path] ?? 0.7,
-					alternates: alternatives
+					priority: Priorities[path] ?? 0.7
 				};
 			});
 		},
