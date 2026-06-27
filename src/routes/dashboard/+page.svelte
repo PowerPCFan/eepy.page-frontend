@@ -188,24 +188,6 @@
 		return new Array(amount) as DashboardDomain[];
 	}
 
-	async function createIsADevJson() {
-		const userData = await serverContactor.getAccountSettings();
-		const obj = {
-			owner: {
-				username: userData["username"],
-				email: userData["email"]
-			},
-			records: {}
-		};
-
-		for (let domain of domains) {
-			const newName = domain.name + ".is-a.dev";
-			obj.records[newName] = domain.values[0];
-		}
-
-		createFile("MANUALLY_CHECK_BEFORE_SUBMIT.json.removeme", JSON.stringify(obj));
-	}
-
 	if (browser) {
 		serverContactor = new ServerContactor(
 			getAuthToken() ?? "",
@@ -306,8 +288,6 @@
 		description={domainErrorDescription}
 		className="mb-6 mt-6"
 		trigger={alertUpdate} />
-
-	<Button onclick={async _ => await createIsADevJson()}>Export to is-a.dev PR JSON</Button>
 
 	<div class="domains space-y-4">
 		{#each domainsLoaded ? domains : createPlaceholders(data.domainAmount) as domain}
