@@ -1,48 +1,29 @@
 <script lang="ts">
-	import { m } from "../../paraglide/messages";
-	import { serverURL } from "../../serverContactor";
 	import Separator from "./ui/separator/separator.svelte";
-
-	const commit = __BUILD_COMMIT__;
-	const time = __BUILD_TIME__;
 </script>
 
 <div class="footer bg-footer space-y-3 pt-8 sentry-unmask">
 	<div class="contact">
-		<h3 class="text-lg font-medium">{m.footer_contact()}</h3>
+		<h3 class="text-lg font-medium">Contact</h3>
 		<Separator />
 
-		<a href="mailto: support@frii.site">{m.footer_contact_support()}</a>
-		<a href="mailto: urgent@frii.site">{m.footer_contact_urgent()}</a>
-		<a href="mailto: support@frii.site">{m.footer_contact_social()}</a>
-		<a href="https://discord.gg/FjujyhvbMY">{m.footer_contact_discord()}</a>
+		<a href="mailto: support@frii.site">Support: support@frii.site</a>
+		<a href="mailto: urgent@frii.site">Vulnerabilities: urgent@frii.site</a>
+		<a href="mailto: social@frii.site">Social media: social@frii.site</a>
 	</div>
 	<div class="starting">
-		<h3 class="text-lg font-medium">{m.footer_started()}</h3>
+		<h3 class="text-lg font-medium">Getting started</h3>
 		<Separator />
-		<a href="https://github.com/ctih1/frii.site-frontend/wiki/FAQ">{m.footer_started_faq()}</a>
+		<a href="https://github.com/ctih1/frii.site-frontend/wiki/FAQ">Frequently asked questions</a>
 		<a href="https://github.com/ctih1/frii.site-frontend/wiki/Getting-Started#getting-started"
-			>{m.footer_started_register()}</a>
+			>Creating an account</a>
 		<a
 			href="https://github.com/ctih1/frii.site-frontend/wiki/Getting-Started#managing-your-domains"
-			>{m.footer_started_modify()}</a>
+			>Modifying domains</a>
 		<a
 			href="https://github.com/ctih1/frii.site-frontend/wiki/Getting-Started#account-management"
-			>{m.footer_started_account()}</a>
-		<a href="https://github.com/ctih1/frii.site-frontend/wiki/API">{m.footer_started_api()}</a>
-	</div>
-	<div class="dev">
-		<h3 class="text-lg font-medium">{m.footer_dev()}</h3>
-		<Separator />
-		<a href="https://github.com/ctih1/frii.site-frontend/wiki/Translation-guide"
-			>{m.footer_dev_translations()}</a>
-		<a href="https://github.com/ctih1/frii.site-frontend/blob/master/.github/CONTRIBUTING.md"
-			>{m.footer_dev_coding()}</a>
-		<a href="https://github.com/ctih1/frii.site-frontend/discussions/67"
-			>{m.footer_dev_partner()}</a>
-		<p style="margin: 0px;">Using server {serverURL}</p>
-		<p style="margin: 0px;">Commit {commit}</p>
-		<p style="margin: 0px;">Built {time}</p>
+			>Managing your account</a>
+		<a href="https://github.com/ctih1/frii.site-frontend/wiki/API">Creating an API key</a>
 	</div>
 </div>
 

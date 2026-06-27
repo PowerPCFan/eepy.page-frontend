@@ -9,7 +9,6 @@
 	import { toast } from "svelte-sonner";
 	import MaterialSymbolsAttachMoneyRounded from "~icons/material-symbols/attach-money-rounded";
 	import { createFile, redirectToLogin } from "../../helperFuncs";
-	import { m } from "../../paraglide/messages";
 	import {
 		AuthError,
 		ConflictError,
@@ -81,8 +80,8 @@
 				button.deletionLoading = false;
 				if (error instanceof AuthError) redirectToLogin(460);
 
-				domainErrorTitle = m.dashboard_delete_error();
-				domainErrorDescription = m.unhandled_error();
+				domainErrorTitle = "Could not delete domain";
+				domainErrorDescription = "An unhandled error occurred.";
 				alertUpdate++;
 
 				throw new Error("Failed to delete domain");
@@ -92,8 +91,8 @@
 
 				window.gtag?.("event", "domain_delete");
 				button.deletionLoading = false;
-				toast.success(m.dashboard_delete_success({ domain: domain }), {
-					description: m.dashboard_delete_success_description({ domain: domain })
+				toast.success(`Successfully deleted ${domain}`, {
+					description: `${domain} was deleted successfully.`
 				});
 				removeDomain(domain);
 			});
@@ -107,19 +106,19 @@
 			.catch(error => {
 				consola.warn("Failed to register a domain");
 				registerNewDomainLoading = false;
-				registerErrorTitle = m.dashboard_register_fail({ domain: domain + tld });
+				registerErrorTitle = `Failed to register ${domain + tld}`;
 
 				if (error instanceof AuthError) redirectToLogin(460);
 				else if (error instanceof DNSError)
-					registerErrorDescription = m.dashboard_invalid();
+					registerErrorDescription = "The domain is invalid";
 				else if (error instanceof PermissionError)
-					registerErrorDescription = m.dashboard_domain_permissions();
+					registerErrorDescription = "You must own all parts of the requested domain.";
 				else if (error instanceof LimitError)
-					registerErrorDescription = m.dashboard_domain_limit();
+					registerErrorDescription = "You have exceeded your domain limit.";
 				else if (error instanceof ConflictError)
-					registerErrorDescription = m.dashboard_domain_use();
+					registerErrorDescription = "The requested domain has already been registered!";
 				else {
-					registerErrorDescription = m.unhandled_error();
+					registerErrorDescription = "An unhandled error occurred.";
 				}
 				alertUpdate++;
 				throw new Error("Failed to register dommain!");
@@ -128,7 +127,7 @@
 				consola.info("Registered domain");
 				registerNewDomainLoading = false;
 				window.gtag?.("event", "domain_register");
-				toast.success(m.dashboard_register_success({ domain: domain + tld }));
+				toast.success(`Successfully registered ${domain + tld}!`);
 				domains.push({
 					type,
 					domain: domain + tld,
@@ -152,15 +151,15 @@
 			.catch(error => {
 				consola.warn("Failed to modify domain");
 				domain.isLoading = false;
-				domainErrorTitle = m.dashboard_modify_fail({ domain: domain.domain });
+				domainErrorTitle = `Error modifying ${domain.domain}`;
 
 				if (error instanceof AuthError) redirectToLogin(460);
 				else if (error instanceof DNSError)
-					domainErrorDescription = m.dashboard_invalid_value();
+					domainErrorDescription = "Please ensure the 'value' field is correct.";
 				else if (error instanceof PermissionError)
-					domainErrorDescription = m.dashboard_domain_permissions();
+					domainErrorDescription = "You must own all parts of the requested domain.";
 				else {
-					domainErrorDescription = m.unhandled_error();
+					domainErrorDescription = "An unhandled error occurred.";
 				}
 				alertUpdate++;
 				throw Error("Failed to modify domain."); // stops execution to the .then block
@@ -170,7 +169,7 @@
 
 				window.gtag?.("event", "domain_modify");
 				domain.isLoading = false;
-				toast.success(m.dashboard_modify_success({ domain: domain.domain }));
+				toast.success(`Successfully modified ${domain.domain}!`);
 			});
 	}
 
@@ -219,8 +218,8 @@
 					redirectToLogin(460);
 				} else {
 					console.error(error);
-					domainErrorTitle = m.dashboard_domain_load_fail();
-					domainErrorDescription = m.generic_fail_description();
+					domainErrorTitle = "Failed to load domains";
+					domainErrorDescription = "Please contact support if this error persists.";
 					throw new Error("Failed to load domains");
 				}
 			})
@@ -265,13 +264,11 @@
 		let newDesc = null;
 
 		if (isFrii) {
-			newTitle = m.dashboard_suffix_warn_title();
-			newDesc = m.dashboard_suffix_warn_desc();
+			newTitle = 'Please remove the ".frii.site" suffix.';
+			newDesc = 'frii.site automatically adds the ".frii.site" portion of your domain';
 		} else if (isVercel) {
-			newTitle = m.dashboard_vercel_hint();
-			newDesc = m.dashboard_vercel_hint_description({
-				baseDomain: window.location.origin
-			});
+			newTitle = "Trying to verify a Vercel domain?";
+			newDesc = `Please go to ${window.location.origin}/account/verify/vercel`;
 		}
 
 		const changed = registerNoteTitle !== newTitle || registerNoteDescription !== newDesc;
@@ -285,7 +282,7 @@
 </script>
 
 <svelte:head>
-	<title>{m.dashboard_title()} - frii.site</title>
+	<title>Dashboard - frii.site</title>
 	<meta content="frii.site dashboard" property="og:title" />
 	<meta content="Manage all of your domains here!" property="og:description" />
 	<meta content="Manage all of your domains here!" name="description" />
@@ -297,8 +294,11 @@
 <Loader bind:this={loader} />
 
 <div class="domain-holder bg-card max-w-8xl sentry-unmask mt-16 mr-auto ml-auto w-11/12 rounded-2xl p-6">
-	<h1 class="text-3xl font-semibold">{m.dashboard_your_domains()}</h1>
-	<p>{m.dashboard_domain_explanation()}</p>
+	<h1 class="text-3xl font-semibold">Your domains</h1>
+	<p>
+		These are all the domains you own. You can modify each parameter of them by simply clicking
+		on their respective input field.
+	</p>
 
 	<InlineAlert
 		variant={"error"}
@@ -377,7 +377,7 @@
 								modifyDomain(domain);
 							}}
 							class="h-full min-h-8 w-1/2 max-w-40"
-							>{m.dashboard_save_modification()}</Button>
+							>Save</Button>
 						<Separator orientation={"vertical"} />
 						<Button
 							loading={domain.deletionLoading}
@@ -397,7 +397,9 @@
 							class="h-full min-h-8 w-1/2 max-w-40"
 							variant={"destructive"}
 							>{#if domain.deletionWarned}
-								{m.dashboard_delete_domain_confirm()}{:else}{m.dashboard_delete_domain_button()}
+								Confirm?
+							{:else}
+								Delete
 							{/if}</Button>
 					{:else}
 						<Skeleton class="h-full min-h-10 w-1/2 max-w-40"></Skeleton>
@@ -471,7 +473,7 @@
 				registerDomain(newDomain, newDomainType, newDomainTld);
 			}}
 			disabled={!newDomain}
-			class="w-24">{m.dashboard_register_domain_button()}</Button>
+			class="w-24">Register</Button>
 	</div>
 </div>
 

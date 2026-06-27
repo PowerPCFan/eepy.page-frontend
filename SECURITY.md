@@ -1,51 +1,24 @@
-# Security Policy
+# security policies
 
-## Supported Versions
+if you encounter vulnerabilities, critical bugs, or malicious/dangerous content on users' websites, this is the place for you.
 
-Here are the current versions of frii.site which are supported.
+## reporting
 
-| Version          | Supported          |
-| ---------------- | ------------------ |
-| frii.site        | :white_check_mark: |
-| canary.frii.site | :white_check_mark: |
-| server.frii.site | ✅                 |
-| api.frii.site    | ✅                 |
-| legacy.frii.site | :x:                |
+to report a vulnerability, send an email to urgent@eepy.page. i'll try my best to respond within the day, but response time may change based on the situation; if the severity of the issue is genuinely high, i'll respond faster than if it's not
 
-## Reporting a Vulnerability
+include the following information in your report:
+- the action
+- expected behaviour
+- actual behaviour
+- importance (0-5, 5 being the most urgent)
+- description of the vulnerability
+- steps to reproduce the issue (not mandatory but greatly appreciated)
+- impacts of the issue
+- how an attacker could use this
 
-To report a vulnerability, either go to https://frii.site/report/security , or contact urgent@frii.site on email.
+## rewards
 
-| Contact method            | Expected time to give updates |
-| ------------------------- | ----------------------------- |
-| frii.site/report/security | 1-2 days                      |
-| urgent@frii.site          | 10 minutes - 6 hours          |
-
-- Note that response time may change based on the situation.
-
-Please include the following information in your report.
-
-- API endpoint URL, or website address
-- Expected behaviour
-- Actual behaviour
-- Importance (0-5, 5 being very urgent)
-- Description of the vulnerability
-- Steps to reproduce (not mandatory, but highly recommended)
-- Impact of the issue
-- How an attacker could use this
-
-## How the investigation will go:
-
-1. We recieve your report
-2. We investigate the problem immediately
-3. We judge the problem, and assign it a priority
-4. We give you a tracking link to see the progress and information about your report
-5. We fix the issue
-6. We give you a reward
-
-## Rewards
-
-By reporting vulnerabilities, you can get yourself some perks. Here is a list of them
+by reporting vulnerabilities, you can receive perks:
 
 | Importance (0-5) | Reward                                                                      |
 | ---------------- | --------------------------------------------------------------------------- |

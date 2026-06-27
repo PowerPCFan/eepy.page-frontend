@@ -8,7 +8,6 @@
 	import Loader from "$lib/components/ui/loader/loader.svelte";
 	import consola from "consola";
 	import { Confetti } from "svelte-confetti";
-	import { m } from "../../../paraglide/messages";
 
 	let { data } = $props();
 
@@ -48,24 +47,24 @@
 <Holder>
 	{#if success === false}
 		<div class="mb-8">
-			<h1 class="text-2xl font-semibold">{m.activation_fail()}</h1>
-			<p>{m.activation_fail_desc()}</p>
-			<a href="mailto:support@frii.site">{m.activation_support_link()}</a>
+			<h1 class="text-2xl font-semibold">Activation failed</h1>
+			<p>The code may have already been used.</p>
+			<a href="mailto:support@frii.site">Contact support</a>
 		</div>
 	{/if}
 	{#if inputRequired}
-		<h1 class="text-2xl font-semibold">{m.activation_title()}</h1>
-		<p>{m.activation_guide()}</p>
+		<h1 class="text-2xl font-semibold">Service Activation</h1>
+		<p>Please enter your activation code below</p>
 
 		<div class="mt-4 space-y-2">
-			<Label>{m.activation_code_label()}</Label>
+			<Label>Activation code</Label>
 			<Input bind:value={inputValue} placeholder="xxxxxxxxx" />
 		</div>
 
 		<Button onclick={_ => redeem(inputValue)} class="mt-2">Activate</Button>
 	{:else if success === undefined}
-		<h1 class="text-2xl font-semibold">{m.activation_loading()}</h1>
-		<p>{m.loading()}</p>
+		<h1 class="text-2xl font-semibold">Activating...</h1>
+		<p>Please wait</p>
 
 		<div class="w-12">
 			<Loader asForeground={true} />
@@ -79,7 +78,7 @@
 				amount={150}
 				x={[-1.2, 1.2]} />
 		</div>
-		<h1 class="text-2xl font-semibold">{m.activation_success()}</h1>
-		<p>{m.activation_thanks()}</p>
+		<h1 class="text-2xl font-semibold">Successfully activated!</h1>
+		<p>Thank you for your purchase!</p>
 	{/if}
 </Holder>

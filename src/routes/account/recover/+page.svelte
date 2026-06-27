@@ -7,7 +7,6 @@
 
 	import { redirectToLogin } from "$lib";
 	import Input from "$lib/components/ui/input/input.svelte";
-	import { m } from "../../../paraglide/messages";
 	import {
 		CodeError,
 		confirmPasswordChange,
@@ -27,28 +26,22 @@
 	function handleButton(event: any) {
 		if (generatingNew) {
 			if (password !== cPassword) {
-				modal.open(
-					m.signup_password_not_match(),
-					m.signup_password_not_match_description()
-				);
+				modal.open("Passwords don't match.", "Please confirm that your passwords match.");
 				return;
 			}
 
 			confirmPasswordChange(code ?? "", password)
 				.catch(err => {
 					if (err instanceof CodeError)
-						modal.open(
-							m.account_recovery_fail(),
-							m.account_recovery_fail_description()
-						);
+						modal.open("Failed to change password", "Perhaps the code has expired?");
 					if (err instanceof UserError) redirectToLogin(404);
 
 					throw new Error("Failed to reset password");
 				})
 				.then(response => {
 					modal.open(
-						m.account_recovery_success(),
-						m.account_recovery_success_description()
+						"Successfully changed password!",
+						"You can now log in using your new password."
 					);
 				});
 		} else {
@@ -57,13 +50,16 @@
 					if (err instanceof UserError) redirectToLogin(404);
 
 					modal.open(
-						m.account_recovery_start_fail(),
-						m.account_recovery_start_fail_description()
+						"Failed to send verification code",
+						"Did you double-check your username? Frii.site usernames are case-sensitive."
 					);
 					throw new Error("Failed to send password reset");
 				})
 				.then(_ => {
-					modal.open(m.account_recovery_sent(), m.account_recovery_sent_description());
+					modal.open(
+						"A verification email has been sent to your inbox.",
+						"If you can't find it, please check your spam folder."
+					);
 				});
 		}
 	}
@@ -75,19 +71,20 @@
 	let modal: Modal;
 </script>
 
-<Modal countdown={undefined} description="" title="" options={[m.modal_ok()]} bind:this={modal} />
+<Modal countdown={undefined} description="" title="" options={["OK"]} bind:this={modal} />
 <Holder>
-	<h1 class="text-2xl font-semibold">{m.account_recovery_title()}</h1>
+	<h1 class="text-2xl font-semibold">Account recovery</h1>
 
 	{#if generatingNew}
-		<Input bind:value={password} placeholder={m.password_placeholder()} />
-		<Input bind:value={cPassword} placeholder={m.confirm_password_placeholder()} />
+		<Input bind:value={password} placeholder="Password" />
+		<Input bind:value={cPassword} placeholder="Confirm password" />
 	{:else}
-		<p>{m.account_recovery_description()}</p>
-		<Input bind:value={username} placeholder={m.username_placeholder()} />
+		<p>
+			Please enter your frii.site username. A verification code will be sent to your email.
+		</p>
+		<Input bind:value={username} placeholder="Username" />
 	{/if}
-	<Button on:click={handleButton} args="fill padding margin-1em-top"
-		>{m.security_report_submit()}</Button>
+	<Button on:click={handleButton} args="fill padding margin-1em-top">Submit</Button>
 </Holder>
 
 <style>

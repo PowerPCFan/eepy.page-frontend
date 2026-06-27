@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { error } from "@sveltejs/kit";
 	import { onMount } from "svelte";
-	import { m } from "../../paraglide/messages";
 	import { serverURL } from "../../serverContactor";
 
 	import Holder from "$lib/components/Holder.svelte";
@@ -34,8 +33,8 @@
 </script>
 
 <Holder>
-	<h1 class="text-4xl font-bold">{m.blogs_title()}</h1>
-	<p>{m.blogs_description()}</p>
+	<h1 class="text-4xl font-bold">Blog posts</h1>
+	<p>Read the latest news about frii.site here!</p>
 
 	{#if blogs.length === 0}
 		<Loader className="w-12" />

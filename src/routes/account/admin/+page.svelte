@@ -25,7 +25,6 @@
 	import { toast } from "svelte-sonner";
 	import { UAParser } from "ua-parser-js";
 	import type { components } from "../../../api";
-	import { m } from "../../../paraglide/messages";
 	import { getLocale } from "../../../paraglide/runtime";
 	// You can create a type alias for easier use
 	type AccountData = components["schemas"]["AccountData"];
@@ -266,7 +265,7 @@
 	});
 </script>
 
-<Modal bind:this={modal} options={[m.modal_ok()]} description={""} title={""}></Modal>
+<Modal bind:this={modal} options={["OK"]} description={""} title={""}></Modal>
 <Loader bind:this={loader} />
 <Holder>
 	{#if hasAccess}

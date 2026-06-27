@@ -11,7 +11,6 @@
 	import { fade } from "svelte/transition";
 	import MaterialSymbolsCheckCircleRounded from "~icons/material-symbols/check-circle-rounded";
 	import MaterialSymbolsKeyboardArrowDownRounded from "~icons/material-symbols/keyboard-arrow-down-rounded";
-	import { m } from "../paraglide/messages.js";
 	import { localizeHref } from "../paraglide/runtime.js";
 
 	let placeholderMessages = ["project", "username", "something-cool", "important", "personal"];
@@ -65,31 +64,31 @@
 		</div>
 		<div class="right-side mr-8 h-fit w-2/5 items-center">
 			<p class="about-us text-3xl leading-10 font-semibold">
-				{m.home_description()}
+				A modern, free subdomain service for developers, project managers, and regular people.
 			</p>
 
 			<div
 				class="details mt-12 mb-12 flex w-full justify-between text-3xl [&>div]:items-center">
 				<div class="item flex">
 					<MaterialSymbolsCheckCircleRounded class=" h-8 text-blue-600" />
-					<Label class="text-lg">{m.home_talking_point_1()}</Label>
+					<Label class="text-lg">100% free</Label>
 				</div>
 				<div class="item flex">
 					<MaterialSymbolsCheckCircleRounded class="h-8 text-blue-600" />
-					<Label class="text-lg">{m.home_talking_point_2()}</Label>
+					<Label class="text-lg">Modern UI</Label>
 				</div>
 				<div class="item flex">
 					<MaterialSymbolsCheckCircleRounded class="h-8 text-blue-600" />
-					<Label class="text-lg">{m.home_talking_point_3()}</Label>
+					<Label class="text-lg">Independent control</Label>
 				</div>
 			</div>
 			<div class="actions mt-auto mb-0 flex justify-between">
 				<Button onclick={_ => goto(localizeHref("/login?register=true"))} class="w-[49%]"
-					>{m.home_signup_action()}</Button>
+					>Sign up now</Button>
 				<Button
 					variant={"secondary"}
 					onclick={_ => goto(localizeHref("/dashboard"))}
-					class="w-[49%]">{m.index_goto_dashboard()}</Button>
+					class="w-[49%]">Go to the dashboard</Button>
 			</div>
 		</div>
 	</div>
@@ -98,8 +97,8 @@
 		<div class="services flex">
 			<div class="visual ml-32 w-2/5"></div>
 			<div class="text bg-primary/10 mr-32 w-3/5 rounded-2xl border-2 p-4 dark:bg-black/30">
-				<h1 class="mb-2 text-5xl font-semibold">{m.index_test_header()}</h1>
-				<p class="text-lg">{@html m.index_test_description()}</p>
+				<h1 class="mb-2 text-5xl font-semibold">Claim yourself a piece of the internet</h1>
+				<p class="text-lg">Let's start from the basics. <b>Try out a domain you'd like to own!</b></p>
 
 				<div class="flex items-center pt-2 pb-2">
 					<div class="absolute">
@@ -129,17 +128,17 @@
 					<div class="domain-results">
 						{#if isTestAvailable}
 							<h1 class="mt-4 text-2xl font-semibold">
-								{@html m.index_test_result_positive({ domain: testDomain })}
+								The domain {testDomain}.frii.site is <span class="text-blue-400">available!</span>
 							</h1>
 							<Button
 								class="mt-2 w-full"
 								onclick={_ => goto(localizeHref("/login?register=true"))}
-								>{m.home_signup_action()}</Button>
+								>Sign up now</Button>
 						{:else}
 							<h1>
-								{@html m.index_test_result_negative({ domain: testDomain })}
+								Unfortunately, the domain {testDomain}.frii.site <b>has already been registered</b>, or is invalid.
 							</h1>
-							<p class="text-lg">{m.index_test_try_else()}</p>
+							<p class="text-lg">Try something else!</p>
 						{/if}
 					</div>
 				{/if}
@@ -150,8 +149,8 @@
 	<div class="selling-points mt-64">
 		<div class="free flex">
 			<div class="text ml-32 w-3/5">
-				<h2 class="w-fit text-5xl font-semibold">{m.home_selling_point_always_free()}</h2>
-				<p class="mt-4 text-xl">{m.home_selling_point_always_free_description()}</p>
+				<h2 class="w-fit text-5xl font-semibold">Always free</h2>
+				<p class="mt-4 text-xl">frii.site will always be completely free for anyone to use. Our main goal is to provide free domains to users who are unable to buy their own domains. However, even if you do own a domain, you're welcome to use our service!</p>
 			</div>
 			<div class="visual w-2/5"></div>
 		</div>
@@ -161,13 +160,8 @@
 		<div class="services flex">
 			<div class="visual ml-32 w-2/5"></div>
 			<div class="text mr-32 w-3/5">
-				<h2 class="w-fit text-5xl font-semibold">{m.home_selling_point_support()}</h2>
-				<p class="mt-4 text-xl">{m.home_selling_point_support_description()}</p>
-
-				<Separator class="mt-4 mb-4" />
-				<p>{m.home_related()}</p>
-				<Button href="https://guides.frii.site/guides/vercel.html" variant={"ghost"}
-					>{m.home_setup_vercel_link()}</Button>
+				<h2 class="w-fit text-5xl font-semibold">Support for many services</h2>
+				<p class="mt-4 text-xl">Since you have full control over DNS records, most services that simply require a domain are supported! Unfortunately, certain services such as Cloudflare DNS require you to register your own domain.</p>
 			</div>
 		</div>
 	</div>
@@ -175,9 +169,9 @@
 	<div class="selling-points mt-64">
 		<div class="management flex">
 			<div class="text ml-32 w-3/5">
-				<h2 class="w-fit text-5xl font-semibold">{m.home_selling_point_independent()}</h2>
+				<h2 class="w-fit text-5xl font-semibold">Independent domain management</h2>
 				<p class="mt-4 text-xl">
-					{m.home_selling_point_independent_description()}
+					You can register, delete, and modify domains straight from our dashboard. There is no need to use a convoluted CLI or a request form, and you don't have to wait for any domain verification as domain registrations are done immediately.
 				</p>
 			</div>
 			<div class="visual mr-32 w-2/5"></div>
@@ -190,18 +184,15 @@
 				<img class="w-3/5" alt="github logo" src={Github} />
 			</div>
 			<div class="text mr-32 w-3/5">
-				<h2 class="w-fit text-5xl font-semibold">{m.home_selling_point_open_source()}</h2>
-				<p class="mt-4 text-xl">{m.home_selling_point_open_source_description()}</p>
+				<h2 class="w-fit text-5xl font-semibold">Completely open-source</h2>
+				<p class="mt-4 text-xl">Our frontend and backend are both completely open-source and open to contributions. Our backend is written in Python, and our frontend is written in SvelteKit.</p>
 
 				<Separator class="mt-4 mb-4" />
-				<p>{m.home_see_more()}</p>
-				<Button
-					href="https://guides.frii.site/translation/getting_started.html"
-					variant={"secondary"}>{m.home_translate_contribute()}</Button>
-				<Button href="https://github.com/ctih1/frii.site-frontend" variant={"ghost"}
-					>{m.home_frontend_link()}</Button>
-				<Button href="https://github.com/ctih1/frii.site-backend" variant={"ghost"}
-					>{m.home_backend_link()}</Button>
+				<p>See more:</p>
+				<Button href="https://github.com/PowerPCFan/eepy.page-frontend" variant={"ghost"}
+					>Our frontend repo (PowerPCFan/eepy.page-frontend)</Button>
+				<Button href="https://github.com/PowerPCFan/eepy.page-backend" variant={"ghost"}
+					>Our backend repo (PowerPCFan/eepy.page-backend)</Button>
 			</div>
 		</div>
 	</div>

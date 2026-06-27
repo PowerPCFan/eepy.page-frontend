@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { m } from "../../paraglide/messages";
 	import Spinner from "./Spinner.svelte";
 	let progress: HTMLElement;
 	let visible = false;
 	let _title: string = "";
 	let _description: string = "";
 
-	export function show(title: string = m.loading(), description: string = m.loading()) {
+	export function show(title: string = "Please wait", description: string = "Please wait") {
 		visible = true;
 		_title = title;
 		_description = description;

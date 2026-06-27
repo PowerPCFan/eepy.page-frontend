@@ -13,7 +13,6 @@
 	import Input from "$lib/components/ui/input/input.svelte";
 	import * as Select from "$lib/components/ui/select/index.js";
 	import { AVAILABLE_TLDS } from "$lib/types";
-	import { m } from "../../../../paraglide/messages";
 
 	let value = $state("");
 	let json = $state("");
@@ -66,16 +65,16 @@
 	<h1 class="text-2xl font-semibold">Vercel verification</h1>
 	{#if userHasConencted}
 		{#if currentPosition === -1}
-			<p>{m.vercel_verification_queue_join()}</p>
+			<p>Joining queue...</p>
 		{:else if currentPosition === 0}
-			<p>{m.vercel_verification_generic()}</p>
+			<p>Completing verification...</p>
 		{:else}
 			<p>
-				{m.vercel_verification_queue({ position: currentPosition })}
+				Your position in queue: {currentPosition}
 			</p>
 		{/if}
 	{:else if userWasVerified}
-		<p>{m.vercel_verification_queue_over()}</p>
+		<p>Successfully verified! Please click 'Refresh' on Vercel.</p>
 	{:else}
 		<div class="mt-4 flex items-center space-x-2">
 			<Input
@@ -96,7 +95,6 @@
 			</Select.Root>
 		</div>
 
-		<Button onclick={() => connectToQueue()}
-			>{m.vercel_verification_queue_join_action_button()}</Button>
+		<Button onclick={() => connectToQueue()}>Join queue</Button>
 	{/if}
 </Holder>

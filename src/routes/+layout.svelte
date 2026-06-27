@@ -19,7 +19,6 @@
 	import Button from "$lib/components/ui/button/button.svelte";
 	import { isBrowser } from "@sentry/core";
 	import "../app.css";
-	import { m } from "../paraglide/messages";
 	import { localizeHref } from "../paraglide/runtime";
 
 	let { children } = $props();
@@ -64,29 +63,29 @@
 <Toaster />
 
 <Header>
-	{@render navbarLink(MaterialSymbolsHomeRounded, localizeHref("/"), m.dashboard_home())}
+	{@render navbarLink(MaterialSymbolsHomeRounded, localizeHref("/"), "Home")}
 	{@render navbarLink(
 		MaterialSymbolsTeamDashboard,
 		localizeHref("/dashboard"),
-		m.dashboard_navbar(),
+		"Dashboard",
 		false
 	)}
 	{@render navbarLink(
 		MaterialSymbolsAccountCircle,
 		localizeHref("/account/manage"),
-		m.dashboard_account(),
+		"Account",
 		false
 	)}
 	{@render navbarLink(
 		MaterialSymbolsCollectionsBookmarkOutlineRounded,
 		localizeHref("/blogs"),
-		m.blogs_navbar()
+		"Blogs"
 	)}
-	{@render navbarLink(MaterialSymbolsFlagRounded, localizeHref("/report"), m.dashboard_abuse())}
+	{@render navbarLink(MaterialSymbolsFlagRounded, localizeHref("/report"), "Report")}
 	{@render navbarLink(
 		MaterialSymbolsMenuBookRounded,
 		"https://guides.frii.site",
-		m.guides_link_navbar()
+		"Guides"
 	)}
 </Header>
 
@@ -97,11 +96,11 @@
 {#if isBrowser() && Number(localStorage.getItem("views")) > 7 && !localStorage.getItem("donation-dismissed") && !localSponsorHidden}
 	<div class="flex w-full items-center justify-around p-4">
 		<div>
-			<h1 class="text-2xl font-semibold">{m.donate_beg_title()}</h1>
+			<h1 class="text-2xl font-semibold">Have you considered donating?</h1>
 			<p class="max-w-[60ch]">
-				{@html m.donate_beg_description()}
+				frii.site has never been profitable, but due to Namecheap raising our domain's prices, we are losing more money than we ever have. Even small donations <nobr>(e.g. 1€ or $1)</nobr> would help out immensely.
 			</p>
-			<a href="https://ko-fi.com/ctih1">{m.donate_beg_options()}</a>
+			<a href="https://ko-fi.com/ctih1">View donation options</a>
 		</div>
 
 		<Button
@@ -109,19 +108,8 @@
 			onclick={_ => {
 				localSponsorHidden = true;
 				localStorage.setItem("donation-dismissed", "true");
-			}}>{m.donate_beg_ignore()}</Button>
+			}}>Never remind me again</Button>
 	</div>
-{/if}
-
-{#if isBrowser() && navigationTrigger && innerWidth > 1450 && window.location.pathname !== "/" && window.location.pathname !== "/dashboard" && towerAdsVisible}
-	<iframe
-		title="Tower Advertisement"
-		class="absolute top-[25%] left-0 z-20 aspect-[320/600] h-[50vh] w-fit"
-		src="https://scontent.frii.site/tower"></iframe>
-	<iframe
-		title="Tower Advertisement"
-		class="absolute top-[25%] right-0 z-20 aspect-[320/600] h-[50vh] pr-2"
-		src="https://scontent.frii.site/tower"></iframe>
 {/if}
 
 <svelte:head>
@@ -131,16 +119,6 @@
 		href="/fonts/InterVariable.woff2"
 		type="font/woff2"
 		crossorigin="anonymous" />
-
-	<script
-		async
-		src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2958231337684546"
-		crossorigin="anonymous">
-	</script>
-	<script
-		defer
-		src="https://analytics.koti.frii.site/script.js"
-		data-website-id="34175ac9-02fb-4df0-96b9-0e847365184e"></script>
 </svelte:head>
 <svelte:window bind:innerWidth={innerWidth} />
 

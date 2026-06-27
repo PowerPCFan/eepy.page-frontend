@@ -2,7 +2,6 @@
 	import { redirectToLogin } from "$lib";
 	import Holder from "$lib/components/Holder.svelte";
 	import { Button } from "$lib/components/ui/button";
-	import { m } from "../../../../paraglide/messages";
 	import { CodeError, UserError, verifyDeletion } from "../../../../serverContactor";
 
 	let doneVerifying: boolean = $state(false);
@@ -33,34 +32,40 @@
 </script>
 
 <Holder>
-	<h1 class="text-2xl font-semibold">{m.deletion_verif_title()}</h1>
+	<h1 class="text-2xl font-semibold">Account deletion verification</h1>
 	<br />
 	{#if !clicked}
-		<p>{m.account_del_desc()}</p>
+		<p>
+			Are you sure you want to delete your account? This action is permanent and cannot be
+			undone. The following actions will happen:
+		</p>
 		<ol>
-			<li>{m.account_del_steps_1()}</li>
-			<li>{m.account_del_steps_2()}</li>
-			<li>{m.account_del_steps_3()}</li>
-			<li>{m.account_del_steps_4()}</li>
+			<li>Your account will be permanently deleted</li>
+			<li>
+				Every domain on your account will also be deleted and become available for other users
+				to register
+			</li>
+			<li>Your personal information will be erased from our servers</li>
+			<li>Your account's username will be available for other users to register</li>
 		</ol>
 		<Button onclick={_ => confirmDeletion()} variant={"destructive"}
-			>{m.account_del_agree()}</Button>
+			>I understand the consequences, and I would like to continue</Button>
 	{/if}
 	<h2>
 		{#if !doneVerifying && clicked}
-			{m.code_verif_loading()}
+			Checking verification validity...
 		{:else if !valid && clicked && doneVerifying}
-			{m.code_verif_loading_wrong()}
+			Invalid code
 		{:else if valid && clicked && doneVerifying}
-			{m.account_verif_loading_success()}
+			Account deleted
 		{/if}
 	</h2>
 	{#if doneVerifying}
 		<p>
 			{#if valid}
-				{m.account_verif_loading_success_desc()}
+				Redirecting to login in 3 seconds...
 			{:else}
-				{m.code_verif_loading_wrong_desc()}
+				This code has either expired, or is invalid.
 			{/if}
 		</p>
 	{/if}

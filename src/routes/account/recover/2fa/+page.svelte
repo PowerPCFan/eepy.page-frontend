@@ -5,7 +5,6 @@
 	import Modal from "$lib/components/Modal.svelte";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
-	import { m } from "../../../../paraglide/messages";
 
 	let username: string = $state("");
 	let password: string = $state("");
@@ -20,19 +19,19 @@
 			.catch(error => {
 				loader.hide();
 				if (error instanceof AuthError || error instanceof UserError) {
-					modal.open(m.mfa_recovery_fail(), m.login_failed_description());
+					modal.open("Failed to remove 2FA", "Username and password do not match.");
 				} else if (error instanceof CodeError) {
-					modal.open(m.code_verif_loading_wrong(), m.mfa_wrong_backup_code());
+					modal.open("Invalid code", "Invalid backup code");
 				} else if (error instanceof MFAError) {
-					modal.open(m.mfa_already_disabled(), "");
+					modal.open("Two-factor authentication is already disabled", "");
 				} else {
-					modal.open(m.unhandled_error(), m.generic_fail_description());
+					modal.open("An unhandled error occurred.", "Please contact support if this error persists.");
 				}
 				throw new Error("Failed to remove 2FA");
 			})
 			.then(_ => {
 				loader.hide();
-				modal.open(m.mfa_disabled_message(), "");
+				modal.open("Two-factor authentication is now disabled", "");
 			});
 	}
 </script>
@@ -40,7 +39,7 @@
 <Modal bind:this={modal} description="" title="" options={["Continue"]}></Modal>
 <Loader bind:this={loader} />
 <Holder>
-	<h1 class="text-2xl font-semibold">{m.mfa_recovery()}</h1>
+	<h1 class="text-2xl font-semibold">Disable two-factor authentication with a backup key</h1>
 
 	<form class="space-y-2">
 		<Input type="text" placeholder="Username" bind:value={username} />
@@ -48,10 +47,10 @@
 		<Input type="text" placeholder="Backup code" bind:value={backupCode} />
 
 		<Button onclick={_ => sendRemoval()}>
-			{m.mfa_recovery_send()}
+			Disable 2FA
 		</Button>
 	</form>
-	<a class="support-tip" href="mailto:contact@frii.site">{m.mfa_unable_to_login()}</a>
+	<a class="support-tip" href="mailto:contact@frii.site">Unable to log in? Contact support.</a>
 </Holder>
 
 <style>

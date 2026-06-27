@@ -2,7 +2,6 @@
 	import { redirectToLogin } from "$lib";
 	import Holder from "$lib/components/Holder.svelte";
 	import { onMount } from "svelte";
-	import { m } from "../../../../paraglide/messages";
 	import { CodeError, UserError, verifyEmail } from "../../../../serverContactor";
 	let doneVerifying: boolean = $state(false);
 	let valid: boolean = $state(false);
@@ -30,23 +29,23 @@
 </script>
 
 <Holder>
-	<h1 class="text-2xl font-semibold">{m.email_verif_title()}</h1>
+	<h1 class="text-2xl font-semibold">Email verification</h1>
 	<br />
 	<h2 class="text-xl font-semibold">
 		{#if !doneVerifying}
-			{m.code_verif_loading()}
+			Checking verification validity...
 		{:else if !valid}
-			{m.code_verif_loading_wrong()}
+			Invalid code
 		{:else if valid}
-			{m.code_verif_loading_success()}
+			Verification complete!
 		{/if}
 	</h2>
 	{#if doneVerifying}
 		<p>
 			{#if valid}
-				{m.code_verif_loading_success_desc()}
+				Redirecting to login...
 			{:else}
-				{m.code_verif_loading_wrong_desc()}
+				This code has either expired, or is invalid.
 			{/if}
 		</p>
 	{/if}

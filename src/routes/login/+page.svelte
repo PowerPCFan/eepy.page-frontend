@@ -29,7 +29,6 @@
 	import Cookies from "js-cookie";
 	import { onMount } from "svelte";
 	import { fade } from "svelte/transition";
-	import { m } from "../../paraglide/messages";
 	import { localizeHref } from "../../paraglide/runtime";
 
 	let { data } = $props();
@@ -85,11 +84,11 @@
 		login(username, password, captchaToken, mfaCode ? mfaCode : undefined)
 			.catch(error => {
 				buttonLoadingState = false;
-				errorTitle = m.login_failed();
+				errorTitle = "Login failed";
 				if (error instanceof AuthError || error instanceof UserError)
-					errorDescription = m.login_failed_description();
+					errorDescription = "Username and password do not match.";
 				else if (error instanceof PermissionError) {
-					errorDescription = m.login_failed_verify();
+					errorDescription = "Please verify your account";
 					accountNeedsEmailVerification = true;
 				} else if (error instanceof MFAError) {
 					if (!requiresMfa) {
@@ -99,10 +98,13 @@
 						resetTurnstile();
 						return;
 					} else {
-						errorDescription = m.mfa_wrong_code_desc();
+						errorDescription = "Invalid two-factor authentication code.";
 					}
-				} else if (error instanceof CaptchaError) errorDescription = m.captcha_fail();
-				else errorDescription = m.login_generic_error();
+				} else if (error instanceof CaptchaError)
+					errorDescription = "Please solve the captcha before continuing";
+				else
+					errorDescription =
+						"There was an error while logging in. If this continues, please contact support.";
 				consola.warn(errorDescription);
 
 				resetTurnstile();
@@ -131,10 +133,11 @@
 		register(username, password, email, captchaToken)
 			.catch(error => {
 				buttonLoadingState = false;
-				errorTitle = m.signup_fail();
-				if (error instanceof ConflictError) errorDescription = m.signup_fail_username();
-				if (error instanceof UserError) errorDescription = m.signup_fail_email();
-				if (error instanceof CaptchaError) errorDescription = m.captcha_fail();
+				errorTitle = "Sign up failed";
+				if (error instanceof ConflictError) errorDescription = "Username is taken";
+				if (error instanceof UserError) errorDescription = "Email is already in use";
+				if (error instanceof CaptchaError)
+					errorDescription = "Please solve the captcha before continuing";
 
 				resetTurnstile();
 				consola.warn(errorDescription);
@@ -143,8 +146,8 @@
 			.then(_ => {
 				buttonLoadingState = false;
 				window.gtag?.("event", "sign_up");
-				alertTitle = m.signup_success();
-				alertDescription = m.signup_success_description();
+				alertTitle = "Successfully registered!";
+				alertDescription = "Please log in.";
 
 				isLoggingIn = true;
 				resetTurnstile();
@@ -181,19 +184,21 @@
 			switch (Number(data.statusCode)) {
 				case 460:
 				case 465: {
-					alertTitle = m.login_failed();
-					alertDescription = m.login_fail_signout();
+					alertTitle = "Login failed";
+					alertDescription = "Looks like you were signed out";
 					break;
 				}
 
 				case 469: {
-					errorTitle = m.login_failed();
-					errorDescription = m.social_login_conflict();
+					errorTitle = "Login failed";
+					errorDescription =
+						"This email has already been linked to an existing account! Please connect your account in settings.";
 					break;
 				}
 				default: {
-					errorTitle = m.unhandled_error();
-					errorDescription = m.login_generic_error();
+					errorTitle = "An unhandled error occurred.";
+					errorDescription =
+						"There was an error while logging in. If this continues, please contact support.";
 					break;
 				}
 			}
@@ -243,9 +248,9 @@
 		<img class="w-8" src={favicon} alt="logo" />
 		<h1 class="text-3xl font-bold">
 			{#if isLoggingIn}
-				{m.login_prompt()}
+				Log into your frii.site account
 			{:else}
-				{m.signup_prompt()}
+				Sign up for a frii.site account
 			{/if}
 		</h1>
 	</div>
@@ -266,15 +271,16 @@
 					})
 					.then(_ => {
 						resendEmailClicked = false;
-						alertTitle = m.login_failed_verify();
-						alertDescription = m.login_failed_verify_description();
+						alertTitle = "Please verify your account";
+						alertDescription =
+							"An email has been sent to your inbox. Please check your spam folder.";
 					});
-			}}>{m.login_resend_email()}</Button>
+			}}>Resend email verification</Button>
 	{/if}
 	{#if requiresMfa}
 		<div class="mfa-screen mt-12">
-			<h2 class="text-2xl font-semibold">{m.login_mfa_required()}</h2>
-			<p>{m.login_mfa_description()}</p>
+			<h2 class="text-2xl font-semibold">Two-factor authentication</h2>
+			<p>Enter the verification code from your authenticator app.</p>
 			<form>
 				<InputOTP.Root
 					bind:value={mfaCode}
@@ -301,17 +307,17 @@
 					loading={buttonLoadingState}
 					disabled={!captchaDone || mfaCode.length != 6}
 					type="submit"
-					class="mt-4 w-full">{m.login_button()}</Button>
+					class="mt-4 w-full">Sign in</Button>
 			</form>
 
 			<a class="text-sm" href={localizeHref("/account/recover/2fa")}
-				>{m.mfa_disable_with_backup()}</a>
+				>Disable two-factor authentication with a backup code</a>
 		</div>
 	{:else}
 		<form class="mt-6">
 			<div class="flex flex-col gap-6">
 				<div class="grid gap-2">
-					<Label for="username">{m.username_placeholder()}</Label>
+					<Label for="username">Username</Label>
 					<Input
 						bind:value={username}
 						id="username"
@@ -320,7 +326,7 @@
 						required />
 
 					{#if !isLoggingIn}
-						<Label for="email">{m.login_email_label()}</Label>
+						<Label for="email">Email</Label>
 						<Input
 							aria-invalid={emailInvalid}
 							bind:value={email}
@@ -330,14 +336,14 @@
 							required />
 					{/if}
 					<div class="flex h-4 items-center">
-						<Label for="password">{m.password_placeholder()}</Label>
+						<Label for="password">Password</Label>
 						{#if isLoggingIn}
 							<a
 								tabindex="-1"
 								transition:fade={{ duration: 100 }}
 								href={localizeHref("/account/recover/")}
 								class="ml-auto inline-block text-sm underline-offset-4 hover:underline">
-								{m.password_forget_intro()}
+								Forgot your password?
 							</a>
 						{/if}
 					</div>
@@ -348,7 +354,7 @@
 						placeholder="*********"
 						required />
 					{#if !isLoggingIn}
-						<Label for="repeat-password">{m.confirm_password_placeholder()}</Label>
+						<Label for="repeat-password">Confirm password</Label>
 						<Input
 							aria-invalid={!!repeatPassword && repeatPassword !== password}
 							bind:value={repeatPassword}
@@ -363,10 +369,7 @@
 								class="mr-2"
 								id="agreements" />
 							<Label for="agreements"
-								>{@html m.signup_tos_and_privacy({
-									tosLink: "/terms",
-									privacyLink: "/privacy"
-								})}</Label>
+								>{@html 'I agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>'}</Label>
 						</div>
 					{/if}
 				</div>
@@ -380,14 +383,14 @@
 				loading={buttonLoadingState}
 				disabled={!browser || actionButtonDisabled}
 				type="submit"
-				class="mt-4 w-full">{isLoggingIn ? m.login_button() : m.signup_button()}</Button>
+				class="mt-4 w-full">{isLoggingIn ? "Sign in" : "Sign up"}</Button>
 		</form>
 
 		<a
 			onclick={_ => (isLoggingIn = !isLoggingIn)}
 			href="##"
 			class="ml-auto inline-block text-sm underline-offset-4 hover:underline">
-			{isLoggingIn ? m.signup_instead() : m.login_instead()}
+			{isLoggingIn ? "Sign up instead" : "Log in instead"}
 		</a>
 	{/if}
 	{#if !requiresMfa}
@@ -416,7 +419,7 @@
 
 				window.location.href = googleAuthUrl.toString();
 			}}
-			class="mt-2 w-full">{m.login_with_google()}</Button>
+			class="mt-2 w-full">Or continue with Google</Button>
 	{/if}
 </div>
 

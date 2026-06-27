@@ -14,7 +14,6 @@
 	import { fade } from "svelte/transition";
 	import MaterialSymbolsVisibility from "~icons/material-symbols/visibility";
 	import MaterialSymbolsVisibilityOff from "~icons/material-symbols/visibility-off";
-	import { m } from "../../../paraglide/messages";
 	import { AuthError, ServerContactor } from "../../../serverContactor";
 	interface Key {
 		hash: string;
@@ -28,6 +27,13 @@
 	}
 
 	const Permissions = ["register", "modify", "delete", "list", "userdetails"] as const;
+	const PermissionLabels = {
+		register: "Register new domains",
+		modify: "Modify",
+		delete: "Delete",
+		list: "View domains",
+		userdetails: "View account details"
+	} as const;
 
 	let apiKeys: Key[] = $state([]);
 	let keysLoaded: boolean = $state(false);
@@ -136,8 +142,8 @@
 					redirectToLogin(460);
 				} else {
 					console.error(error);
-					apiErrorTitle = m.dashboard_domain_load_fail();
-					apiErrorDescription = m.generic_fail_description();
+					apiErrorTitle = "Failed to load domains";
+					apiErrorDescription = "Please contact support if this error persists.";
 					throw new Error("Failed to load domains");
 				}
 			})
@@ -158,7 +164,7 @@
 </script>
 
 <div class="domain-holder bg-card max-w-8xl mt-16 mr-auto ml-auto w-10/12 rounded-2xl p-6">
-	<h1 class="text-3xl font-semibold">{m.api_title()}</h1>
+	<h1 class="text-3xl font-semibold">Your API keys</h1>
 
 	{#key apiKeys}
 		{#if !keysLoaded}
@@ -191,27 +197,27 @@
 							{/if}
 						</Button>
 					</div>
-					<p class="font-semibold">{m.api_dashboard_permission_section()}</p>
+					<p class="font-semibold">Permissions:</p>
 					<ul class="list-disc [&>li]:ml-8">
 						{#each key.perms as permission}
 							{#if permission === "modify"}
-								<li>{m.api_dashboard_modify_perm()}</li>
+								<li>Modify</li>
 							{/if}
 							{#if permission === "register"}
-								<li>{m.api_dashboard_register_perm()}</li>
+								<li>Register new domains</li>
 							{/if}
 							{#if permission === "delete"}
-								<li>{m.api_dashboard_delete_perm()}</li>
+								<li>Delete</li>
 							{/if}
 							{#if permission === "list"}
-								<li>{m.api_dashboard_list_perm()}</li>
+								<li>View domains</li>
 							{/if}
 							{#if permission === "userdetails"}
-								<li>{m.api_dashboard_userdetails_perm()}</li>
+								<li>View account details</li>
 							{/if}
 						{/each}
 					</ul>
-					<p class="font-semibold">{m.api_dashboard_domains_section()}</p>
+					<p class="font-semibold">Domains:</p>
 					<ul class="list-disc [&>li]:ml-8">
 						{#each key.domains as domain}
 							<li>{domain}.frii.site</li>
@@ -223,13 +229,15 @@
 						open={key.dialogOpen}>
 						<Dialog.Trigger>
 							<Button variant={"destructive"}
-								>{m.api_dashboard_delete_action()}</Button>
+								>Delete</Button>
 						</Dialog.Trigger>
 						<Dialog.Content>
 							<Dialog.Header>
-								<Dialog.Title>{m.api_dashboard_delete_title()}</Dialog.Title>
+								<Dialog.Title>Are you sure you would like to delete this key?</Dialog.Title>
 								<Dialog.Description>
-									{m.api_dashboard_delete_description()}
+									Deleting an API key immediately stops all services using this key from
+									having access to your domains. This is a destructive action that cannot be
+									undone.
 								</Dialog.Description>
 							</Dialog.Header>
 							<Dialog.Footer>
@@ -240,7 +248,7 @@
 									}}
 									loading={key.deletionLoading}
 									variant={"destructive"}
-									>{m.api_dashboard_delete_action()}</Button>
+									>Delete</Button>
 							</Dialog.Footer>
 						</Dialog.Content>
 					</Dialog.Root>
@@ -258,23 +266,23 @@
 </div>
 
 <div class="create bg-card max-w-8xl mt-16 mr-auto ml-auto w-10/12 rounded-2xl p-6">
-	<h1 class="text-2xl font-semibold">{m.api_dashboard_create_title()}</h1>
+	<h1 class="text-2xl font-semibold">Create an API key</h1>
 	<form class="mt-4 items-center space-y-4 space-x-2">
 		<div class="w-full max-w-96 space-y-2">
-			<Label for="comment">{m.api_dashboard_create_comment_input()}</Label>
+			<Label for="comment">Comment</Label>
 			<Input
-				placeholder={m.api_dashboard_comment_placeholder()}
+				placeholder="For testing my super cool app"
 				aria-required={true}
 				bind:value={comment}
 				id="comment" />
 		</div>
 		<div class="space-y-2">
-			<Label>{m.api_dashboard_create_affected_domains_input()}</Label>
+			<Label>Domains</Label>
 			<Select.Root bind:value={selectedDomains} type="multiple">
 				<Select.Trigger class="w-96"
 					>{selectedDomains.join(", ").slice(0, 45)}...</Select.Trigger>
 				<Select.Content>
-					<Select.Item value="*">{m.api_dashboard_domain_any()}</Select.Item>
+					<Select.Item value="*">Any domain</Select.Item>
 					{#each domains as domain}
 						<Select.Item value={domain.domain}>{domain.domain}</Select.Item>
 					{/each}
@@ -282,14 +290,13 @@
 			</Select.Root>
 		</div>
 		<div class="space-y-2">
-			<Label>{m.api_dashboard_create_affected_permission_input()}</Label>
+			<Label>Permissions</Label>
 			<Select.Root bind:value={selectedPermissions} type="multiple">
 				<Select.Trigger class="w-96"
 					>{selectedPermissions.join(", ").slice(0, 45)}...</Select.Trigger>
 				<Select.Content>
 					{#each Permissions as permission}
-						<Select.Item value={permission}
-							>{m[`api_dashboard_${permission}_perm`]()}</Select.Item>
+						<Select.Item value={permission}>{PermissionLabels[permission]}</Select.Item>
 					{/each}
 				</Select.Content>
 			</Select.Root>
@@ -297,10 +304,11 @@
 
 		{#if selectedPermissions.includes("userdetails")}
 			<h2>
-				<span class="text-red-500">{m.generic_warning()}</span>
-				{m.api_dashboard_userdetails_warning({
-					permission: m.api_dashboard_userdetails_perm()
-				})}
+				<span class="text-red-500">WARNING:</span>
+				Giving the API key the "View account details" permission is extremely dangerous, as it
+				can expose your IP-address, email, username, list of sessions, list of devices, and
+				other sensitive data. It is advised to turn this off unless you absolutely know what
+				you are doing.
 			</h2>
 		{/if}
 
@@ -310,6 +318,6 @@
 				apiCreationLoading = true;
 				registerKey();
 			}}
-			loading={apiCreationLoading}>{m.api_dashboard_create_action()}</Button>
+			loading={apiCreationLoading}>Create</Button>
 	</form>
 </div>

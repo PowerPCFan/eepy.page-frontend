@@ -31,7 +31,6 @@
 	import { fade } from "svelte/transition";
 	import { UAParser } from "ua-parser-js";
 	import MaterialSymbolsDesktopMac from "~icons/material-symbols/desktop-mac";
-	import { m } from "../../../paraglide/messages";
 	import { localizeHref } from "../../../paraglide/runtime";
 
 	let serverContactor: ServerContactor;
@@ -78,7 +77,7 @@
 					return;
 				}
 				if (error instanceof ConflictError) {
-					toast.error(m.account_mfa_setup_exists());
+					toast.error("Two-factor authentication is already enabled");
 					return;
 				}
 				throw new Error("Failed to begin 2fa setup");
@@ -101,20 +100,19 @@
 				}
 				if (error instanceof CodeError) {
 					consola.warn("Invalid MFA code");
-					toast.error(m.code_verif_loading_wrong(), {
-						description: m.code_verif_loading_wrong_desc()
+					toast.error("Invalid code", {
+						description: "This code has either expired, or is invalid."
 					});
 					return;
 				}
 				if (error instanceof ConflictError) {
 					consola.error("MFA code already exist. This shouldn't be able to happen");
 				}
-				// modal.open(m.unhandled_error(), m.generic_fail_description());
 				throw new Error("Failed to verify code");
 			})
 			.then(_ => {
 				mfaButtonLoading = false;
-				toast.success(m.mfa_success(), { duration: 9000 });
+				toast.success("Successfully enabled two-factor authentication!", { duration: 9000 });
 				mfaIsVerified = true;
 			});
 	}
@@ -135,14 +133,14 @@
 				}
 				if (error instanceof CodeError) {
 					consola.warn("Invalid MFA code while removing MFA");
-					toast.error(m.code_verif_loading_wrong(), {
-						description: m.mfa_fail_hint()
+					toast.error("Invalid code", {
+						description: "Please refresh and try again"
 					});
 					return;
 				}
 
-				toast.error(m.unhandled_error(), {
-					description: m.generic_fail_description()
+				toast.error("An unhandled error occurred.", {
+					description: "Please contact support if this error persists."
 				});
 				throw new Error("Failed to verify code");
 			})
@@ -150,7 +148,7 @@
 				mfaIsVerified = false;
 				mfaButtonLoading = false;
 				dialogOpen = false;
-				toast.success(m.mfa_disabled_message());
+				toast.success("Two-factor authentication is now disabled");
 			});
 	}
 
@@ -163,17 +161,18 @@
 				mfaButtonLoading = false;
 
 				if (err instanceof AuthError) redirectToLogin(460);
-				else if (err instanceof MFAError) toast.error(m.mfa_wrong_code_desc());
+				else if (err instanceof MFAError) toast.error("Invalid two-factor authentication code.");
 				else
-					toast.error(m.account_deletion_fail(), {
-						description: m.generic_fail_description()
+					toast.error("Failed to delete your account", {
+						description: "Please contact support if this error persists."
 					});
 				throw new Error("Failed to delete account");
 			})
 			.then(_ => {
 				mfaButtonLoading = false;
-				toast.success(m.account_check_email(), {
-					description: m.account_check_email_description(),
+				toast.success("Please check your email", {
+					description:
+						"A link to delete your account has been sent to your email. If you cannot find it, please check the spam folder",
 					duration: 9000
 				});
 			});
@@ -244,43 +243,40 @@
 </script>
 
 <div class="account bg-card mt-16 mr-auto ml-auto w-11/12 max-w-5xl rounded-2xl p-6">
-	<h1 class="text-3xl font-semibold">{m.account_hello_user({ user: data.username })}</h1>
-	<p>{m.account_email({ email: data.email })}</p>
-	<h3 id="username">{m.account_username({ username: data.username })}</h3>
+	<h1 class="text-3xl font-semibold">Hello, {data.username}!</h1>
+	<p>Email: {data.email}</p>
+	<h3 id="username">Username: {data.username}</h3>
 	<div class="permission flex items-center">
 		<MaterialSymbolsLockOutline />
-		<p>
-			{m.dashboard_permission_domains()}:
-			<strong>{data.maxDomains}</strong>
-		</p>
+		<p>Maximum domains:<strong>{data.maxDomains}</strong></p>
 	</div>
 
 	<div class="permission flex items-center">
 		<MaterialSymbolsLockOutline />
 		<p>
-			{m.account_max_subdomains()}:
+			Max subdomains:
 			<strong>{data.maxSubdomains}</strong>
 		</p>
 	</div>
 
 	<div class="mt-8">
-		<h2 class="text-2xl font-semibold">{m.account_manage_account()}</h2>
+		<h2 class="text-2xl font-semibold">Manage your account</h2>
 		<div class="buttons space-y-1">
 			{#if data.mfaEnabled}
 				<Dialog.Root onOpenChange={open => (dialogOpen = open)} open={dialogOpen}>
 					<Dialog.Trigger>
-						<Button variant={"destructive"}>{m.account_disable_mfa()}</Button>
+						<Button variant={"destructive"}>Remove two-factor authentication</Button>
 					</Dialog.Trigger>
 					<Dialog.Content>
 						<Dialog.Header>
-							<Dialog.Title>{m.mfa_recovery_send()}</Dialog.Title>
+							<Dialog.Title>Disable two-factor authentication</Dialog.Title>
 							<Dialog.Description>
-								{m.mfa_login_description()}
+								Enter your one-time code from your authenticator app
 							</Dialog.Description>
 
 							{#if usingBackupCode}
 								<div class="space-y-2">
-									<Label for="backup-code">{m.mfa_use_backup()}</Label>
+									<Label for="backup-code">Use a backup code</Label>
 									<Input bind:value={mfaCode} id="backup-code" />
 								</div>
 							{:else}
@@ -305,7 +301,7 @@
 							<Button
 								onclick={_ => (usingBackupCode = !usingBackupCode)}
 								variant={"ghost"}
-								>{#if usingBackupCode}{m.mfa_use_code()}{:else}{m.mfa_use_backup()}{/if}</Button>
+								>{#if usingBackupCode}Use authenticator app{:else}Use a backup code{/if}</Button>
 						</Dialog.Header>
 
 						<Dialog.Footer>
@@ -317,33 +313,33 @@
 								}}
 								disabled={(!usingBackupCode && mfaCode.length != 6) ||
 									(usingBackupCode && mfaCode.length < 16)}
-								variant={"destructive"}>{m.mfa_recovery_send()}</Button>
+								variant={"destructive"}>Disable 2FA</Button>
 						</Dialog.Footer>
 					</Dialog.Content>
 				</Dialog.Root>
 			{:else}
 				<Dialog.Root onOpenChange={open => (dialogOpen = open)} open={dialogOpen}>
 					<Dialog.Trigger>
-						<Button onclick={_ => mfaSetup()}>{m.account_enable_mfa()}</Button>
+						<Button onclick={_ => mfaSetup()}>Enable two-factor authentication</Button>
 					</Dialog.Trigger>
 					<Dialog.Content>
 						<Dialog.Header>
 							{#if !mfaUrl}
 								<Dialog.Title>Please wait...</Dialog.Title>
-								<Dialog.Description>{m.mfa_loading()}</Dialog.Description>
+								<Dialog.Description>Starting two-factor authentication setup</Dialog.Description>
 							{:else}
 								<Dialog.Title>Setup 2Fa</Dialog.Title>
 								{#if !mfaIsVerified}
 									<Dialog.Description>
-										{m.mfa_qr_guide()}
+										Scan this QR code in your authenticator app
 									</Dialog.Description>
 
 									<QR backgroundFill="white" data={mfaUrl} />
 									<Button href={mfaUrl} variant={"link"}
-										>{m.mfa_alternate_link_hint()}</Button>
+										>Or alternatively, use this link</Button>
 
 									<h2 class="text-xl font-semibold">
-										{m.mfa_verification_step()}
+										Now enter your 2FA code
 									</h2>
 
 									<InputOTP.Root
@@ -364,7 +360,7 @@
 									</InputOTP.Root>
 								{:else}
 									<h2 class="text-xl font-semibold">
-										{m.mfa_backup_warning()}
+										Please save these backup codes somewhere safe. If you get locked out, you cannot recover your account without these.
 									</h2>
 									<ul class="list-disc [&>li]:ml-8">
 										{#each backupCodes as code}
@@ -383,7 +379,7 @@
 										mfaButtonLoading = true;
 										verifyMfa(mfaCode);
 									}}
-									disabled={mfaCode.length != 6}>{m.account_enable_mfa()}</Button>
+									disabled={mfaCode.length != 6}>Enable two-factor authentication</Button>
 							{/if}
 						</Dialog.Footer>
 					</Dialog.Content>
@@ -391,19 +387,19 @@
 			{/if}
 			<Dialog.Root onOpenChange={open => (deleteOpen = open)} open={deleteOpen}>
 				<Dialog.Trigger>
-					<Button variant={"destructive"}>{m.account_delete_account()}</Button>
+					<Button variant={"destructive"}>Delete your account</Button>
 				</Dialog.Trigger>
 				<Dialog.Content>
 					<Dialog.Header>
-						<Dialog.Title>{m.account_delete_account()}</Dialog.Title>
+						<Dialog.Title>Delete your account</Dialog.Title>
 						{#if data.mfaEnabled}
 							<Dialog.Description>
-								{m.mfa_login_description()}
+								Enter your one-time code from your authenticator app
 							</Dialog.Description>
 
 							{#if usingBackupCode}
 								<div class="space-y-2">
-									<Label for="backup-code">{m.mfa_use_backup()}</Label>
+									<Label for="backup-code">Use a backup code</Label>
 									<Input bind:value={mfaCode} id="backup-code" />
 								</div>
 							{:else}
@@ -428,16 +424,21 @@
 							<Button
 								onclick={_ => (usingBackupCode = !usingBackupCode)}
 								variant={"ghost"}
-								>{#if usingBackupCode}{m.mfa_use_code()}{:else}{m.mfa_use_backup()}{/if}</Button>
+								>{#if usingBackupCode}Use authenticator app{:else}Use a backup code{/if}</Button>
 						{/if}
 					</Dialog.Header>
 
 					<Dialog.Footer>
 						<div class="space-y-2">
-							<p class="text-sm">{m.acount_delete_confirm_description()}</p>
+							<p class="text-sm">
+								This is a destructive action which cannot be undone. Are you sure you want
+								to continue?
+							</p>
 							<div class="flex space-x-2">
 								<Checkbox bind:checked={deleteAccountChecked} id="understand" />
-								<Label for="understand">{m.account_del_agree()}</Label>
+								<Label for="understand">
+									I understand the consequences, and I would like to continue
+								</Label>
 							</div>
 						</div>
 						<Button
@@ -450,7 +451,7 @@
 								(data.mfaEnabled &&
 									((!usingBackupCode && mfaCode.length != 6) ||
 										(usingBackupCode && mfaCode.length < 16)))}
-							variant={"destructive"}>{m.account_delete_account()}</Button>
+							variant={"destructive"}>Delete your account</Button>
 					</Dialog.Footer>
 				</Dialog.Content>
 			</Dialog.Root>
@@ -486,39 +487,40 @@
 
 							window.location.href = googleAuthUrl.toString();
 						});
-					}}>{m.link_google()}</Button>
+					}}>Link Google account</Button>
 			{/if}
 			{#if data.discordLinked}
 				<Button
 					onclick={_ => removeDiscordLinkingCode()}
 					variant={"destructive"}
-					loading={discordButtonLoading}>{m.account_discord_link_remove()}</Button>
+					loading={discordButtonLoading}>Disconnect Discord</Button>
 			{:else}
 				<Dialog.Root onOpenChange={open => (discordConnOpen = open)} open={discordConnOpen}>
 					<Dialog.Trigger>
-						<Button>{m.account_discord_link()}</Button>
+						<Button>Link Discord account</Button>
 					</Dialog.Trigger>
 					<Dialog.Content>
 						<Dialog.Header>
-							<Dialog.Title>{m.account_discord_link()}</Dialog.Title>
+							<Dialog.Title>Link Discord account</Dialog.Title>
 							<Dialog.Description>
-								{m.account_discord_link_desc()}
+								By linking your Discord account to your frii.site account, you can receive
+								login alerts directly through Discord.
 							</Dialog.Description>
 						</Dialog.Header>
 
 						<div class="space-y-2">
-							<p class="text-sm">{m.account_discord_link_server()}</p>
+							<p class="text-sm">Click the link below to join our Discord server</p>
 							<a href="https://discord.gg/ANeVwQ5yWq"
 								>https://discord.gg/ANeVwQ5yWq</a>
 						</div>
 
 						{#if discordCode}
 							<h3 class="m-0 text-xl font-semibold">
-								{m.account_discord_link_code({ code: discordCode })}
+								Your linking code: "{discordCode}"
 							</h3>
 
 							<h3 class="m-0 text-lg font-medium">
-								{m.account_discord_link_bot()}
+								Next, join our Discord server, and run /link in the #bot-commands channel.
 							</h3>
 						{/if}
 
@@ -526,22 +528,22 @@
 							<Button
 								loading={discordButtonLoading}
 								onclick={_ => generateDiscordLinkingCode()}
-								>{m.account_discord_link_code_button()}</Button>
+								>Generate new linking code</Button>
 						</Dialog.Footer>
 					</Dialog.Content>
 				</Dialog.Root>
 			{/if}
-			<Button onclick={_ => gpdrData()}>{m.account_download_data()}</Button>
+			<Button onclick={_ => gpdrData()}>Download your data</Button>
 			<Button onclick={_ => goto(localizeHref("/api/dashboard"))}
-				>{m.account_api_dashboard_link()}</Button>
-			<Button variant={"secondary"} onclick={_ => logOut()}>{m.account_log_out()}</Button>
+				>Manage your API keys</Button>
+			<Button variant={"secondary"} onclick={_ => logOut()}>Log out</Button>
 		</div>
 	</div>
 
 	<InlineAlert variant={"error"} title={alertTitle} description={alertDescription} />
 	<div class="referrals mt-4 space-y-2">
-		<h1 class="text-2xl font-semibold">{m.referral_title()}</h1>
-		<a href="https://guides.frii.site/faq/referrals.html">{m.blog_read()}</a>
+		<h1 class="text-2xl font-semibold">Referrals</h1>
+		<a href="https://guides.frii.site/faq/referrals.html">Read more...</a>
 		{#if data.referralCode}
 			{@const link = `${window.origin}/login?ref=${data.referralCode}`}
 			<div>
@@ -549,11 +551,11 @@
 					{data.referralCode}
 				</h2>
 				<a class="ml-4" href={link}>{link}</a>
-				<p class="ml-4">{m.referred_users({ usersNum: data.referredPeople })}</p>
+				<p class="ml-4">Referred users: {data.referredPeople}</p>
 			</div>
 		{:else}
 			<div class="space-y-2">
-				<Label for="referral">{m.referral_creation_title()}</Label>
+				<Label for="referral">Custom referral code</Label>
 				<Input
 					disabled={referralCreating}
 					bind:value={referralCode}
@@ -571,11 +573,11 @@
 						.createReferral(referralCode)
 						.catch(err => {
 							if (err instanceof UserError || err instanceof TypeError) {
-								alertTitle = m.unhandled_error();
-								alertDescription = m.generic_fail_description();
+								alertTitle = "An unhandled error occurred.";
+								alertDescription = "Please contact support if this error persists.";
 							} else if (err instanceof CodeError) {
-								alertTitle = m.referral_create_fail();
-								alertDescription = m.referral_create_fail_used();
+								alertTitle = "Failed to create a referral code";
+								alertDescription = "Referral code already exists!";
 							}
 							alertTrigger++;
 							referralCreating = false;
@@ -587,7 +589,7 @@
 							referralCreating = false;
 						});
 				}}
-				loading={referralCreating}>{m.api_dashboard_create_action()}</Button>
+				loading={referralCreating}>Create</Button>
 		{/if}
 	</div>
 
