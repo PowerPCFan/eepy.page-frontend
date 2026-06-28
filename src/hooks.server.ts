@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/sveltekit";
 import { sequence } from "@sveltejs/kit/hooks";
 
 Sentry.init({
-    dsn: "https://0e20b29e0aab621bc4e9eb20bf1e6681@o4508127968886784.ingest.de.sentry.io/4508128377765968",
+    dsn: "https://0282a25a9d71818a00050d292b033a20@o4511644088139776.ingest.us.sentry.io/4511644093775872",
     enableLogs: true
 });
 

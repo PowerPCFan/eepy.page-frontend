@@ -1,7 +1,7 @@
 import { json } from "@sveltejs/kit";
 
-const SENTRY_HOST = "o4508127968886784.ingest.de.sentry.io";
-const SENTRY_PROJECT_IDS = ["4508128377765968"];
+const SENTRY_HOST = "o4511644088139776.ingest.us.sentry.io";
+const SENTRY_PROJECT_ID = "4511644093775872";
 
 export async function POST({ request }) {
     console.log("Sending over sentry envelope");
@@ -9,7 +9,7 @@ export async function POST({ request }) {
         const envelopeBytes = await request.arrayBuffer();
         const envelope = new TextDecoder().decode(envelopeBytes);
 
-        const piece = envelope.split("\n")[0].trim();
+        const piece = envelope.split("\n")[0]?.trim();
 
         let header: Record<string, any> = {};
         if (piece) {
@@ -27,12 +27,12 @@ export async function POST({ request }) {
             if (dsn.hostname !== SENTRY_HOST) {
                 throw new Error(`Invalid sentry hostname: ${dsn.hostname}`);
             }
-            if (!project_id || !SENTRY_PROJECT_IDS.includes(project_id)) {
+            if (!project_id || !(SENTRY_PROJECT_ID === project_id)) {
                 throw new Error(`Invalid sentry project id: ${project_id}`);
             }
         }
 
-        await fetch(`https://${SENTRY_HOST}/api/${SENTRY_PROJECT_IDS[0]}/envelope/`, {
+        await fetch(`https://${SENTRY_HOST}/api/${SENTRY_PROJECT_ID}/envelope/`, {
             method: "POST",
             body: envelopeBytes
         });

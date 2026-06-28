@@ -1,3 +1,9 @@
+# ========================================================
+#                ~~~ Set up this file: ~~~
+# ========================================================
+# `git config blame.ignoreRevsFile .git-blame-ignore-revs`
+# ========================================================
+
 # Formatted project 24/6/25
 3b274c7bcf682c3a0e4c289b5cd182f11013762a
 
@@ -13,6 +19,5 @@ cf24a7d4680781b385822b7dff432f1ebbba294c
 # Locale format
 bbc7cd98328658dd931619af428f3ca0f562e460
 
-# @PowerPCFan: i've never even used git blame but i might as well put this here if others do
-# Did a global find-and-replace tabs -> spaces
+# @PowerPCFan: Did a global find-and-replace tabs -> spaces (June 28, 2026)
 79757f34af9b9730d79828caca1408c274024128
