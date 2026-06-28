@@ -51,7 +51,7 @@
 
 					modal.open(
 						"Failed to send verification code",
-						"Did you double-check your username? Frii.site usernames are case-sensitive."
+						"Did you double-check your username? eepy.page usernames are case-sensitive."
 					);
 					throw new Error("Failed to send password reset");
 				})
@@ -80,7 +80,7 @@
 		<Input bind:value={cPassword} placeholder="Confirm password" />
 	{:else}
 		<p>
-			Please enter your frii.site username. A verification code will be sent to your email.
+			Please enter your eepy.page username. A verification code will be sent to your email.
 		</p>
 		<Input bind:value={username} placeholder="Username" />
 	{/if}

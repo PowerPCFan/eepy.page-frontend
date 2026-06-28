@@ -8,7 +8,7 @@ import devtoolsJson from "vite-plugin-devtools-json";
 export default defineConfig({
 	plugins: [
 		sentrySvelteKit({
-			sourceMapsUploadOptions: { org: "friisite", project: "frontend" }
+			sourceMapsUploadOptions: { org: "eepypage", project: "frontend" }
 		}),
 		tailwindcss(),
 		sveltekit(),

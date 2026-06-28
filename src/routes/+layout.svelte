@@ -8,7 +8,7 @@
 	import { sidebarOpen } from "$lib/store";
 	import consola from "consola";
 	import NProgress from "nprogress";
-	import type { Component } from "svelte";
+	import { onMount, type Component } from "svelte";
 	import MaterialSymbolsAccountCircle from "~icons/material-symbols/account-circle";
 	import MaterialSymbolsCollectionsBookmarkOutlineRounded from "~icons/material-symbols/collections-bookmark-outline-rounded";
 	import MaterialSymbolsFlagRounded from "~icons/material-symbols/flag-rounded";
@@ -46,6 +46,17 @@
 		consola.debug("Starting navigation");
 		NProgress.start();
 	});
+
+	onMount(() => {
+		const dismissed = localStorage.getItem("donation-dismissed");
+		let dismissedTime = dismissed ? Number(dismissed) : 0;
+		const threeDaysSecs = 3 * 24 * 60 * 60;
+		const threeDaysMillis = threeDaysSecs * 1000;
+		if (dismissedTime > 0 && ((Date.now() - dismissedTime) > threeDaysMillis)) {
+			localStorage.removeItem("donation-dismissed");
+			dismissedTime = 0;
+		}
+	});
 </script>
 
 {#snippet navbarLink(Icon: Component, href: string, text: string, preload: boolean = true)}
@@ -75,39 +86,29 @@
 		"Account",
 		false
 	)}
-	{@render navbarLink(
-		MaterialSymbolsCollectionsBookmarkOutlineRounded,
-		"/blogs",
-		"Blogs"
-	)}
 	{@render navbarLink(MaterialSymbolsFlagRounded, "/report", "Report")}
-	{@render navbarLink(
-		MaterialSymbolsMenuBookRounded,
-		"https://guides.frii.site",
-		"Guides"
-	)}
 </Header>
 
 <Banner />
 
 <Analytics />
 
-{#if isBrowser() && Number(localStorage.getItem("views")) > 7 && !localStorage.getItem("donation-dismissed") && !localSponsorHidden}
+{#if isBrowser() && !localStorage.getItem("donation-dismissed") && !localSponsorHidden}
 	<div class="flex w-full items-center justify-around p-4">
 		<div>
 			<h1 class="text-2xl font-semibold">Have you considered donating?</h1>
-			<p class="max-w-[60ch]">
-				frii.site has never been profitable, but due to Namecheap raising our domain's prices, we are losing more money than we ever have. Even small donations <nobr>(e.g. 1€ or $1)</nobr> would help out immensely.
+			<p class="max-w-[65ch]">
+				eepy.page has never been profitable, but due to raised domain prices and server costs, we are losing more money than ever. Even small donations would help out immensely.
 			</p>
-			<a href="https://ko-fi.com/ctih1">View donation options</a>
+			<a href="https://ko-fi.com/powerpcfan">Donate on Ko-fi</a>
 		</div>
 
 		<Button
-			variant={"destructive"}
-			onclick={_ => {
+			variant="destructive"
+			onclick={() => {
 				localSponsorHidden = true;
-				localStorage.setItem("donation-dismissed", "true");
-			}}>Never remind me again</Button>
+				localStorage.setItem("donation-dismissed", Date.now().toString());
+			}}>Remind me later</Button>
 	</div>
 {/if}
 

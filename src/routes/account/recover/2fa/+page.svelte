@@ -50,7 +50,7 @@
 			Disable 2FA
 		</Button>
 	</form>
-	<a class="support-tip" href="mailto:contact@frii.site">Unable to log in? Contact support.</a>
+	<a class="support-tip" href="mailto:support@eepy.page">Unable to log in? Contact support.</a>
 </Holder>
 
 <style>

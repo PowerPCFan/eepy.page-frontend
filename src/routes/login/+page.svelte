@@ -247,9 +247,9 @@
 		<img class="w-8" src={favicon} alt="logo" />
 		<h1 class="text-3xl font-bold">
 			{#if isLoggingIn}
-				Log into your frii.site account
+				Log into your eepy.page account
 			{:else}
-				Sign up for a frii.site account
+				Sign up for a eepy.page account
 			{/if}
 		</h1>
 	</div>

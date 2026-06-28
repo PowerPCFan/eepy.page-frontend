@@ -9,7 +9,7 @@ export interface Session {
 }
 
 export const load = async () => {
-	const serverContactor = new ServerContactor(getAuthToken());
+	const serverContactor = new ServerContactor(getAuthToken() ?? null);
 	try {
 		var accountSettings = await serverContactor.getAccountSettings();
 	} catch (err) {
@@ -54,7 +54,6 @@ export const load = async () => {
 		googleLinked: accountSettings["google-connected"],
 		referralCode: accountSettings["referral-code"],
 		referredPeople: accountSettings["referred-people"] ?? 0,
-		discordLinked: accountSettings["discord-linked"]
 	};
 };
 

@@ -220,7 +220,7 @@
 					<p class="font-semibold">Domains:</p>
 					<ul class="list-disc [&>li]:ml-8">
 						{#each key.domains as domain}
-							<li>{domain}.frii.site</li>
+							<li>{domain}.eepy.page</li>
 						{/each}
 					</ul>
 

@@ -5,30 +5,11 @@ export interface TLD {
 }
 export const AVAILABLE_TLDS: TLD[] = [
 	{
-		tld: ".frii.site",
+		tld: ".eepy.page",
 		hidden: false
 	},
 	{
-		tld: ".arr.ovh",
-		purchaseLink: "https://ko-fi.com/s/ee4b5170a6",
+		tld: ".worksonmymachine.top",
 		hidden: false
 	},
-	{
-		tld: ".pill.ovh",
-		purchaseLink: "https://ko-fi.com/s/38e30ddc66",
-		hidden: false
-	},
-	{
-		tld: ".srvr.be",
-		purchaseLink: "https://ko-fi.com/s/50a9f34469",
-		hidden: false
-	},
-	{
-		tld: ".suomi.dev",
-		hidden: true
-	},
-	{
-		tld: ".expect.ovh",
-		hidden: true
-	}
 ];

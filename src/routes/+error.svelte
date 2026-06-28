@@ -1,12 +1,12 @@
-<script>
-	// @ts-nocheck
+<svelte:options runes={true} />
 
-	import { page } from "$app/stores";
+<script>
+	import { page } from "$app/state";
 </script>
 
 <div class="container sentry-unmask">
-	<h1>{$page.status}</h1>
-	<p>{$page.error.message}</p>
+	<h1>{page.status}</h1>
+	<p>{page.error?.message}</p>
 </div>
 
 <style>
@@ -20,8 +20,8 @@
 		min-height: 100vh;
 		height: 100%;
 	}
-	.container h1,
-	p {
+
+	.container h1, p {
 		margin-top: 5px;
 		margin-bottom: 5px;
 	}

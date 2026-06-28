@@ -49,7 +49,7 @@
 		<div class="mb-8">
 			<h1 class="text-2xl font-semibold">Activation failed</h1>
 			<p>The code may have already been used.</p>
-			<a href="mailto:support@frii.site">Contact support</a>
+			<a href="mailto:support@eepy.page">Contact support</a>
 		</div>
 	{/if}
 	{#if inputRequired}

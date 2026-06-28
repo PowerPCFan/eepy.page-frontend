@@ -4,16 +4,16 @@ import Cookies from "js-cookie";
 import createClient, { type Middleware } from "openapi-fetch";
 import type { paths } from "./api";
 import { getAuthToken, redirectToLogin, setAuthToken } from "./helperFuncs";
-export let serverURL = "https://api.frii.site";
+export let serverURL = "https://api.eepy.page";
 if (browser) {
 	let subdomain = window.location.hostname.split(".")[0];
 	if (subdomain === "canary") {
-		serverURL = "https://beta.frii.site";
+		serverURL = "https://beta.eepy.page";
 	} else if (subdomain === "development") {
-		serverURL = "https://alpha.frii.site";
+		serverURL = "https://alpha.eepy.page";
 	}
 	if (localStorage.getItem("url_override")) {
-		serverURL = localStorage.getItem("url_override") ?? "https://api.frii.site";
+		serverURL = localStorage.getItem("url_override") ?? "https://api.eepy.page";
 	}
 	console.debug("Switched server url to " + serverURL);
 }
@@ -564,14 +564,15 @@ export class ServerContactor {
 	async getGDPR(): Promise<
 		paths["/gdpr"]["get"]["responses"]["200"]["content"]["application/json"]
 	> {
-		const { data, error, response } = await client.GET("/gdpr", {
+		const { data, error } = await client.GET("/gdpr", {
 			params: {
-				//@ts-ignore
+				// @ts-expect-error
 				header: { "X-Auth-Token": getAuthToken() }
 			}
 		});
 
 		if (error) {
+			// @ts-expect-error
 			throw new Error(`Failed to get GDPR data. Status code: ${error.detail}`);
 		}
 
@@ -1368,74 +1369,6 @@ export class ServerContactor {
 					throw new AuthError("Invalid session");
 				case 412:
 					throw new CodeError("Invalid permissions");
-				default:
-					throw new Error("Failed to load user permission");
-			}
-		}
-
-		return data;
-	}
-
-	async getWrapped() {
-		const { data, error, response } = await client.GET("/profile/wrapped", {
-			params: {
-				//@ts-ignore
-				header: {
-					"X-Auth-Token": getAuthToken()
-				}
-			}
-		});
-
-		if (error) {
-			switch (response.status) {
-				case 460:
-					throw new AuthError("Invalid session");
-				case 412:
-					throw new CodeError("Invalid permissions");
-				default:
-					throw new Error("Failed to load user permission");
-			}
-		}
-
-		return data;
-	}
-
-	async generateDiscordLinkCode(): Promise<string | undefined> {
-		const { data, error, response } = await client.POST("/discord", {
-			params: {
-				//@ts-ignore
-				header: {
-					"X-Auth-Token": getAuthToken()
-				}
-			}
-		});
-
-		if (error) {
-			switch (response.status) {
-				case 460:
-					throw new AuthError("Invalid session");
-				default:
-					throw new Error("Failed to load user permission");
-			}
-		}
-
-		return data;
-	}
-
-	async removeDiscordLinkCode(): Promise<string | undefined> {
-		const { data, error, response } = await client.DELETE("/discord", {
-			params: {
-				//@ts-ignore
-				header: {
-					"X-Auth-Token": getAuthToken()
-				}
-			}
-		});
-
-		if (error) {
-			switch (response.status) {
-				case 460:
-					throw new AuthError("Invalid session");
 				default:
 					throw new Error("Failed to load user permission");
 			}

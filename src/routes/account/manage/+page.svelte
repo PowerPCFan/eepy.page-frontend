@@ -49,9 +49,6 @@
 
 	let dialogOpen: boolean = $state(false);
 	let deleteOpen: boolean = $state(false);
-	let discordConnOpen: boolean = $state(false);
-	let discordCode: string | undefined = $state();
-	let discordButtonLoading: boolean = $state(false);
 
 	let referralCode: string = $state("");
 	let referralInvalid: boolean = $state(false);
@@ -189,7 +186,7 @@
 			.logOut(session?.hash)
 			.catch(err => {
 				throw new Error(
-					"Failed to delete session. Please file an issue report over on our github (ctih1/frii.site-frontend)"
+					"Failed to delete session. Please file an issue report over on our github (PowerPCFan/eepy.page-frontend)"
 				);
 			})
 			.then(_ => {
@@ -206,22 +203,6 @@
 					});
 				}
 			});
-	}
-
-	function generateDiscordLinkingCode() {
-		discordButtonLoading = true;
-		serverContactor.generateDiscordLinkCode().then(code => {
-			discordCode = code;
-			discordButtonLoading = false;
-		});
-	}
-
-	function removeDiscordLinkingCode() {
-		discordButtonLoading = true;
-		serverContactor.removeDiscordLinkCode().then(_ => {
-			discordButtonLoading = false;
-			window.location.reload();
-		});
 	}
 
 	$effect(() => {
@@ -488,50 +469,6 @@
 						});
 					}}>Link Google account</Button>
 			{/if}
-			{#if data.discordLinked}
-				<Button
-					onclick={_ => removeDiscordLinkingCode()}
-					variant={"destructive"}
-					loading={discordButtonLoading}>Disconnect Discord</Button>
-			{:else}
-				<Dialog.Root onOpenChange={open => (discordConnOpen = open)} open={discordConnOpen}>
-					<Dialog.Trigger>
-						<Button>Link Discord account</Button>
-					</Dialog.Trigger>
-					<Dialog.Content>
-						<Dialog.Header>
-							<Dialog.Title>Link Discord account</Dialog.Title>
-							<Dialog.Description>
-								By linking your Discord account to your frii.site account, you can receive
-								login alerts directly through Discord.
-							</Dialog.Description>
-						</Dialog.Header>
-
-						<div class="space-y-2">
-							<p class="text-sm">Click the link below to join our Discord server</p>
-							<a href="https://discord.gg/ANeVwQ5yWq"
-								>https://discord.gg/ANeVwQ5yWq</a>
-						</div>
-
-						{#if discordCode}
-							<h3 class="m-0 text-xl font-semibold">
-								Your linking code: "{discordCode}"
-							</h3>
-
-							<h3 class="m-0 text-lg font-medium">
-								Next, join our Discord server, and run /link in the #bot-commands channel.
-							</h3>
-						{/if}
-
-						<Dialog.Footer>
-							<Button
-								loading={discordButtonLoading}
-								onclick={_ => generateDiscordLinkingCode()}
-								>Generate new linking code</Button>
-						</Dialog.Footer>
-					</Dialog.Content>
-				</Dialog.Root>
-			{/if}
 			<Button onclick={_ => gpdrData()}>Download your data</Button>
 			<Button onclick={_ => goto("/api/dashboard")}
 				>Manage your API keys</Button>
@@ -542,7 +479,6 @@
 	<InlineAlert variant={"error"} title={alertTitle} description={alertDescription} />
 	<div class="referrals mt-4 space-y-2">
 		<h1 class="text-2xl font-semibold">Referrals</h1>
-		<a href="https://guides.frii.site/faq/referrals.html">Read more...</a>
 		{#if data.referralCode}
 			{@const link = `${window.origin}/login?ref=${data.referralCode}`}
 			<div>

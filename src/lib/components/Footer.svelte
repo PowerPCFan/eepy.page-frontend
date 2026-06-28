@@ -6,24 +6,8 @@
 	<div class="contact">
 		<h3 class="text-lg font-medium">Contact</h3>
 		<Separator />
-
-		<a href="mailto: support@frii.site">Support: support@frii.site</a>
-		<a href="mailto: urgent@frii.site">Vulnerabilities: urgent@frii.site</a>
-		<a href="mailto: social@frii.site">Social media: social@frii.site</a>
-	</div>
-	<div class="starting">
-		<h3 class="text-lg font-medium">Getting started</h3>
-		<Separator />
-		<a href="https://github.com/ctih1/frii.site-frontend/wiki/FAQ">Frequently asked questions</a>
-		<a href="https://github.com/ctih1/frii.site-frontend/wiki/Getting-Started#getting-started"
-			>Creating an account</a>
-		<a
-			href="https://github.com/ctih1/frii.site-frontend/wiki/Getting-Started#managing-your-domains"
-			>Modifying domains</a>
-		<a
-			href="https://github.com/ctih1/frii.site-frontend/wiki/Getting-Started#account-management"
-			>Managing your account</a>
-		<a href="https://github.com/ctih1/frii.site-frontend/wiki/API">Creating an API key</a>
+		Support: <a href="mailto:support@eepy.page">support@eepy.page</a>
+		Report sites or vulnerabilities &lpar;<a href="https://github.com/PowerPCFan/eepy.page-frontend/blob/master/SECURITY.md">read this before reporting</a>&rpar;&colon; <a href="mailto:report@eepy.page">report@eepy.page</a>
 	</div>
 </div>
 

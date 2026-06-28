@@ -12,7 +12,7 @@
 	import MaterialSymbolsCheckCircleRounded from "~icons/material-symbols/check-circle-rounded";
 	import MaterialSymbolsKeyboardArrowDownRounded from "~icons/material-symbols/keyboard-arrow-down-rounded";
 
-	let placeholderMessages = ["project", "username", "something-cool", "important", "personal"];
+	let placeholderMessages = ["project", "username", "cool-website", "important", "personal", "blog"];
 
 	let testDomain: string = $state("");
 	let placeholderInputFocused: boolean = $state(false);
@@ -42,7 +42,7 @@
 			clearTimeout(timeoutId);
 		}
 		timeoutId = setTimeout(async () => {
-			isTestAvailable = await domainAvailable(testDomain + ".frii.site");
+			isTestAvailable = await domainAvailable(testDomain + ".eepy.page");
 			checkingDomainAvailability = false;
 			latestCheckedDomain = testDomain;
 		}, 600);
@@ -50,7 +50,7 @@
 </script>
 
 <svelte:head>
-	<title>frii.site - Register subdomains for free!</title>
+	<title>eepy.page - Register subdomains for free!</title>
 </svelte:head>
 
 <svelte:window bind:scrollY={scrollY} />
@@ -59,7 +59,7 @@
 	<div
 		class="introduction mr-auto ml-auto flex min-h-screen w-screen max-w-screen items-center p-10 lg:w-11/12">
 		<div class="description w-3/5">
-			<h1 class="ml-8 w-fit text-9xl font-bold">frii.site</h1>
+			<h1 class="ml-8 w-fit text-9xl font-bold">eepy.page</h1>
 		</div>
 		<div class="right-side mr-8 h-fit w-2/5 items-center">
 			<p class="about-us text-3xl leading-10 font-semibold">
@@ -107,18 +107,18 @@
 							onfocusout={_ => (placeholderInputFocused = false)}
 							bind:value={testDomain}
 							type="text"
-							class="w-48" />
+							class="w-[12rem]" />
 					</div>
 					{#if !testDomain && !placeholderInputFocused}
 						{#key testPlaceholder}
 							<span
-								transition:fade={{ duration: 150 }}
+								transition:fade={{ duration: 500 }}
 								class="pointer-events-none absolute ml-4 w-48 opacity-90">
 								{testPlaceholder}
 							</span>
 						{/key}
 					{/if}
-					<span class="ml-48 text-lg">.frii.site</span>
+					<span class="ml-[12.3rem] text-lg">.eepy.page</span>
 				</div>
 
 				{#if checkingDomainAvailability}
@@ -127,7 +127,7 @@
 					<div class="domain-results">
 						{#if isTestAvailable}
 							<h1 class="mt-4 text-2xl font-semibold">
-								The domain {testDomain}.frii.site is <span class="text-blue-400">available!</span>
+								The domain {testDomain}.eepy.page is <span class="text-blue-400">available!</span>
 							</h1>
 							<Button
 								class="mt-2 w-full"
@@ -135,7 +135,7 @@
 								>Sign up now</Button>
 						{:else}
 							<h1>
-								Unfortunately, the domain {testDomain}.frii.site <b>has already been registered</b>, or is invalid.
+								Unfortunately, the domain {testDomain}.eepy.page <b>has already been registered</b>, or is invalid.
 							</h1>
 							<p class="text-lg">Try something else!</p>
 						{/if}
@@ -149,7 +149,7 @@
 		<div class="free flex">
 			<div class="text ml-32 w-3/5">
 				<h2 class="w-fit text-5xl font-semibold">Always free</h2>
-				<p class="mt-4 text-xl">frii.site will always be completely free for anyone to use. Our main goal is to provide free domains to users who are unable to buy their own domains. However, even if you do own a domain, you're welcome to use our service!</p>
+				<p class="mt-4 text-xl">eepy.page will always be completely free for anyone to use. Our main goal is to provide free domains to users who are unable to buy their own domains. However, even if you do own a domain, you're welcome to use our service!</p>
 			</div>
 			<div class="visual w-2/5"></div>
 		</div>

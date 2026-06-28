@@ -17,7 +17,7 @@
 	let value = $state("");
 	let json = $state("");
 
-	let tld = $state(".frii.site");
+	let tld = $state(".eepy.page");
 	let currentPosition: number = $state(-1);
 	let userHasConencted: boolean = $state(false);
 	let userWasVerified: boolean = $state(false);
@@ -26,7 +26,7 @@
 	let intervalId: number = 0;
 
 	if (browser) {
-		serverContactor = new ServerContactor(getAuthToken());
+		serverContactor = new ServerContactor(getAuthToken() ?? null);
 	}
 
 	function fetchQueueData() {
@@ -79,7 +79,7 @@
 		<div class="mt-4 flex items-center space-x-2">
 			<Input
 				bind:value={value}
-				placeholder="vc-domain-verify=***.frii.site,********************" />
+				placeholder="vc-domain-verify=***.eepy.page,********************" />
 
 			<Select.Root bind:value={tld} type="single" name="domain">
 				<Select.Trigger class="w-1/8 min-w-24">{tld}</Select.Trigger>

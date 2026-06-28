@@ -4,12 +4,12 @@ if you encounter vulnerabilities, critical bugs, or malicious/dangerous content 
 
 ## reporting
 
-to report a vulnerability, send an email to urgent@eepy.page. i'll try my best to respond within the day, but response time may change based on the situation; if the severity of the issue is genuinely high, i'll respond faster than if it's not
+to report a vulnerability, send an email to report@eepy.page. i'll try my best to respond within the day, but response time may change based on the situation; if the severity of the issue is genuinely high, i'll respond faster than if it's not
 
 include the following information in your report:
 - the action
-- expected behaviour
-- actual behaviour
+- expected behavior
+- actual behavior
 - importance (0-5, 5 being the most urgent)
 - description of the vulnerability
 - steps to reproduce the issue (not mandatory but greatly appreciated)

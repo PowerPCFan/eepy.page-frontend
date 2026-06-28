@@ -9,8 +9,9 @@
 		description: string;
 		trigger?: number;
 		className?: string;
+		renderDescriptionAsHTML?: boolean;
 	}
-	let { variant, title, description, className, trigger }: Props = $props();
+	let { variant, title, description, trigger, className, renderDescriptionAsHTML }: Props = $props();
 	let closed: boolean = $state(true);
 
 	$effect(() => {
@@ -43,6 +44,6 @@
 			</div>
 		</div>
 
-		<p>{description}</p>
+		<p>{#if renderDescriptionAsHTML}{@html description}{:else}{description}{/if}</p>
 	</div>
 {/if}

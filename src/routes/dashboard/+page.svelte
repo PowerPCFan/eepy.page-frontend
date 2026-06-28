@@ -51,7 +51,7 @@
 	let registerNewDomainLoading: boolean = $state(false);
 	let newDomain: string = $state("");
 	let newDomainType: string = $state("A");
-	let newDomainTld: string = $state(".frii.site");
+	let newDomainTld: string = $state(".eepy.page");
 
 	let registerErrorTitle: string = $state("");
 	let registerErrorDescription: string = $state("");
@@ -239,18 +239,18 @@
 	}
 
 	$effect(() => {
-		const isFrii = newDomain.includes(".frii.site");
+		const isEepy = newDomain.includes(".eepy.page");
 		const isVercel = newDomain.includes("_vercel");
 
 		let newTitle = null;
 		let newDesc = null;
 
-		if (isFrii) {
-			newTitle = 'Please remove the ".frii.site" suffix.';
-			newDesc = 'frii.site automatically adds the ".frii.site" portion of your domain';
+		if (isEepy) {
+			newTitle = 'Please remove the ".eepy.page" suffix.';
+			newDesc = 'eepy.page automatically adds the ".eepy.page" portion of your domain';
 		} else if (isVercel) {
 			newTitle = "Trying to verify a Vercel domain?";
-			newDesc = `Please go to ${window.location.origin}/account/verify/vercel`;
+			newDesc = `This requires an extra step. Please go to <a href="${window.location.origin}/account/verify/vercel">${window.location.origin}/account/verify/vercel</a> to verify.`;
 		}
 
 		const changed = registerNoteTitle !== newTitle || registerNoteDescription !== newDesc;
@@ -264,12 +264,12 @@
 </script>
 
 <svelte:head>
-	<title>Dashboard - frii.site</title>
-	<meta content="frii.site dashboard" property="og:title" />
+	<title>Dashboard | eepy.page</title>
+	<meta content="eepy.page dashboard" property="og:title" />
 	<meta content="Manage all of your domains here!" property="og:description" />
 	<meta content="Manage all of your domains here!" name="description" />
-	<meta content="https://frii.site/dashboard" property="og:url" />
-	<meta content="https://frii.site/fse1.webp" property="og:image" />
+	<meta content="https://eepy.page/dashboard" property="og:url" />
+	<meta content="https://eepy.page/fse1.webp" property="og:image" />
 	<meta content="#007be1" data-react-helmet="true" name="theme-color" />
 </svelte:head>
 
@@ -403,7 +403,8 @@
 		title={registerNoteTitle}
 		description={registerNoteDescription}
 		className="mb-6"
-		trigger={alertUpdate} />
+		trigger={alertUpdate}
+		renderDescriptionAsHTML />
 	<div class="content flex space-y-2 space-x-2">
 		<Select.Root bind:value={newDomainType} type="single" name="domain">
 			<Select.Trigger class="w-1/8 min-w-24">{newDomainType}</Select.Trigger>
@@ -422,7 +423,7 @@
 					if (ownedTlds.indexOf(val.slice(1)) == -1) {
 						let link = AVAILABLE_TLDS.find(v => val === v.tld)?.purchaseLink;
 						consola.log(`Opening ${link}`);
-						newDomainTld = ".frii.site";
+						newDomainTld = ".eepy.page";
 						window.open(link, "_blank")?.focus();
 					}
 				}}
