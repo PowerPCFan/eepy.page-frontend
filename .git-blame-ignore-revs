@@ -12,3 +12,7 @@ cf24a7d4680781b385822b7dff432f1ebbba294c
 
 # Locale format
 bbc7cd98328658dd931619af428f3ca0f562e460
+
+# @PowerPCFan: i've never even used git blame but i might as well put this here if others do
+# Did a global find-and-replace tabs -> spaces
+79757f34af9b9730d79828caca1408c274024128
