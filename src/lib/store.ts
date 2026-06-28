@@ -1,19 +1,19 @@
 import { writable } from "svelte/store";
 
 function getLocalStorageKey(key: string, defaultValue: any) {
-	if (typeof window === typeof undefined) {
-		return defaultValue;
-	} else {
-		return localStorage.getItem(key) ?? defaultValue;
-	}
+    if (typeof window === typeof undefined) {
+        return defaultValue;
+    } else {
+        return localStorage.getItem(key) ?? defaultValue;
+    }
 }
 
 function setKey(key: string, value: string) {
-	if (typeof window === typeof undefined) {
-		return null;
-	} else {
-		localStorage.setItem(key, value);
-	}
+    if (typeof window === typeof undefined) {
+        return null;
+    } else {
+        localStorage.setItem(key, value);
+    }
 }
 
 const StoredDomainKey = "domainAmountStore";
@@ -23,13 +23,13 @@ const storedDomainAmount: number = Number(getLocalStorageKey(StoredDomainKey, De
 export const domainAmount = writable(storedDomainAmount);
 
 domainAmount.subscribe(value => {
-	setKey(StoredDomainKey, `${Number(value) || DefaultDomainAmount}`);
+    setKey(StoredDomainKey, `${Number(value) || DefaultDomainAmount}`);
 });
 
 export const activeTheme = writable(getLocalStorageKey("theme", "dark"));
 
 activeTheme.subscribe(value => {
-	setKey("theme", value);
+    setKey("theme", value);
 });
 
 export const sidebarOpen = writable(false);

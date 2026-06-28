@@ -1,92 +1,92 @@
 <script lang="ts">
-	import { afterNavigate, beforeNavigate } from "$app/navigation";
-	import Analytics from "$lib/components/Analytics.svelte";
-	import Banner from "$lib/components/Banner.svelte";
-	import Header from "$lib/components/Header.svelte";
-	import { Toaster } from "$lib/components/ui/sonner";
-	import "$lib/nprogress.css";
-	import { sidebarOpen } from "$lib/store";
-	import consola from "consola";
-	import NProgress from "nprogress";
-	import { onMount, type Component } from "svelte";
-	import MaterialSymbolsAccountCircle from "~icons/material-symbols/account-circle";
-	import MaterialSymbolsCollectionsBookmarkOutlineRounded from "~icons/material-symbols/collections-bookmark-outline-rounded";
-	import MaterialSymbolsFlagRounded from "~icons/material-symbols/flag-rounded";
-	import MaterialSymbolsHomeRounded from "~icons/material-symbols/home-rounded";
-	import MaterialSymbolsMenuBookRounded from "~icons/material-symbols/menu-book-rounded";
-	import MaterialSymbolsTeamDashboard from "~icons/material-symbols/team-dashboard";
+    import { afterNavigate, beforeNavigate } from "$app/navigation";
+    import Analytics from "$lib/components/Analytics.svelte";
+    import Banner from "$lib/components/Banner.svelte";
+    import Header from "$lib/components/Header.svelte";
+    import { Toaster } from "$lib/components/ui/sonner";
+    import "$lib/nprogress.css";
+    import { sidebarOpen } from "$lib/store";
+    import consola from "consola";
+    import NProgress from "nprogress";
+    import { onMount, type Component } from "svelte";
+    import MaterialSymbolsAccountCircle from "~icons/material-symbols/account-circle";
+    import MaterialSymbolsCollectionsBookmarkOutlineRounded from "~icons/material-symbols/collections-bookmark-outline-rounded";
+    import MaterialSymbolsFlagRounded from "~icons/material-symbols/flag-rounded";
+    import MaterialSymbolsHomeRounded from "~icons/material-symbols/home-rounded";
+    import MaterialSymbolsMenuBookRounded from "~icons/material-symbols/menu-book-rounded";
+    import MaterialSymbolsTeamDashboard from "~icons/material-symbols/team-dashboard";
 
-	import Button from "$lib/components/ui/button/button.svelte";
-	import { isBrowser } from "@sentry/core";
-	import "../app.css";
+    import Button from "$lib/components/ui/button/button.svelte";
+    import { isBrowser } from "@sentry/core";
+    import "../app.css";
 
-	let { children } = $props();
-	let localSponsorHidden = $state(false);
-	let innerWidth = $state(0);
-	let adsVisible = $state(false);
-	let towerAdsVisible = $state(false);
-	let navigationTrigger = $state(0);
+    let { children } = $props();
+    let localSponsorHidden = $state(false);
+    let innerWidth = $state(0);
+    let adsVisible = $state(false);
+    let towerAdsVisible = $state(false);
+    let navigationTrigger = $state(0);
 
-	NProgress.configure({
-		minimum: 0.55,
-		trickle: true,
-		trickleSpeed: 200
-	});
+    NProgress.configure({
+        minimum: 0.55,
+        trickle: true,
+        trickleSpeed: 200
+    });
 
-	afterNavigate(() => {
-		$sidebarOpen = false;
-		consola.debug("Navigation done");
-		NProgress.done();
+    afterNavigate(() => {
+        $sidebarOpen = false;
+        consola.debug("Navigation done");
+        NProgress.done();
 
-		localStorage.setItem("views", (Number(localStorage.getItem("views")) + 1).toString());
-		navigationTrigger++;
-	});
+        localStorage.setItem("views", (Number(localStorage.getItem("views")) + 1).toString());
+        navigationTrigger++;
+    });
 
-	beforeNavigate(() => {
-		consola.debug("Starting navigation");
-		NProgress.start();
-	});
+    beforeNavigate(() => {
+        consola.debug("Starting navigation");
+        NProgress.start();
+    });
 
-	onMount(() => {
-		const dismissed = localStorage.getItem("donation-dismissed");
-		let dismissedTime = dismissed ? Number(dismissed) : 0;
-		const threeDaysSecs = 3 * 24 * 60 * 60;
-		const threeDaysMillis = threeDaysSecs * 1000;
-		if (dismissedTime > 0 && ((Date.now() - dismissedTime) > threeDaysMillis)) {
-			localStorage.removeItem("donation-dismissed");
-			dismissedTime = 0;
-		}
-	});
+    onMount(() => {
+        const dismissed = localStorage.getItem("donation-dismissed");
+        let dismissedTime = dismissed ? Number(dismissed) : 0;
+        const threeDaysSecs = 3 * 24 * 60 * 60;
+        const threeDaysMillis = threeDaysSecs * 1000;
+        if (dismissedTime > 0 && ((Date.now() - dismissedTime) > threeDaysMillis)) {
+            localStorage.removeItem("donation-dismissed");
+            dismissedTime = 0;
+        }
+    });
 </script>
 
 {#snippet navbarLink(Icon: Component, href: string, text: string, preload: boolean = true)}
-	{@const preloadValue = preload ? "hover" : "off"}
+    {@const preloadValue = preload ? "hover" : "off"}
 
-	<a
-		class="hover:text-accent flex flex-row items-center justify-start gap-1.5 text-xl font-medium"
-		href={href}
-		data-sveltekit-preload-data={preloadValue}>
-		<Icon />{text}
-	</a>
+    <a
+        class="hover:text-accent flex flex-row items-center justify-start gap-1.5 text-xl font-medium"
+        href={href}
+        data-sveltekit-preload-data={preloadValue}>
+        <Icon />{text}
+    </a>
 {/snippet}
 
 <Toaster />
 
 <Header>
-	{@render navbarLink(MaterialSymbolsHomeRounded, "/", "Home")}
-	{@render navbarLink(
-		MaterialSymbolsTeamDashboard,
-		"/dashboard",
-		"Dashboard",
-		false
-	)}
-	{@render navbarLink(
-		MaterialSymbolsAccountCircle,
-		"/account/manage",
-		"Account",
-		false
-	)}
-	{@render navbarLink(MaterialSymbolsFlagRounded, "/report", "Report")}
+    {@render navbarLink(MaterialSymbolsHomeRounded, "/", "Home")}
+    {@render navbarLink(
+        MaterialSymbolsTeamDashboard,
+        "/dashboard",
+        "Dashboard",
+        false
+    )}
+    {@render navbarLink(
+        MaterialSymbolsAccountCircle,
+        "/account/manage",
+        "Account",
+        false
+    )}
+    {@render navbarLink(MaterialSymbolsFlagRounded, "/report", "Report")}
 </Header>
 
 <Banner />
@@ -94,57 +94,57 @@
 <Analytics />
 
 {#if isBrowser() && !localStorage.getItem("donation-dismissed") && !localSponsorHidden}
-	<div class="flex w-full items-center justify-around p-4">
-		<div>
-			<h1 class="text-2xl font-semibold">Have you considered donating?</h1>
-			<p class="max-w-[65ch]">
-				eepy.page has never been profitable, but due to raised domain prices and server costs, we are losing more money than ever. Even small donations would help out immensely.
-			</p>
-			<a href="https://ko-fi.com/powerpcfan">Donate on Ko-fi</a>
-		</div>
+    <div class="flex w-full items-center justify-around p-4">
+        <div>
+            <h1 class="text-2xl font-semibold">Have you considered donating?</h1>
+            <p class="max-w-[65ch]">
+                eepy.page has never been profitable, but due to raised domain prices and server costs, we are losing more money than ever. Even small donations would help out immensely.
+            </p>
+            <a href="https://ko-fi.com/powerpcfan">Donate on Ko-fi</a>
+        </div>
 
-		<Button
-			variant="destructive"
-			onclick={() => {
-				localSponsorHidden = true;
-				localStorage.setItem("donation-dismissed", Date.now().toString());
-			}}>Remind me later</Button>
-	</div>
+        <Button
+            variant="destructive"
+            onclick={() => {
+                localSponsorHidden = true;
+                localStorage.setItem("donation-dismissed", Date.now().toString());
+            }}>Remind me later</Button>
+    </div>
 {/if}
 
 <svelte:head>
-	<link
-		rel="preload"
-		as="font"
-		href="/fonts/InterVariable.woff2"
-		type="font/woff2"
-		crossorigin="anonymous" />
+    <link
+        rel="preload"
+        as="font"
+        href="/fonts/InterVariable.woff2"
+        type="font/woff2"
+        crossorigin="anonymous" />
 </svelte:head>
 <svelte:window bind:innerWidth={innerWidth} />
 
 <main class="h-full min-h-screen">
-	{@render children()}
+    {@render children()}
 </main>
 
 <style>
-	@font-face {
-		font-family: "Inter";
-		src: url("/fonts/InterVariable.woff2") format("woff2");
-		font-weight: 100 600;
-		font-style: normal;
-		font-display: swap;
-	}
+    @font-face {
+        font-family: "Inter";
+        src: url("/fonts/InterVariable.woff2") format("woff2");
+        font-weight: 100 600;
+        font-style: normal;
+        font-display: swap;
+    }
 
-	:global(*) {
-		font-family: "Inter", sans-serif;
-	}
+    :global(*) {
+        font-family: "Inter", sans-serif;
+    }
 
-	:global(a) {
-		color: var(--color-primary);
-		transition: color 0.2s ease-in-out;
-	}
+    :global(a) {
+        color: var(--color-primary);
+        transition: color 0.2s ease-in-out;
+    }
 
-	:global(body) {
-		overflow-x: hidden;
-	}
+    :global(body) {
+        overflow-x: hidden;
+    }
 </style>

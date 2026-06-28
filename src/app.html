@@ -1,45 +1,45 @@
 <!DOCTYPE html>
 <html lang="%lang%">
-	<head>
-		<script>
-			const theme = localStorage.getItem("theme") || "dark";
-			if (theme === "light") {
-				document.documentElement.classList.remove("dark");
-			} else if (theme === "dark") {
-				document.documentElement.classList.add("dark");
-			} else if (theme === "auto") {
-				if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-					document.documentElement.classList.add("dark");
-				} else {
-					document.documentElement.classList.add("light");
-				}
-			}
-		</script>
-		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.svg" type="image/svg+xml" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" type="image/png" sizes="any" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta content="eepy.page" property="og:title" />
-		<meta property="og:type" content="website" />
-		<meta
-			content="A free subdomain service. Sign up now for 100% free"
-			property="og:description" />
-		<meta
-			content="A free subdomain service. Sign up now for 100% free"
-			name="description" />
-		<meta content="https://eepy.page" property="og:url" />
-		<meta content="#007be1" data-react-helmet="true" name="theme-color" />
-		<title>eepy.page</title>
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta property="twitter:domain" content="eepy.page" />
-		<meta property="twitter:url" content="https://eepy.page" />
-		<meta name="twitter:title" content="eepy.page" />
-		<meta
-			name="twitter:description"
-			content="Completely free subdomain registrar service, which doesn't ask for your phone number, physical address, or identification. Get started now for free with absolutely no hassle." />
-		%sveltekit.head%
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div style="display: contents">%sveltekit.body%</div>
-	</body>
+    <head>
+        <script>
+            const theme = localStorage.getItem("theme") || "dark";
+            if (theme === "light") {
+                document.documentElement.classList.remove("dark");
+            } else if (theme === "dark") {
+                document.documentElement.classList.add("dark");
+            } else if (theme === "auto") {
+                if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                    document.documentElement.classList.add("dark");
+                } else {
+                    document.documentElement.classList.add("light");
+                }
+            }
+        </script>
+        <meta charset="utf-8" />
+        <link rel="icon" href="%sveltekit.assets%/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="%sveltekit.assets%/favicon.png" type="image/png" sizes="any" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta content="eepy.page" property="og:title" />
+        <meta property="og:type" content="website" />
+        <meta
+            content="A free subdomain service. Sign up now for 100% free"
+            property="og:description" />
+        <meta
+            content="A free subdomain service. Sign up now for 100% free"
+            name="description" />
+        <meta content="https://eepy.page" property="og:url" />
+        <meta content="#007be1" data-react-helmet="true" name="theme-color" />
+        <title>eepy.page</title>
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta property="twitter:domain" content="eepy.page" />
+        <meta property="twitter:url" content="https://eepy.page" />
+        <meta name="twitter:title" content="eepy.page" />
+        <meta
+            name="twitter:description"
+            content="Completely free subdomain registrar service, which doesn't ask for your phone number, physical address, or identification. Get started now for free with absolutely no hassle." />
+        %sveltekit.head%
+    </head>
+    <body data-sveltekit-preload-data="hover">
+        <div style="display: contents">%sveltekit.body%</div>
+    </body>
 </html>

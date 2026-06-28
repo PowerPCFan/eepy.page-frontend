@@ -1,5 +1,5 @@
 import type { Reroute } from "@sveltejs/kit";
 
 export const reroute: Reroute = request => {
-	return request.url.pathname;
+    return request.url.pathname;
 };

@@ -1,10 +1,10 @@
 const html = `
 <head>
-	<link
-		rel="preload"
-		href="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-		as="script" />
-	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
+    <link
+        rel="preload"
+        href="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+        as="script" />
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
 </head>
 
 <body style="width: fit-content; height: fit-content; margin: 0px;">
@@ -32,9 +32,9 @@ const html = `
 `;
 
 export function GET() {
-	return new Response(html, {
-		headers: {
-			"Content-Type": "text/html"
-		}
-	});
+    return new Response(html, {
+        headers: {
+            "Content-Type": "text/html"
+        }
+    });
 }

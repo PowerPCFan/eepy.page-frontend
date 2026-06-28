@@ -1,491 +1,491 @@
 <script lang="ts">
-	import { getAuthToken } from "$lib";
-	import Loader from "$lib/components/Loader.svelte";
-	import Button from "$lib/components/ui/button/button.svelte";
-	import Input from "$lib/components/ui/input/input.svelte";
-	import * as Select from "$lib/components/ui/select/index.js";
-	import Separator from "$lib/components/ui/separator/separator.svelte";
-	import Skeleton from "$lib/components/ui/skeleton/skeleton.svelte";
-	import { toast } from "svelte-sonner";
-	import MaterialSymbolsAttachMoneyRounded from "~icons/material-symbols/attach-money-rounded";
-	import { createFile, redirectToLogin } from "../../helperFuncs";
-	import {
-		AuthError,
-		ConflictError,
-		DNSError,
-		LimitError,
-		PermissionError,
-		ServerContactor
-	} from "../../serverContactor";
+    import { getAuthToken } from "$lib";
+    import Loader from "$lib/components/Loader.svelte";
+    import Button from "$lib/components/ui/button/button.svelte";
+    import Input from "$lib/components/ui/input/input.svelte";
+    import * as Select from "$lib/components/ui/select/index.js";
+    import Separator from "$lib/components/ui/separator/separator.svelte";
+    import Skeleton from "$lib/components/ui/skeleton/skeleton.svelte";
+    import { toast } from "svelte-sonner";
+    import MaterialSymbolsAttachMoneyRounded from "~icons/material-symbols/attach-money-rounded";
+    import { createFile, redirectToLogin } from "../../helperFuncs";
+    import {
+        AuthError,
+        ConflictError,
+        DNSError,
+        LimitError,
+        PermissionError,
+        ServerContactor
+    } from "../../serverContactor";
 
-	import { browser } from "$app/environment";
-	import InlineAlert from "$lib/components/ui/inline-alert/inline-alert.svelte";
-	import { AVAILABLE_TLDS } from "$lib/types";
-	import consola from "consola";
-	import Cookies from "js-cookie";
-	import { fade } from "svelte/transition";
-	import type { components } from "../../api";
+    import { browser } from "$app/environment";
+    import InlineAlert from "$lib/components/ui/inline-alert/inline-alert.svelte";
+    import { AVAILABLE_TLDS } from "$lib/types";
+    import consola from "consola";
+    import Cookies from "js-cookie";
+    import { fade } from "svelte/transition";
+    import type { components } from "../../api";
 
-	interface Domain {
-		type: string;
-		domain: string;
-		values: string[];
-	}
+    interface Domain {
+        type: string;
+        domain: string;
+        values: string[];
+    }
 
-	interface DashboardDomain extends Domain {
-		tld: string;
-		name: string;
-		deletionWarned: boolean;
-		isLoading: boolean;
-		buttonDisabled: boolean;
-		deletionLoading: boolean;
-	}
+    interface DashboardDomain extends Domain {
+        tld: string;
+        name: string;
+        deletionWarned: boolean;
+        isLoading: boolean;
+        buttonDisabled: boolean;
+        deletionLoading: boolean;
+    }
 
-	let { data } = $props();
+    let { data } = $props();
 
-	let ownedTlds: string[] = $state([]);
+    let ownedTlds: string[] = $state([]);
 
-	let domains: DashboardDomain[] = $state([]);
-	let domainsLoaded: boolean = $state(false);
+    let domains: DashboardDomain[] = $state([]);
+    let domainsLoaded: boolean = $state(false);
 
-	let registerNewDomainLoading: boolean = $state(false);
-	let newDomain: string = $state("");
-	let newDomainType: string = $state("A");
-	let newDomainTld: string = $state(".eepy.page");
+    let registerNewDomainLoading: boolean = $state(false);
+    let newDomain: string = $state("");
+    let newDomainType: string = $state("A");
+    let newDomainTld: string = $state(".eepy.page");
 
-	let registerErrorTitle: string = $state("");
-	let registerErrorDescription: string = $state("");
+    let registerErrorTitle: string = $state("");
+    let registerErrorDescription: string = $state("");
 
-	let registerNoteTitle: string = $state("");
-	let registerNoteDescription: string = $state("");
+    let registerNoteTitle: string = $state("");
+    let registerNoteDescription: string = $state("");
 
-	let domainErrorTitle: string = $state("");
-	let domainErrorDescription: string = $state("");
+    let domainErrorTitle: string = $state("");
+    let domainErrorDescription: string = $state("");
 
-	let alertUpdate: number = $state(0);
+    let alertUpdate: number = $state(0);
 
-	let serverContactor: ServerContactor;
-	let loader: Loader;
+    let serverContactor: ServerContactor;
+    let loader: Loader;
 
-	const SupportedTypes = ["A", "AAAA", "CNAME", "TXT", "NS"];
+    const SupportedTypes = ["A", "AAAA", "CNAME", "TXT", "NS"];
 
-	function deleteDomain(domain: string, button: DashboardDomain) {
-		consola.info(`Deleting domain ${domain}`);
+    function deleteDomain(domain: string, button: DashboardDomain) {
+        consola.info(`Deleting domain ${domain}`);
 
-		serverContactor
-			.deleteDomain(domain)
-			.catch(error => {
-				consola.info(`Failed to delete domain ${domain}`);
+        serverContactor
+            .deleteDomain(domain)
+            .catch(error => {
+                consola.info(`Failed to delete domain ${domain}`);
 
-				button.deletionLoading = false;
-				if (error instanceof AuthError) redirectToLogin(460);
+                button.deletionLoading = false;
+                if (error instanceof AuthError) redirectToLogin(460);
 
-				domainErrorTitle = "Could not delete domain";
-				domainErrorDescription = "An unhandled error occurred.";
-				alertUpdate++;
+                domainErrorTitle = "Could not delete domain";
+                domainErrorDescription = "An unhandled error occurred.";
+                alertUpdate++;
 
-				throw new Error("Failed to delete domain");
-			})
-			.then(() => {
-				consola.info(`Deleted domain ${domain} succesfully`);
+                throw new Error("Failed to delete domain");
+            })
+            .then(() => {
+                consola.info(`Deleted domain ${domain} succesfully`);
 
-				window.gtag?.("event", "domain_delete");
-				button.deletionLoading = false;
-				toast.success(`Successfully deleted ${domain}`, {
-					description: `${domain} was deleted successfully.`
-				});
-				removeDomain(domain);
-			});
-	}
+                window.gtag?.("event", "domain_delete");
+                button.deletionLoading = false;
+                toast.success(`Successfully deleted ${domain}`, {
+                    description: `${domain} was deleted successfully.`
+                });
+                removeDomain(domain);
+            });
+    }
 
-	function registerDomain(domain: string, type: string, tld: string) {
-		consola.info("Regsitering a domain");
+    function registerDomain(domain: string, type: string, tld: string) {
+        consola.info("Regsitering a domain");
 
-		serverContactor
-			.registerDomain(domain + tld, type)
-			.catch(error => {
-				consola.warn("Failed to register a domain");
-				registerNewDomainLoading = false;
-				registerErrorTitle = `Failed to register ${domain + tld}`;
+        serverContactor
+            .registerDomain(domain + tld, type)
+            .catch(error => {
+                consola.warn("Failed to register a domain");
+                registerNewDomainLoading = false;
+                registerErrorTitle = `Failed to register ${domain + tld}`;
 
-				if (error instanceof AuthError) redirectToLogin(460);
-				else if (error instanceof DNSError)
-					registerErrorDescription = "The domain is invalid";
-				else if (error instanceof PermissionError)
-					registerErrorDescription = "You must own all parts of the requested domain.";
-				else if (error instanceof LimitError)
-					registerErrorDescription = "You have exceeded your domain limit.";
-				else if (error instanceof ConflictError)
-					registerErrorDescription = "The requested domain has already been registered!";
-				else {
-					registerErrorDescription = "An unhandled error occurred.";
-				}
-				alertUpdate++;
-				throw new Error("Failed to register dommain!");
-			})
-			.then(values => {
-				consola.info("Registered domain");
-				registerNewDomainLoading = false;
-				window.gtag?.("event", "domain_register");
-				toast.success(`Successfully registered ${domain + tld}!`);
-				domains.push({
-					type,
-					domain: domain + tld,
-					values,
-					isLoading: false,
-					deletionWarned: false,
-					buttonDisabled: false,
-					deletionLoading: false,
-					tld: tld,
-					name: domain
-				});
-				Cookies.set("domain-amount", domains.length.toString());
-			});
-	}
+                if (error instanceof AuthError) redirectToLogin(460);
+                else if (error instanceof DNSError)
+                    registerErrorDescription = "The domain is invalid";
+                else if (error instanceof PermissionError)
+                    registerErrorDescription = "You must own all parts of the requested domain.";
+                else if (error instanceof LimitError)
+                    registerErrorDescription = "You have exceeded your domain limit.";
+                else if (error instanceof ConflictError)
+                    registerErrorDescription = "The requested domain has already been registered!";
+                else {
+                    registerErrorDescription = "An unhandled error occurred.";
+                }
+                alertUpdate++;
+                throw new Error("Failed to register dommain!");
+            })
+            .then(values => {
+                consola.info("Registered domain");
+                registerNewDomainLoading = false;
+                window.gtag?.("event", "domain_register");
+                toast.success(`Successfully registered ${domain + tld}!`);
+                domains.push({
+                    type,
+                    domain: domain + tld,
+                    values,
+                    isLoading: false,
+                    deletionWarned: false,
+                    buttonDisabled: false,
+                    deletionLoading: false,
+                    tld: tld,
+                    name: domain
+                });
+                Cookies.set("domain-amount", domains.length.toString());
+            });
+    }
 
-	function modifyDomain(domain: DashboardDomain) {
-		consola.info(`Modifying domain ${domain.domain}`);
+    function modifyDomain(domain: DashboardDomain) {
+        consola.info(`Modifying domain ${domain.domain}`);
 
-		serverContactor
-			.modifyDomain(domain.domain, domain.values, domain.type)
-			.catch(error => {
-				consola.warn("Failed to modify domain");
-				domain.isLoading = false;
-				domainErrorTitle = `Error modifying ${domain.domain}`;
+        serverContactor
+            .modifyDomain(domain.domain, domain.values, domain.type)
+            .catch(error => {
+                consola.warn("Failed to modify domain");
+                domain.isLoading = false;
+                domainErrorTitle = `Error modifying ${domain.domain}`;
 
-				if (error instanceof AuthError) redirectToLogin(460);
-				else if (error instanceof DNSError)
-					domainErrorDescription = "Please ensure the 'value' field is correct.";
-				else if (error instanceof PermissionError)
-					domainErrorDescription = "You must own all parts of the requested domain.";
-				else {
-					domainErrorDescription = "An unhandled error occurred.";
-				}
-				alertUpdate++;
-				throw Error("Failed to modify domain."); // stops execution to the .then block
-			})
-			.then(() => {
-				consola.warn("Modified domain");
+                if (error instanceof AuthError) redirectToLogin(460);
+                else if (error instanceof DNSError)
+                    domainErrorDescription = "Please ensure the 'value' field is correct.";
+                else if (error instanceof PermissionError)
+                    domainErrorDescription = "You must own all parts of the requested domain.";
+                else {
+                    domainErrorDescription = "An unhandled error occurred.";
+                }
+                alertUpdate++;
+                throw Error("Failed to modify domain."); // stops execution to the .then block
+            })
+            .then(() => {
+                consola.warn("Modified domain");
 
-				window.gtag?.("event", "domain_modify");
-				domain.isLoading = false;
-				toast.success(`Successfully modified ${domain.domain}!`);
-			});
-	}
+                window.gtag?.("event", "domain_modify");
+                domain.isLoading = false;
+                toast.success(`Successfully modified ${domain.domain}!`);
+            });
+    }
 
-	function removeDomain(name: string) {
-		consola.debug("Removing domain from frontend");
+    function removeDomain(name: string) {
+        consola.debug("Removing domain from frontend");
 
-		domains = domains.filter(domain => {
-			return domain.domain !== name;
-		});
+        domains = domains.filter(domain => {
+            return domain.domain !== name;
+        });
 
-		// Triggers svelte's reactivity. This was a bug in svelte 4, but I'm not sure if its necessary anymore. Keeping in case.
-		domains = [...domains];
-	}
+        // Triggers svelte's reactivity. This was a bug in svelte 4, but I'm not sure if its necessary anymore. Keeping in case.
+        domains = [...domains];
+    }
 
-	function createPlaceholders(amount: number): DashboardDomain[] {
-		return new Array(amount) as DashboardDomain[];
-	}
+    function createPlaceholders(amount: number): DashboardDomain[] {
+        return new Array(amount) as DashboardDomain[];
+    }
 
-	if (browser) {
-		serverContactor = new ServerContactor(
-			getAuthToken() ?? "",
-			localStorage.getItem("server_url")
-		);
-		serverContactor
-			.getDomains()
-			.catch(error => {
-				if (error instanceof AuthError) {
-					redirectToLogin(460);
-				} else {
-					console.error(error);
-					domainErrorTitle = "Failed to load domains";
-					domainErrorDescription = "Please contact support if this error persists.";
-					throw new Error("Failed to load domains");
-				}
-			})
-			.then(data => {
-				if (!data) return;
-				domainsLoaded = true;
-				// @ts-expect-error
-				ownedTlds = data["owned-tlds"];
+    if (browser) {
+        serverContactor = new ServerContactor(
+            getAuthToken() ?? "",
+            localStorage.getItem("server_url")
+        );
+        serverContactor
+            .getDomains()
+            .catch(error => {
+                if (error instanceof AuthError) {
+                    redirectToLogin(460);
+                } else {
+                    console.error(error);
+                    domainErrorTitle = "Failed to load domains";
+                    domainErrorDescription = "Please contact support if this error persists.";
+                    throw new Error("Failed to load domains");
+                }
+            })
+            .then(data => {
+                if (!data) return;
+                domainsLoaded = true;
+                // @ts-expect-error
+                ownedTlds = data["owned-tlds"];
 
-				const userDomains: [string, components["schemas"]["DomainFormat"]][] =
-					Object.entries(data["domains"]);
+                const userDomains: [string, components["schemas"]["DomainFormat"]][] =
+                    Object.entries(data["domains"]);
 
-				Cookies.set("domain-amount", userDomains.length.toString());
+                Cookies.set("domain-amount", userDomains.length.toString());
 
-				for (let [key, value] of userDomains) {
-					const lastDot = key.lastIndexOf(".");
-					const secondLastDot = key.lastIndexOf(".", lastDot - 1);
+                for (let [key, value] of userDomains) {
+                    const lastDot = key.lastIndexOf(".");
+                    const secondLastDot = key.lastIndexOf(".", lastDot - 1);
 
-					const name = key.slice(0, secondLastDot);
-					const tld = key.slice(secondLastDot + 1);
-					const domain = {
-						type: value.type,
-						domain: key,
-						values: value.ip as string[],
-						isLoading: false,
-						deletionWarned: false,
-						buttonDisabled: false,
-						deletionLoading: false,
-						tld: tld,
-						name: name
-					};
-					domains.push(domain);
-				}
-			});
-	}
+                    const name = key.slice(0, secondLastDot);
+                    const tld = key.slice(secondLastDot + 1);
+                    const domain = {
+                        type: value.type,
+                        domain: key,
+                        values: value.ip as string[],
+                        isLoading: false,
+                        deletionWarned: false,
+                        buttonDisabled: false,
+                        deletionLoading: false,
+                        tld: tld,
+                        name: name
+                    };
+                    domains.push(domain);
+                }
+            });
+    }
 
-	$effect(() => {
-		const isEepy = newDomain.includes(".eepy.page");
-		const isVercel = newDomain.includes("_vercel");
+    $effect(() => {
+        const isEepy = newDomain.includes(".eepy.page");
+        const isVercel = newDomain.includes("_vercel");
 
-		let newTitle = null;
-		let newDesc = null;
+        let newTitle = null;
+        let newDesc = null;
 
-		if (isEepy) {
-			newTitle = 'Please remove the ".eepy.page" suffix.';
-			newDesc = 'eepy.page automatically adds the ".eepy.page" portion of your domain';
-		} else if (isVercel) {
-			newTitle = "Trying to verify a Vercel domain?";
-			newDesc = `This requires an extra step. Please go to <a href="${window.location.origin}/account/verify/vercel">${window.location.origin}/account/verify/vercel</a> to verify.`;
-		}
+        if (isEepy) {
+            newTitle = 'Please remove the ".eepy.page" suffix.';
+            newDesc = 'eepy.page automatically adds the ".eepy.page" portion of your domain';
+        } else if (isVercel) {
+            newTitle = "Trying to verify a Vercel domain?";
+            newDesc = `This requires an extra step. Please go to <a href="${window.location.origin}/account/verify/vercel">${window.location.origin}/account/verify/vercel</a> to verify.`;
+        }
 
-		const changed = registerNoteTitle !== newTitle || registerNoteDescription !== newDesc;
+        const changed = registerNoteTitle !== newTitle || registerNoteDescription !== newDesc;
 
-		if (changed) {
-			registerNoteTitle = newTitle!;
-			registerNoteDescription = newDesc!;
-			alertUpdate++;
-		}
-	});
+        if (changed) {
+            registerNoteTitle = newTitle!;
+            registerNoteDescription = newDesc!;
+            alertUpdate++;
+        }
+    });
 </script>
 
 <svelte:head>
-	<title>Dashboard | eepy.page</title>
-	<meta content="eepy.page dashboard" property="og:title" />
-	<meta content="Manage all of your domains here!" property="og:description" />
-	<meta content="Manage all of your domains here!" name="description" />
-	<meta content="https://eepy.page/dashboard" property="og:url" />
-	<meta content="https://eepy.page/fse1.webp" property="og:image" />
-	<meta content="#007be1" data-react-helmet="true" name="theme-color" />
+    <title>Dashboard | eepy.page</title>
+    <meta content="eepy.page dashboard" property="og:title" />
+    <meta content="Manage all of your domains here!" property="og:description" />
+    <meta content="Manage all of your domains here!" name="description" />
+    <meta content="https://eepy.page/dashboard" property="og:url" />
+    <meta content="https://eepy.page/fse1.webp" property="og:image" />
+    <meta content="#007be1" data-react-helmet="true" name="theme-color" />
 </svelte:head>
 
 <Loader bind:this={loader} />
 
 <div class="domain-holder bg-card max-w-8xl sentry-unmask mt-16 mr-auto ml-auto w-11/12 rounded-2xl p-6">
-	<h1 class="text-3xl font-semibold">Your domains</h1>
-	<p>
-		These are all the domains you own. You can modify each parameter of them by simply clicking
-		on their respective input field.
-	</p>
+    <h1 class="text-3xl font-semibold">Your domains</h1>
+    <p>
+        These are all the domains you own. You can modify each parameter of them by simply clicking
+        on their respective input field.
+    </p>
 
-	<InlineAlert
-		variant={"error"}
-		title={domainErrorTitle}
-		description={domainErrorDescription}
-		className="mb-6 mt-6"
-		trigger={alertUpdate} />
+    <InlineAlert
+        variant={"error"}
+        title={domainErrorTitle}
+        description={domainErrorDescription}
+        className="mb-6 mt-6"
+        trigger={alertUpdate} />
 
-	<div class="domains space-y-4">
-		{#each domainsLoaded ? domains : createPlaceholders(data.domainAmount) as domain}
-			<div transition:fade class="domain mt-1 mb-1 flex min-h-10 space-y-0.5 space-x-1">
-				<div class="basic-controls flex w-2/5 space-x-1">
-					{#if domainsLoaded}
-						<Select.Root type="single" name="domain" bind:value={domain.type}>
-							<Select.Trigger class="w-1/8 min-w-24">{domain.type}</Select.Trigger>
-							<Select.Content>
-								{#each SupportedTypes as type}
-									<Select.Item value={type} label={type}>
-										{type}
-									</Select.Item>
-								{/each}
-							</Select.Content>
-						</Select.Root>
-					{:else}
-						<Skeleton class="w-1/8 min-w-24" />
-					{/if}
-					<div class="domain-name flex w-full">
-						{#if domainsLoaded}
-							<Input class="rounded-r-none" value={domain.name} disabled={true} />
-							<Input
-								class="w-1/4 min-w-20 rounded-l-none border-l-0"
-								value={domain.tld}
-								disabled={true} />
-						{:else}
-							<Skeleton class="w-full" />
-						{/if}
-					</div>
-				</div>
-				<div class="value w-2/5">
-					{#if domainsLoaded && domain.values}
-						{#each domain.values as _, i}
-							<div class="flex">
-								<Input
-									class="mb-1 w-[90%] rounded-r-none"
-									bind:value={domain.values[i]} />
-								<div class="flex w-[10%]">
-									<Button
-										class="w-[50%] rounded-none"
-										onclick={_ => domain.values.push("0.0.0.0")}
-										variant="secondary">+</Button>
+    <div class="domains space-y-4">
+        {#each domainsLoaded ? domains : createPlaceholders(data.domainAmount) as domain}
+            <div transition:fade class="domain mt-1 mb-1 flex min-h-10 space-y-0.5 space-x-1">
+                <div class="basic-controls flex w-2/5 space-x-1">
+                    {#if domainsLoaded}
+                        <Select.Root type="single" name="domain" bind:value={domain.type}>
+                            <Select.Trigger class="w-1/8 min-w-24">{domain.type}</Select.Trigger>
+                            <Select.Content>
+                                {#each SupportedTypes as type}
+                                    <Select.Item value={type} label={type}>
+                                        {type}
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    {:else}
+                        <Skeleton class="w-1/8 min-w-24" />
+                    {/if}
+                    <div class="domain-name flex w-full">
+                        {#if domainsLoaded}
+                            <Input class="rounded-r-none" value={domain.name} disabled={true} />
+                            <Input
+                                class="w-1/4 min-w-20 rounded-l-none border-l-0"
+                                value={domain.tld}
+                                disabled={true} />
+                        {:else}
+                            <Skeleton class="w-full" />
+                        {/if}
+                    </div>
+                </div>
+                <div class="value w-2/5">
+                    {#if domainsLoaded && domain.values}
+                        {#each domain.values as _, i}
+                            <div class="flex">
+                                <Input
+                                    class="mb-1 w-[90%] rounded-r-none"
+                                    bind:value={domain.values[i]} />
+                                <div class="flex w-[10%]">
+                                    <Button
+                                        class="w-[50%] rounded-none"
+                                        onclick={_ => domain.values.push("0.0.0.0")}
+                                        variant="secondary">+</Button>
 
-									<Button
-										class="bg-destructive/30! w-[50%] rounded-l-none"
-										onclick={_ => {
-											domain.values = domain.values.filter(
-												(val, idx) => idx != i
-											);
-										}}
-										disabled={domain.values.length <= 1}
-										variant="destructive">-</Button>
-								</div>
-							</div>
-						{/each}
-					{:else}
-						<Skeleton class="h-10 w-full" />
-					{/if}
-				</div>
-				<div class="actions flex h-full w-1/4 space-x-0.5">
-					{#if domainsLoaded}
-						<Button
-							loading={domain.isLoading}
-							onclick={_ => {
-								domain.isLoading = true;
-								modifyDomain(domain);
-							}}
-							class="h-full min-h-8 w-1/2 max-w-40"
-							>Save</Button>
-						<Separator orientation={"vertical"} />
-						<Button
-							loading={domain.deletionLoading}
-							disabled={domain.buttonDisabled}
-							onclick={_ => {
-								if (!domain.deletionWarned) {
-									domain.deletionWarned = true;
-									domain.buttonDisabled = true;
-									setTimeout(() => {
-										domain.buttonDisabled = false;
-									}, 700);
-								} else {
-									domain.deletionLoading = true;
-									deleteDomain(domain.domain, domain);
-								}
-							}}
-							class="h-full min-h-8 w-1/2 max-w-40"
-							variant={"destructive"}
-							>{#if domain.deletionWarned}
-								Confirm?
-							{:else}
-								Delete
-							{/if}</Button>
-					{:else}
-						<Skeleton class="h-full min-h-10 w-1/2 max-w-40"></Skeleton>
-						<Skeleton class="h-full min-h-10 w-1/2 max-w-40"></Skeleton>
-					{/if}
-				</div>
-			</div>
-		{/each}
-	</div>
+                                    <Button
+                                        class="bg-destructive/30! w-[50%] rounded-l-none"
+                                        onclick={_ => {
+                                            domain.values = domain.values.filter(
+                                                (val, idx) => idx != i
+                                            );
+                                        }}
+                                        disabled={domain.values.length <= 1}
+                                        variant="destructive">-</Button>
+                                </div>
+                            </div>
+                        {/each}
+                    {:else}
+                        <Skeleton class="h-10 w-full" />
+                    {/if}
+                </div>
+                <div class="actions flex h-full w-1/4 space-x-0.5">
+                    {#if domainsLoaded}
+                        <Button
+                            loading={domain.isLoading}
+                            onclick={_ => {
+                                domain.isLoading = true;
+                                modifyDomain(domain);
+                            }}
+                            class="h-full min-h-8 w-1/2 max-w-40"
+                            >Save</Button>
+                        <Separator orientation={"vertical"} />
+                        <Button
+                            loading={domain.deletionLoading}
+                            disabled={domain.buttonDisabled}
+                            onclick={_ => {
+                                if (!domain.deletionWarned) {
+                                    domain.deletionWarned = true;
+                                    domain.buttonDisabled = true;
+                                    setTimeout(() => {
+                                        domain.buttonDisabled = false;
+                                    }, 700);
+                                } else {
+                                    domain.deletionLoading = true;
+                                    deleteDomain(domain.domain, domain);
+                                }
+                            }}
+                            class="h-full min-h-8 w-1/2 max-w-40"
+                            variant={"destructive"}
+                            >{#if domain.deletionWarned}
+                                Confirm?
+                            {:else}
+                                Delete
+                            {/if}</Button>
+                    {:else}
+                        <Skeleton class="h-full min-h-10 w-1/2 max-w-40"></Skeleton>
+                        <Skeleton class="h-full min-h-10 w-1/2 max-w-40"></Skeleton>
+                    {/if}
+                </div>
+            </div>
+        {/each}
+    </div>
 </div>
 
 <div class="registrar bg-card max-w-8xl mt-8 mr-auto mb-8 ml-auto w-11/12 rounded-2xl p-6 sentry-unmask">
-	<InlineAlert
-		variant={"error"}
-		title={registerErrorTitle}
-		description={registerErrorDescription}
-		className="mb-6"
-		trigger={alertUpdate} />
-	<InlineAlert
-		variant={"note"}
-		title={registerNoteTitle}
-		description={registerNoteDescription}
-		className="mb-6"
-		trigger={alertUpdate}
-		renderDescriptionAsHTML />
-	<div class="content flex space-y-2 space-x-2">
-		<Select.Root bind:value={newDomainType} type="single" name="domain">
-			<Select.Trigger class="w-1/8 min-w-24">{newDomainType}</Select.Trigger>
-			<Select.Content>
-				{#each SupportedTypes as type}
-					<Select.Item value={type} label={type}>
-						{type}
-					</Select.Item>
-				{/each}
-			</Select.Content>
-		</Select.Root>
-		<div class="domain-bar flex">
-			<Input bind:value={newDomain} class="max-w-2xl rounded-r-none" placeholder="domain" />
-			<Select.Root
-				onValueChange={val => {
-					if (ownedTlds.indexOf(val.slice(1)) == -1) {
-						let link = AVAILABLE_TLDS.find(v => val === v.tld)?.purchaseLink;
-						consola.log(`Opening ${link}`);
-						newDomainTld = ".eepy.page";
-						window.open(link, "_blank")?.focus();
-					}
-				}}
-				bind:value={newDomainTld}
-				type="single"
-				name="domain">
-				<Select.Trigger class="w-1/8 min-w-24 rounded-l-none"
-					>{newDomainTld}</Select.Trigger>
-				<Select.Content>
-					{#each AVAILABLE_TLDS.filter(tld => !(tld.hidden && !ownedTlds.includes(tld.tld.slice(1)))) as tld}
-						<Select.Item value={tld.tld} label={tld.tld}>
-							<div class="flex flex-row items-center">
-								{tld.tld}
-								{#if tld.purchaseLink && ownedTlds.indexOf(tld.tld.slice(1)) == -1}
-									<MaterialSymbolsAttachMoneyRounded
-										class="text-primary-secondary" />
-								{/if}
-							</div>
-						</Select.Item>
-					{/each}
-				</Select.Content>
-			</Select.Root>
-		</div>
-		<Button
-			loading={registerNewDomainLoading}
-			onclick={_ => {
-				registerNewDomainLoading = true;
-				registerDomain(newDomain, newDomainType, newDomainTld);
-			}}
-			disabled={!newDomain}
-			class="w-24">Register</Button>
-	</div>
+    <InlineAlert
+        variant={"error"}
+        title={registerErrorTitle}
+        description={registerErrorDescription}
+        className="mb-6"
+        trigger={alertUpdate} />
+    <InlineAlert
+        variant={"note"}
+        title={registerNoteTitle}
+        description={registerNoteDescription}
+        className="mb-6"
+        trigger={alertUpdate}
+        renderDescriptionAsHTML />
+    <div class="content flex space-y-2 space-x-2">
+        <Select.Root bind:value={newDomainType} type="single" name="domain">
+            <Select.Trigger class="w-1/8 min-w-24">{newDomainType}</Select.Trigger>
+            <Select.Content>
+                {#each SupportedTypes as type}
+                    <Select.Item value={type} label={type}>
+                        {type}
+                    </Select.Item>
+                {/each}
+            </Select.Content>
+        </Select.Root>
+        <div class="domain-bar flex">
+            <Input bind:value={newDomain} class="max-w-2xl rounded-r-none" placeholder="domain" />
+            <Select.Root
+                onValueChange={val => {
+                    if (ownedTlds.indexOf(val.slice(1)) == -1) {
+                        let link = AVAILABLE_TLDS.find(v => val === v.tld)?.purchaseLink;
+                        consola.log(`Opening ${link}`);
+                        newDomainTld = ".eepy.page";
+                        window.open(link, "_blank")?.focus();
+                    }
+                }}
+                bind:value={newDomainTld}
+                type="single"
+                name="domain">
+                <Select.Trigger class="w-1/8 min-w-24 rounded-l-none"
+                    >{newDomainTld}</Select.Trigger>
+                <Select.Content>
+                    {#each AVAILABLE_TLDS.filter(tld => !(tld.hidden && !ownedTlds.includes(tld.tld.slice(1)))) as tld}
+                        <Select.Item value={tld.tld} label={tld.tld}>
+                            <div class="flex flex-row items-center">
+                                {tld.tld}
+                                {#if tld.purchaseLink && ownedTlds.indexOf(tld.tld.slice(1)) == -1}
+                                    <MaterialSymbolsAttachMoneyRounded
+                                        class="text-primary-secondary" />
+                                {/if}
+                            </div>
+                        </Select.Item>
+                    {/each}
+                </Select.Content>
+            </Select.Root>
+        </div>
+        <Button
+            loading={registerNewDomainLoading}
+            onclick={_ => {
+                registerNewDomainLoading = true;
+                registerDomain(newDomain, newDomainType, newDomainTld);
+            }}
+            disabled={!newDomain}
+            class="w-24">Register</Button>
+    </div>
 </div>
 
 <style>
-	@media (orientation: portrait), (max-width: 700px) {
-		.basic-controls {
-			width: 100%;
-		}
-		.domain {
-			flex-direction: column;
-			min-height: 8rem;
-		}
-		.domain div {
-			min-height: 2.5em;
-		}
-		.value {
-			width: 100%;
-		}
-		.actions {
-			width: 100%;
-			justify-content: space-between;
-		}
+    @media (orientation: portrait), (max-width: 700px) {
+        .basic-controls {
+            width: 100%;
+        }
+        .domain {
+            flex-direction: column;
+            min-height: 8rem;
+        }
+        .domain div {
+            min-height: 2.5em;
+        }
+        .value {
+            width: 100%;
+        }
+        .actions {
+            width: 100%;
+            justify-content: space-between;
+        }
 
-		.content {
-			flex-direction: column;
-		}
-		:global(.registrar .content button) {
-			width: 100%;
-		}
-		.domain-holder {
-			padding: 0.5em;
-		}
-	}
+        .content {
+            flex-direction: column;
+        }
+        :global(.registrar .content button) {
+            width: 100%;
+        }
+        .domain-holder {
+            padding: 0.5em;
+        }
+    }
 </style>

@@ -5,31 +5,31 @@ import * as sitemap from "super-sitemap";
 export const prerender = true; // optional
 
 const Priorities: { [key: string]: 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1.0 } = {
-	"/": 0.9,
-	"/dashboard": 0.8,
-	"/adblock-info": 0.3,
-	"/terms": 0.7,
-	"/privacy": 0.7,
-	"/support/info": 0.4,
-	"/login": 0.8
+    "/": 0.9,
+    "/dashboard": 0.8,
+    "/adblock-info": 0.3,
+    "/terms": 0.7,
+    "/privacy": 0.7,
+    "/support/info": 0.4,
+    "/login": 0.8
 };
 
 export const GET: RequestHandler = async () => {
-	return await sitemap.response({
-		origin: "https://www.eepy.page",
-		excludeRoutePatterns: ["^/account.*", "^/blog.*", "componenttest", "^/redeem.*"],
-		defaultChangefreq: "daily",
-		defaultPriority: 0.7,
-		sort: "alpha",
-		processPaths: paths => {
-			return paths.map(({ path, ...rest }) => {
-				return {
-					...rest,
-					path: path,
-					priority: Priorities[path] ?? 0.7
-				};
-			});
-		},
-		headers: { "Content-Type": "text/xml" }
-	});
+    return await sitemap.response({
+        origin: "https://www.eepy.page",
+        excludeRoutePatterns: ["^/account.*", "^/blog.*", "componenttest", "^/redeem.*"],
+        defaultChangefreq: "daily",
+        defaultPriority: 0.7,
+        sort: "alpha",
+        processPaths: paths => {
+            return paths.map(({ path, ...rest }) => {
+                return {
+                    ...rest,
+                    path: path,
+                    priority: Priorities[path] ?? 0.7
+                };
+            });
+        },
+        headers: { "Content-Type": "text/xml" }
+    });
 };

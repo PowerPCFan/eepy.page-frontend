@@ -1,26 +1,26 @@
 {
-	"trailingComma": "es5",
-	"tabWidth": 4,
-	"semi": true,
-	"singleQuote": false,
-	"printWidth": 120,
-	"useTabs": false,
-	"arrowParens": "avoid",
-	"bracketSameLine": true,
-	"bracketSpacing": true,
-	"svelteAllowShorthand": false,
-	"svelteSortOrder": "options-scripts-markup-styles",
-	"plugins": [
-		"prettier-plugin-organize-imports",
-		"prettier-plugin-svelte",
-		"prettier-plugin-tailwindcss"
-	],
-	"overrides": [
-		{
-			"files": "*.svelte",
-			"options": {
-				"parser": "svelte"
-			}
-		}
-	]
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "semi": true,
+    "singleQuote": false,
+    "printWidth": 120,
+    "useTabs": false,
+    "arrowParens": "avoid",
+    "bracketSameLine": true,
+    "bracketSpacing": true,
+    "svelteAllowShorthand": false,
+    "svelteSortOrder": "options-scripts-markup-styles",
+    "plugins": [
+        "prettier-plugin-organize-imports",
+        "prettier-plugin-svelte",
+        "prettier-plugin-tailwindcss"
+    ],
+    "overrides": [
+        {
+            "files": "*.svelte",
+            "options": {
+                "parser": "svelte"
+            }
+        }
+    ]
 }

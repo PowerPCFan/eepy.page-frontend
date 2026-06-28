@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { activeTheme } from "$lib/store";
-	import { Toaster as Sonner, type ToasterProps as SonnerProps } from "svelte-sonner";
+    import { activeTheme } from "$lib/store";
+    import { Toaster as Sonner, type ToasterProps as SonnerProps } from "svelte-sonner";
 
-	let { ...restProps }: SonnerProps = $props();
+    let { ...restProps }: SonnerProps = $props();
 </script>
 
 <Sonner
-	theme={$activeTheme}
-	class="toaster group"
-	style="--normal-bg: var(--color-popover); --normal-text: var(--color-popover-foreground); --normal-border: var(--color-border);"
-	{...restProps} />
+    theme={$activeTheme}
+    class="toaster group"
+    style="--normal-bg: var(--color-popover); --normal-text: var(--color-popover-foreground); --normal-border: var(--color-border);"
+    {...restProps} />
