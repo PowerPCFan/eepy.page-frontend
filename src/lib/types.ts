@@ -10,6 +10,7 @@ export const AVAILABLE_TLDS: TLD[] = [
     },
     {
         tld: ".worksonmymachine.top",
+        purchaseLink: "https://ko-fi.com/s/bee975efcd",
         hidden: false
     },
 ];
