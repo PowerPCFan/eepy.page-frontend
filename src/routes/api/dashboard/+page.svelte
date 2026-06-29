@@ -109,7 +109,7 @@
     }
 
     onMount(() => {
-        serverContactor = new ServerContactor(getAuthToken()!);
+        serverContactor = new ServerContactor(getAuthToken() ?? null);
         serverContactor
             .getApiKeys()
             .catch(error => {

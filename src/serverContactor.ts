@@ -4,6 +4,8 @@ import Cookies from "js-cookie";
 import createClient, { type Middleware } from "openapi-fetch";
 import type { paths } from "./api";
 import { getAuthToken, redirectToLogin, setAuthToken } from "./helperFuncs";
+
+
 export let serverURL = "https://api.eepy.page";
 if (browser) {
     let subdomain = window.location.hostname.split(".")[0];
@@ -424,6 +426,7 @@ export class ServerContactor {
     > {
         console.log(`Value: ${values}`);
         const { data, error, response } = await client.PATCH("/domain/modify", {
+            // @ts-ignore
             body: { domain, type, values: values },
             params: {
                 //@ts-ignore
@@ -459,6 +462,7 @@ export class ServerContactor {
         }
 
         const { data, error, response } = await client.POST("/domain/register", {
+            // @ts-ignore
             body: { domain, type, values: [value] },
             params: {
                 //@ts-ignore
@@ -620,6 +624,7 @@ export class ServerContactor {
                 case 460:
                     throw new AuthError("Invalid session");
                 default:
+                    // @ts-ignore
                     throw new Error(`Failed to get domains. Status code: ${response.status}`);
             }
         }
@@ -702,6 +707,7 @@ export class ServerContactor {
         });
 
         if (error) {
+            // @ts-ignore
             switch (response.status) {
                 case 460:
                     throw new AuthError("Invalid session");
@@ -981,6 +987,7 @@ export class ServerContactor {
     async findByIps(
         ips: string[]
     ): Promise<ReturnType<Awaited<ServerContactor["findByUsername"]>>[]> {
+        // @ts-ignore
         const { data, error, response } = await client.POST("/admin/user/get/ips", {
             params: {
                 //@ts-ignore
@@ -992,6 +999,7 @@ export class ServerContactor {
         });
 
         if (error) {
+            // @ts-ignore
             switch (response.status) {
                 case 460:
                     throw new AuthError("Invalid session");
@@ -1004,6 +1012,7 @@ export class ServerContactor {
             }
         }
 
+        // @ts-ignore
         return data;
     }
 
@@ -1337,6 +1346,7 @@ export class ServerContactor {
         });
 
         if (error) {
+            // @ts-ignore
             switch (response.status) {
                 case 460:
                     throw new AuthError("Invalid session");
@@ -1364,6 +1374,31 @@ export class ServerContactor {
         });
 
         if (error) {
+            switch (response.status) {
+                case 460:
+                    throw new AuthError("Invalid session");
+                case 412:
+                    throw new CodeError("Invalid permissions");
+                default:
+                    throw new Error("Failed to load user permission");
+            }
+        }
+
+        return data;
+    }
+
+    async getWrapped() {
+        const { data, error, response } = await client.GET("/profile/wrapped", {
+            params: {
+                //@ts-ignore
+                header: {
+                    "X-Auth-Token": getAuthToken()
+                }
+            }
+        });
+
+        if (error) {
+            // @ts-ignore
             switch (response.status) {
                 case 460:
                     throw new AuthError("Invalid session");
