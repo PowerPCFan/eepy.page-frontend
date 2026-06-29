@@ -93,7 +93,7 @@
 
 <Analytics />
 
-{#if isBrowser() && !localStorage.getItem("donation-dismissed") && !localSponsorHidden}
+{#if isBrowser() && !localStorage.getItem("donation-dismissed") && !localSponsorHidden && !localStorage.getItem("already-donated")}
     <div class="flex w-full items-center justify-around p-4">
         <div>
             <h1 class="text-2xl font-semibold">Have you considered donating?</h1>
@@ -109,6 +109,12 @@
                 localSponsorHidden = true;
                 localStorage.setItem("donation-dismissed", Date.now().toString());
             }}>Remind me later</Button>
+        <Button
+            variant={"secondary"}
+            onclick={() => {
+                localSponsorHidden = true;
+                localStorage.setItem("already-donated", Date.now().toString());
+            }}>I already donated</Button>
     </div>
 {/if}
 

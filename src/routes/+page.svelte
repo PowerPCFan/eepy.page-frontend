@@ -50,7 +50,7 @@
 </script>
 
 <svelte:head>
-    <title>eepy.page - Register subdomains for free!</title>
+    <title>Home | eepy.page</title>
 </svelte:head>
 
 <svelte:window bind:scrollY={scrollY} />

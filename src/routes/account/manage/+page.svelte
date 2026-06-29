@@ -222,6 +222,10 @@
     });
 </script>
 
+<svelte:head>
+    <title>Manage your account | eepy.page</title>
+</svelte:head>
+
 <div class="account bg-card mt-16 mr-auto ml-auto w-11/12 max-w-5xl rounded-2xl p-6">
     <h1 class="text-3xl font-semibold">Hello, {data.username}!</h1>
     <p>Email: {data.email}</p>

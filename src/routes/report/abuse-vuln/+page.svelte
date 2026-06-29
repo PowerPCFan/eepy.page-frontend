@@ -1,3 +1,7 @@
+<svelte:head>
+    <title>Report Abuse/Vulnerabilities | eepy.page</title>
+</svelte:head>
+
 <div class="bg-card mt-8 mr-auto ml-auto w-11/12 max-w-4xl rounded-xl p-4">
     <h1 class="text-2xl font-bold">Report Abuse/Vulnerabilities</h1>
     <p>To report abuse or vulnerabilities, send an email to <a href="mailto:report@eepy.page">report@eepy.page</a> with the following information:</p>

@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-    <title>Terms of Service</title>
+    <title>Terms of Service | eepy.page</title>
 </svelte:head>
 
 <Holder>
