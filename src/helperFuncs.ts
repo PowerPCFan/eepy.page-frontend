@@ -69,6 +69,29 @@ export function setAuthToken(token: string) {
     });
 }
 
+const utcDateTimeFormatter = new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "medium",
+    timeZone: "UTC",
+    hour12: false
+});
+
+const localDateTimeFormatter = new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+    timeStyle: "medium",
+    timeZoneName: "short"
+});
+
+export function formatUTCDateTime(date: Date | number | string): string {
+    const parsedDate = date instanceof Date ? date : new Date(date);
+    return `${utcDateTimeFormatter.format(parsedDate)} UTC`;
+}
+
+export function formatLocalDateTime(date: Date | number | string): string {
+    const parsedDate = date instanceof Date ? date : new Date(date);
+    return localDateTimeFormatter.format(parsedDate);
+}
+
 export function getFlagImageSrcFromEmoji(emoji: string) {
     const codePoint = Array.from(emoji)
         // @ts-ignore

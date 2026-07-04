@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getAuthToken, ServerContactor } from "$lib";
+    import { formatUTCDateTime, getAuthToken, ServerContactor } from "$lib";
     import Holder from "$lib/components/Holder.svelte";
     import Loader from "$lib/components/ui/loader/loader.svelte";
     import { onMount } from "svelte";
@@ -121,10 +121,10 @@
             <div>
                 <h2 class="text-3xl font-semibold">
                     You created your account in <span class="text-primary"
-                        >{createDate.getFullYear()}</span
+                        >{createDate.getUTCFullYear()}</span
                     >!
                 </h2>
-                <p class="text-foreground/50">(specifically {createDate.toLocaleString()})</p>
+                <p class="text-foreground/50">(specifically {formatUTCDateTime(createDate)})</p>
                 <h3 class="text-xl font-semibold">
                     That's {daysSinceCreation} days ago!
                 </h3>

@@ -29,7 +29,7 @@
         let serverContactor = new ServerContactor(getAuthToken() ?? "");
         try {
             await serverContactor.redeemCode(code);
-            consola.log("Succesfully redeemed!");
+            consola.log("successfully redeemed!");
 
             success = true;
         } catch (error) {

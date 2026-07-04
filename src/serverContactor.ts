@@ -83,13 +83,6 @@ export async function digestMessage(message: string): Promise<string> {
     return hashHex;
 }
 
-export async function createToken(username: string, password: string): Promise<string> {
-    const psw = await digestMessage(password);
-    const usr = await digestMessage(username);
-    const token = `${usr}|${psw}`;
-    return token;
-}
-
 export class UserError extends Error {
     constructor(message: string) {
         super(message);
@@ -171,16 +164,16 @@ export async function login(
     mfaCode?: string
 ): Promise<paths["/login"]["post"]["responses"]["200"]["content"]["application/json"]> {
     const hashed_username: string = await digestMessage(username);
-    const hashed_password: string = await digestMessage(password);
-
-    const token: string = `${hashed_username}|${hashed_password}`;
 
     const { data, error, response } = await client.POST("/login", {
+        body: {
+            username_hash: hashed_username,
+            password,
+            plain_username: username
+        },
         params: {
             header: {
-                "x-auth-request": token,
                 "x-mfa-code": mfaCode,
-                "x-plain-username": username, // Older versions of the backend didnt save usernames so this is the only way to give the backend the users actual username
                 "x-captcha-code": captcha
             }
         },
@@ -275,10 +268,8 @@ export async function confirmPasswordChange(
     id: string,
     password: string
 ): Promise<paths["/recovery/verify"]["post"]["responses"]["200"]["content"]["application/json"]> {
-    let hashed_password: string = await digestMessage(password);
-
     const { data, error, response } = await client.POST(`/recovery/verify`, {
-        body: { code: id, hashed_password: hashed_password }
+        body: { code: id, password }
     });
 
     if (error) {
@@ -364,14 +355,14 @@ export async function verifyDeletion(
 
 export async function recoverMfaCode(username: string, password: string, backupCode: string) {
     const hashed_username: string = await digestMessage(username);
-    const hashed_password: string = await digestMessage(password);
-
-    const token: string = `${hashed_username}|${hashed_password}`;
 
     const { data, error, response } = await client.DELETE("/mfa/recovery", {
+        body: {
+            username_hash: hashed_username,
+            password
+        },
         params: {
             header: {
-                "x-auth-request": token,
                 "x-backup-code": backupCode
             }
         }

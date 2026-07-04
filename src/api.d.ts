@@ -1246,12 +1246,28 @@ export interface components {
             /** Id */
             id: string;
         };
+        /** LoginRequest */
+        LoginRequest: {
+            /** Username Hash */
+            username_hash: string;
+            /** Password */
+            password: string;
+            /** Plain Username */
+            plain_username?: string | null;
+        };
+        /** MfaRecovery */
+        MfaRecovery: {
+            /** Username Hash */
+            username_hash: string;
+            /** Password */
+            password: string;
+        };
         /** PasswordReset */
         PasswordReset: {
             /** Code */
             code: string;
-            /** Hashed Password */
-            hashed_password: string;
+            /** Password */
+            password: string;
         };
         /** SignUp */
         SignUp: {
@@ -1517,7 +1533,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Domain deleted succesfully */
+            /** @description Domain deleted successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -1745,7 +1761,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Domain deleted succesfully */
+            /** @description Domain deleted successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -2090,7 +2106,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Succesfully retrived blogs */
+            /** @description successfully retrived blogs */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -2188,7 +2204,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Succesfully redeemed code */
+            /** @description successfully redeemed code */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -2233,7 +2249,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Email sent succesfully */
+            /** @description Email sent successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -2278,7 +2294,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Verified succesfully */
+            /** @description Verified successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -2883,13 +2899,16 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                "x-auth-request": string;
                 "x-backup-code": string;
             };
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MfaRecovery"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -2948,7 +2967,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Code created succesfully */
+            /** @description Code created successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -2998,7 +3017,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Code created succesfully */
+            /** @description Code created successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -3036,17 +3055,19 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                "x-auth-request": string;
                 "x-captcha-code": string;
                 "x-mfa-code"?: string;
-                "x-plain-username"?: string;
             };
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginRequest"];
+            };
+        };
         responses: {
-            /** @description Login succesfull */
+            /** @description Login successfull */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -3110,7 +3131,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Refreshed tokens succesfully */
+            /** @description Refreshed tokens successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -3225,7 +3246,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Sign up succesfull */
+            /** @description Sign up successfull */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -3311,7 +3332,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Succesfully registered event */
+            /** @description successfully registered event */
             200: {
                 headers: {
                     [name: string]: unknown;

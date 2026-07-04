@@ -87,7 +87,7 @@
                 throw new Error("Failed to delete domain");
             })
             .then(() => {
-                consola.info(`Deleted domain ${domain} succesfully`);
+                consola.info(`Deleted domain ${domain} successfully`);
 
                 window.gtag?.("event", "domain_delete");
                 button.deletionLoading = false;

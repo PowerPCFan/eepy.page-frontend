@@ -1,6 +1,6 @@
 <script lang="ts">
     import { dev } from "$app/environment";
-    import { createFile, getAuthToken, redirectToLogin } from "$lib";
+    import { createFile, formatLocalDateTime, getAuthToken, redirectToLogin } from "$lib";
     import * as Dialog from "$lib/components/ui/dialog/index.js";
     import * as InputOTP from "$lib/components/ui/input-otp/index.js";
     import MaterialSymbolsLockOutline from "~icons/material-symbols/lock-outline";
@@ -190,7 +190,7 @@
                 );
             })
             .then(_ => {
-                consola.info("Succesfully logged session out");
+                consola.info("successfully logged session out");
                 if (!session) {
                     Cookies.remove("auth-token", { secure: !dev });
                     localStorage.removeItem("logged-in");
@@ -554,7 +554,7 @@
                     </h2>
                 </div>
                 <p>
-                    Expires: {expires.toLocaleString()}
+                    Expires: {formatLocalDateTime(expires)}
                 </p>
                 <div class="footer flex items-center justify-between">
                     <Button

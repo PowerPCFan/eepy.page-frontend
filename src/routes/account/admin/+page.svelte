@@ -3,6 +3,7 @@
         AuthError,
         ConflictError,
         DNSError,
+        formatLocalDateTime,
         getAuthToken,
         PermissionError,
         redirectToLogin,
@@ -82,7 +83,7 @@
                 if (error instanceof AuthError) redirectToLogin(460);
                 throw new Error("failed to delete domain");
             })
-            .then(_ => toast.success("Deleted domain succesfully"));
+            .then(_ => toast.success("Deleted domain successfully"));
     }
 
     function terminateAccount(id: string) {
@@ -140,7 +141,7 @@
             })
             .then(_ => {
                 loader.hide();
-                modal.open("Updated value succesfully", `${permission} -> ${value}`);
+                modal.open("Updated value successfully", `${permission} -> ${value}`);
             });
     }
 
@@ -344,8 +345,8 @@
                         <Button variant={"ghost"} onclick={_ => serverContactor.verify(user.id)}
                             >Force verify</Button>
                     </p>
-                    <p>Created at {createdAt}</p>
-                    <p>Last login: {new Date(user.last_login * 1000)}</p>
+                    <p>Created at {formatLocalDateTime(createdAt)}</p>
+                    <p>Last login: {formatLocalDateTime(user.last_login * 1000)}</p>
                     <p>Active sessions: {user.sessions.length}</p>
                     <p>API keys: {user.api_key_amount}</p>
                     <Accordion.Root type="single">
@@ -369,7 +370,7 @@
                                                 ({"user-agent" in session ? "Old" : "New"})
                                                 {ua.getBrowser().name}
                                                 {ua.getDevice().vendor}
-                                                {date.toLocaleString()}
+                                                {formatLocalDateTime(date)}
                                             </Accordion.Trigger>
                                             <Accordion.Content>
                                                 {#if "user-agent" in session}
@@ -377,9 +378,9 @@
                                                 {:else if "agent" in session}
                                                     <p>{session.agent}</p>
                                                     <p>
-                                                        Created: {new Date(
+                                                        Created: {formatLocalDateTime(
                                                             session.created * 1000
-                                                        ).toLocaleString()}
+                                                        )}
                                                     </p>
                                                 {/if}
                                                 <p>ip: {session.ip}</p>
