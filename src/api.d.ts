@@ -230,57 +230,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/blog/get": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get */
-        get: operations["get_blog_get_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/blog/get/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get All */
-        get: operations["get_all_blog_get_all_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/blog/create": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create */
-        post: operations["create_blog_create_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/settings": {
         parameters: {
             query?: never;
@@ -604,41 +553,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/discord": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create Conn Code */
-        post: operations["create_conn_code_discord_post"];
-        /** Remove Discord Conn */
-        delete: operations["remove_discord_conn_discord_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/discord/link": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Verify Discord Link */
-        post: operations["verify_discord_link_discord_link_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/login": {
         parameters: {
             query?: never;
@@ -667,41 +581,6 @@ export interface paths {
         put?: never;
         /** Refresh */
         post: operations["refresh_refresh_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/google/callback": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Google Oauth2 */
-        get: operations["google_oauth2_auth_google_callback_post"];
-        put?: never;
-        /** Google Oauth2 */
-        post: operations["google_oauth2_auth_google_callback_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/link": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create Linking Code */
-        post: operations["create_linking_code_auth_link_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -963,6 +842,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/user/get/ips": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Find User By Ips */
+        post: operations["find_user_by_ips_admin_user_get_ips_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/user/get/referral": {
         parameters: {
             query?: never;
@@ -1027,33 +923,35 @@ export interface components {
             /** Lang */
             lang: string;
             /** Country */
-            country: components["schemas"]["CountryType"] | Record<string, never>;
+            country: components["schemas"]["CountryType"] | {
+                [key: string]: unknown;
+            };
             /** Created */
             created: number;
             /** Verified */
             verified: boolean;
             /** Permissions */
-            permissions: Record<string, never>;
+            permissions: {
+                [key: string]: unknown;
+            };
             /** Beta-Enroll */
             "beta-enroll": boolean;
             /** Sessions */
-            sessions: (components["schemas"]["NewSessionType"] | components["schemas"]["OldSessionType"])[] | Record<string, never>[];
+            sessions: (components["schemas"]["NewSessionType"] | components["schemas"]["OldSessionType"])[] | {
+                [key: string]: unknown;
+            }[];
             /** Invites */
             invites: {
                 [key: string]: components["schemas"]["InviteType"];
             };
             /** Mfa Enabled */
             mfa_enabled: boolean;
-            /** Google-Connected */
-            "google-connected": boolean;
             /** Referral-Code */
-            "referral-code": string;
+            "referral-code": string | null;
             /** Referred-People */
-            "referred-people": number;
+            "referred-people": number | null;
             /** Owned-Tlds */
             "owned-tlds": string[];
-            /** Discord-Linked */
-            "discord-linked": boolean;
             /** Domains */
             domains: {
                 [key: string]: components["schemas"]["DomainFormat"];
@@ -1063,7 +961,7 @@ export interface components {
             /** Banned */
             banned: boolean;
             /** Ban Reasons */
-            ban_reasons: string[] | string[][];
+            ban_reasons: string[] | string[][] | null;
             /** Last Login */
             last_login: number;
             /** Api Key Amount */
@@ -1074,7 +972,7 @@ export interface components {
         /** ApiCreationBody */
         ApiCreationBody: {
             /** Permissions */
-            permissions: ("register" | "modify" | "delete" | "list" | "userdetails")[];
+            permissions: components["schemas"]["ApiPermission"][];
             /** Domains */
             domains: string[];
             /** Comment */
@@ -1085,12 +983,14 @@ export interface components {
             /** Hash */
             hash: string;
         };
+        /** @enum {string} */
+        ApiPermission: "register" | "modify" | "delete" | "list" | "userdetails";
         /** ApiType */
         ApiType: {
             /** String */
             string: string;
             /** Perms */
-            perms: ("register" | "modify" | "delete" | "list" | "userdetails")[];
+            perms: components["schemas"]["ApiPermission"][];
             /** Domains */
             domains: string[];
             /** Comment */
@@ -1102,17 +1002,6 @@ export interface components {
             user_id: string;
             /** Reasons */
             reasons: string[];
-        };
-        /** BlogType */
-        BlogType: {
-            /** Url */
-            url: string;
-            /** Date */
-            date: number;
-            /** Title */
-            title: string;
-            /** Body */
-            body: string;
         };
         /** Body_webhook_kofi_webhook_post */
         Body_webhook_kofi_webhook_post: {
@@ -1146,11 +1035,17 @@ export interface components {
             /** Country Flag Url */
             country_flag_url: string;
             /** Country Flag */
-            country_flag: Record<string, never>;
+            country_flag: {
+                [key: string]: unknown;
+            };
             /** Country Currency */
-            country_currency: Record<string, never>;
+            country_currency: {
+                [key: string]: unknown;
+            };
             /** Continent */
-            continent: Record<string, never>;
+            continent: {
+                [key: string]: unknown;
+            };
             /** Latitude */
             latitude: string;
             /** Longitude */
@@ -1168,7 +1063,7 @@ export interface components {
              */
             type: "A" | "AAAA" | "CNAME" | "TXT" | "NS";
             /** Id */
-            id: string;
+            id: string | null;
         };
         /** DomainRetrieve */
         DomainRetrieve: {
@@ -1210,12 +1105,33 @@ export interface components {
             /** Used At */
             used_at?: number;
         };
+        /** IpFind */
+        IpFind: {
+            /** Ips */
+            ips: string[];
+        };
+        /** LoginRequest */
+        LoginRequest: {
+            /** Username Hash */
+            username_hash: string;
+            /** Password */
+            password: string;
+            /** Plain Username */
+            plain_username?: string | null;
+        };
         /** MFACreation */
         MFACreation: {
             /** Backup Codes */
             backup_codes: string[];
             /** App Link */
             app_link: string;
+        };
+        /** MfaRecovery */
+        MfaRecovery: {
+            /** Username Hash */
+            username_hash: string;
+            /** Password */
+            password: string;
         };
         /** NewSessionType */
         NewSessionType: {
@@ -1246,22 +1162,6 @@ export interface components {
             /** Id */
             id: string;
         };
-        /** LoginRequest */
-        LoginRequest: {
-            /** Username Hash */
-            username_hash: string;
-            /** Password */
-            password: string;
-            /** Plain Username */
-            plain_username?: string | null;
-        };
-        /** MfaRecovery */
-        MfaRecovery: {
-            /** Username Hash */
-            username_hash: string;
-            /** Password */
-            password: string;
-        };
         /** PasswordReset */
         PasswordReset: {
             /** Code */
@@ -1289,33 +1189,35 @@ export interface components {
             /** Lang */
             lang: string;
             /** Country */
-            country: components["schemas"]["CountryType"] | Record<string, never>;
+            country: components["schemas"]["CountryType"] | {
+                [key: string]: unknown;
+            };
             /** Created */
             created: number;
             /** Verified */
             verified: boolean;
             /** Permissions */
-            permissions: Record<string, never>;
+            permissions: {
+                [key: string]: unknown;
+            };
             /** Beta-Enroll */
             "beta-enroll": boolean;
             /** Sessions */
-            sessions: (components["schemas"]["NewSessionType"] | components["schemas"]["OldSessionType"])[] | Record<string, never>[];
+            sessions: (components["schemas"]["NewSessionType"] | components["schemas"]["OldSessionType"])[] | {
+                [key: string]: unknown;
+            }[];
             /** Invites */
             invites: {
                 [key: string]: components["schemas"]["InviteType"];
             };
             /** Mfa Enabled */
             mfa_enabled: boolean;
-            /** Google-Connected */
-            "google-connected": boolean;
             /** Referral-Code */
-            "referral-code": string;
+            "referral-code": string | null;
             /** Referred-People */
-            "referred-people": number;
+            "referred-people": number | null;
             /** Owned-Tlds */
             "owned-tlds": string[];
-            /** Discord-Linked */
-            "discord-linked": boolean;
         };
         /** ValidationError */
         ValidationError: {
@@ -1384,7 +1286,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Domain missing for subdomain (e.g: a.b.frii.site needs b.frii.site registered) */
+            /** @description Domain missing for subdomain (e.g: a.b.eepy.page needs b.eepy.page registered) */
             403: {
                 headers: {
                     [name: string]: unknown;
@@ -1696,7 +1598,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Domain missing for subdomain (e.g: a.b.frii.site needs b.frii.site registered) */
+            /** @description Domain missing for subdomain (e.g: a.b.eepy.page needs b.eepy.page registered) */
             403: {
                 headers: {
                     [name: string]: unknown;
@@ -1753,7 +1655,7 @@ export interface operations {
         parameters: {
             query: {
                 domain: string;
-                type?: string;
+                type?: string | null;
             };
             header?: never;
             path?: never;
@@ -1818,17 +1720,14 @@ export interface operations {
     };
     modify_api_domain_patch: {
         parameters: {
-            query: {
-                domain: string;
-                type: "A" | "AAAA" | "CNAME" | "TXT" | "NS";
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": string[];
+                "application/json": components["schemas"]["DomainType"];
             };
         };
         responses: {
@@ -1941,7 +1840,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        [key: string]: components["schemas"]["DomainFormat"];
+                        [key: string]: components["schemas"]["DomainFormat"] | null;
                     };
                 };
             };
@@ -1976,7 +1875,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": ("register" | "modify" | "delete" | "list" | "userdetails")[];
+                    "application/json": components["schemas"]["ApiPermission"][];
                 };
             };
         };
@@ -2046,116 +1945,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
-            };
-            /** @description Invalid session */
-            460: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    get_blog_get_get: {
-        parameters: {
-            query: {
-                id: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Blog found */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BlogType"];
-                };
-            };
-            /** @description Blog not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_all_blog_get_all_get: {
-        parameters: {
-            query?: {
-                n?: number;
-                content?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description successfully retrived blogs */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BlogType"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    create_blog_create_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BlogType"];
-            };
-        };
-        responses: {
-            /** @description Blog created */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
             };
             /** @description Invalid session */
             460: {
@@ -2504,7 +2293,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": Record<string, never>;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Invalid session */
@@ -2853,8 +2644,8 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "x-mfa-code"?: string;
-                "x-backup-code"?: string;
+                "x-mfa-code"?: string | null;
+                "x-backup-code"?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2958,105 +2749,12 @@ export interface operations {
             };
         };
     };
-    create_conn_code_discord_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Code created successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": string;
-                };
-            };
-            /** @description Account has linked discord but code isn't stored */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    remove_discord_conn_discord_delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Discord account detached */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    verify_discord_link_discord_link_post: {
-        parameters: {
-            query: {
-                code: string;
-                discord_id: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Code created successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Code does not exist */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Code has been linked already */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     login_login_post: {
         parameters: {
             query?: never;
             header: {
                 "x-captcha-code": string;
-                "x-mfa-code"?: string;
+                "x-mfa-code"?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3076,7 +2774,7 @@ export interface operations {
                     "application/json": unknown;
                 };
             };
-            /** @description User signed up with Google */
+            /** @description Account does not support password login */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -3146,88 +2844,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
-            };
-        };
-    };
-    google_oauth2_auth_google_callback_post: {
-        parameters: {
-            query: {
-                code: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    google_oauth2_auth_google_callback_post: {
-        parameters: {
-            query: {
-                code: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    create_linking_code_auth_link_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": Record<string, never>;
-                };
             };
         };
     };
@@ -3882,6 +3498,60 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AccountData"];
+                };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Invalid session */
+            460: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid permissions */
+            461: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    find_user_by_ips_admin_user_get_ips_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IpFind"];
+            };
+        };
+        responses: {
+            /** @description User found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountData"][];
                 };
             };
             /** @description User not found */
