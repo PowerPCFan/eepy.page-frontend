@@ -416,8 +416,9 @@
                             <p class="permission-key">{permission} -&gt;</p>
                             {#if typeof user.permissions[permission] === "boolean"}
                                 <Select.Root
-                                    onValueChange={value =>
-                                        (user.permissions[permission] = value === "true")}
+                                    onValueChange={value => (
+                                        // @ts-ignore
+                                        user.permissions[permission] = value === "true")}
                                     type="single"
                                     name="domain">
                                     <Select.Trigger class="w-1/8 min-w-24"

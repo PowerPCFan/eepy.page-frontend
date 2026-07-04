@@ -1,3 +1,5 @@
+<svelte:options runes={true} />
+
 <script lang="ts">
     import { browser } from "$app/environment";
 
@@ -14,7 +16,7 @@
         UserError
     } from "./../../../serverContactor";
 
-    let generatingNew: boolean = false;
+    let generatingNew: boolean = $state(false);
     let code: string | null = null;
 
     if (browser) {
@@ -64,9 +66,9 @@
         }
     }
 
-    let cPassword: string;
-    let password: string;
-    let username: string;
+    let cPassword: string = $state("");
+    let password: string = $state("");
+    let username: string = $state("");
 
     let modal: Modal;
 </script>

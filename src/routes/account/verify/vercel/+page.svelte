@@ -48,7 +48,6 @@
     }
 
     function connectToQueue() {
-        console.log("connecting to queue");
         serverContactor.joinVercelQueue(value, tld).catch(err => {
             alert("Failed to join queue");
             throw new Error("Failed to join queue");

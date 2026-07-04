@@ -19,7 +19,7 @@ const html = `
         }
         // @ts-ignore
         widgetId = turnstile.render("#turnstile-container", {
-            sitekey: "0x4AAAAAABiGbbOhSUc5vWl9",
+            sitekey: "0x4AAAAAADviUbGPh--ynweX",
             callback: function (token) {
                 if (window.webkit) {
                     window.webkit?.messageHandlers.turnstile.postMessage(token);

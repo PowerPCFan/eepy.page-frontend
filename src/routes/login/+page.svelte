@@ -164,7 +164,7 @@
             }
             // @ts-ignore
             widgetId = turnstile.render("#turnstile-container", {
-                sitekey: "0x4AAAAAABiGbbOhSUc5vWl9",
+                sitekey: "0x4AAAAAADviUbGPh--ynweX",
                 theme: $activeTheme,
                 callback: function (token: string) {
                     captchaToken = token;

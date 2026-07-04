@@ -458,7 +458,6 @@
                             googleAuthUrl.searchParams.set("response_type", "code");
                             googleAuthUrl.searchParams.set("scope", "openid email profile");
 
-                            console.log(data);
                             googleAuthUrl.searchParams.set(
                                 "state",
                                 JSON.stringify({

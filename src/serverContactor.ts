@@ -1,4 +1,4 @@
-import { browser } from "$app/environment";
+import { browser, dev } from "$app/environment";
 import consola from "consola";
 import Cookies from "js-cookie";
 import createClient, { type Middleware } from "openapi-fetch";
@@ -14,7 +14,7 @@ if (browser) {
     } else if (subdomain === "development") {
         serverURL = "https://alpha.eepy.page";
     }
-    if (localStorage.getItem("url_override")) {
+    if (dev && localStorage.getItem("url_override")) {
         serverURL = localStorage.getItem("url_override") ?? "https://api.eepy.page";
     }
     console.debug("Switched server url to " + serverURL);
@@ -415,7 +415,6 @@ export class ServerContactor {
     ): Promise<
         paths["/domain/modify"]["patch"]["responses"]["200"]["content"]["application/json"]
     > {
-        console.log(`Value: ${values}`);
         const { data, error, response } = await client.PATCH("/domain/modify", {
             // @ts-ignore
             body: { domain, type, values: values },
