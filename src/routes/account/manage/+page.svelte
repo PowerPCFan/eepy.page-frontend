@@ -11,7 +11,6 @@
         ConflictError,
         MFAError,
         ServerContactor,
-        serverURL,
         UserError
     } from "../../../serverContactor";
     import type { Session } from "./+page";
@@ -441,36 +440,6 @@
             </Dialog.Root>
             {#if data.permissions?.get("admin") === true}
                 <Button onclick={_ => goto("/account/admin")}>Admin dashboard</Button>
-            {/if}
-            {#if !data.googleLinked}
-                <Button
-                    onclick={async () => {
-                        await serverContactor.getOAuthLinkingCode().then(data => {
-                            const googleAuthUrl = new URL(
-                                "https://accounts.google.com/o/oauth2/v2/auth"
-                            );
-                            googleAuthUrl.searchParams.set(
-                                "client_id",
-                                "596305333437-5n6obnm72ir29vi3kier0csqb7redca2.apps.googleusercontent.com"
-                            );
-                            const redirectUrl = `${serverURL}/auth/google/callback`;
-                            googleAuthUrl.searchParams.set("redirect_uri", redirectUrl);
-                            googleAuthUrl.searchParams.set("response_type", "code");
-                            googleAuthUrl.searchParams.set("scope", "openid email profile");
-
-                            googleAuthUrl.searchParams.set(
-                                "state",
-                                JSON.stringify({
-                                    url: window.origin,
-                                    mode: "link",
-                                    "linking-code": data["code"],
-                                    redirect: redirectUrl
-                                })
-                            );
-
-                            window.location.href = googleAuthUrl.toString();
-                        });
-                    }}>Link Google account</Button>
             {/if}
             <Button onclick={_ => gpdrData()}>Download your data</Button>
             <Button onclick={_ => goto("/api/dashboard")}

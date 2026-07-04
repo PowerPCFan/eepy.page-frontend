@@ -11,7 +11,6 @@
         PermissionError,
         register,
         resendEmail,
-        serverURL,
         setAuthToken,
         UserError
     } from "$lib";
@@ -22,7 +21,6 @@
     import * as InputOTP from "$lib/components/ui/input-otp/index.js";
     import { Input } from "$lib/components/ui/input/index";
     import { Label } from "$lib/components/ui/label/index";
-    import Separator from "$lib/components/ui/separator/separator.svelte";
     import { activeTheme } from "$lib/store";
     import { REGEXP_ONLY_DIGITS } from "bits-ui";
     import consola from "consola";
@@ -390,34 +388,6 @@
             class="ml-auto inline-block text-sm underline-offset-4 hover:underline">
             {isLoggingIn ? "Sign up instead" : "Log in instead"}
         </a>
-    {/if}
-    {#if !requiresMfa}
-        <Separator />
-        <Button
-            onclick={_ => {
-                const googleAuthUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
-                googleAuthUrl.searchParams.set(
-                    "client_id",
-                    "596305333437-5n6obnm72ir29vi3kier0csqb7redca2.apps.googleusercontent.com"
-                );
-                const redirectUrl = `${serverURL}/auth/google/callback`;
-
-                googleAuthUrl.searchParams.set("redirect_uri", redirectUrl);
-                googleAuthUrl.searchParams.set("response_type", "code");
-                googleAuthUrl.searchParams.set("scope", "openid email profile");
-                googleAuthUrl.searchParams.set(
-                    "state",
-                    JSON.stringify({
-                        url: window.origin,
-                        mode: "login",
-                        redirect: redirectUrl,
-                        referrer: data.referrerCode || Cookies.get("referrer")
-                    })
-                );
-
-                window.location.href = googleAuthUrl.toString();
-            }}
-            class="mt-2 w-full">Or continue with Google</Button>
     {/if}
 </div>
 

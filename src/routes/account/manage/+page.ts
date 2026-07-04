@@ -52,7 +52,6 @@ export const load = async () => {
         sessions,
         maxSubdomains,
         permissions: new Map(Object.entries(accountSettings.permissions)) || new Map(),
-        googleLinked: accountSettings["google-connected"],
         referralCode: accountSettings["referral-code"],
         referredPeople: accountSettings["referred-people"] ?? 0,
     };
