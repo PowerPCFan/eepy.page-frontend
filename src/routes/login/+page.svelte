@@ -28,6 +28,19 @@
     import { onMount } from "svelte";
     import { fade } from "svelte/transition";
 
+    type Turnstile = {
+        ready: (callback: () => void) => void;
+        render: (
+            container: string,
+            options: {
+                sitekey: string;
+                theme: string;
+                callback: (token: string) => void;
+            }
+        ) => string;
+        reset: (widgetId: string) => void;
+    };
+
     let { data } = $props();
 
     let isLoggingIn: boolean = $state(true);
@@ -73,8 +86,44 @@
     function resetTurnstile() {
         consola.debug("Resetting captcha");
         captchaDone = false;
-        // @ts-ignore
-        turnstile.reset(widgetId);
+        const turnstile = getTurnstile();
+        if (widgetId && turnstile) {
+            turnstile.reset(widgetId);
+        }
+    }
+
+    function getTurnstile(): Turnstile | undefined {
+        return (window as Window & { turnstile?: Turnstile }).turnstile;
+    }
+
+    function loadTurnstile(): Promise<void> {
+        if (getTurnstile()) {
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve, reject) => {
+            const existingScript = document.querySelector<HTMLScriptElement>(
+                'script[src^="https://challenges.cloudflare.com/turnstile/v0/api.js"]'
+            );
+
+            if (existingScript) {
+                existingScript.addEventListener("load", () => resolve(), { once: true });
+                existingScript.addEventListener("error", () => reject(new Error("Failed to load Turnstile")), {
+                    once: true
+                });
+                return;
+            }
+
+            const script = document.createElement("script");
+            script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+            script.async = true;
+            script.defer = true;
+            script.addEventListener("load", () => resolve(), { once: true });
+            script.addEventListener("error", () => reject(new Error("Failed to load Turnstile")), {
+                once: true
+            });
+            document.head.append(script);
+        });
     }
 
     function logIn() {
@@ -151,17 +200,23 @@
             });
     }
 
-    onMount(() => {
-        // if using synchronous loading, will be called once the DOM is ready
-        //@ts-ignore
-        turnstile.ready(function () {
-            let container = document.getElementById("turnstile-container");
+    onMount(async () => {
+        try {
+            await loadTurnstile();
+        } catch (error) {
+            consola.error(error);
+            errorTitle = "Captcha failed to load";
+            errorDescription = "Please refresh the page and try again.";
+            return;
+        }
+
+        getTurnstile()?.ready(function () {
+            const container = document.getElementById("turnstile-container");
 
             if (container) {
                 container.innerHTML = "";
             }
-            // @ts-ignore
-            widgetId = turnstile.render("#turnstile-container", {
+            widgetId = getTurnstile()?.render("#turnstile-container", {
                 sitekey: "0x4AAAAAADviUbGPh--ynweX",
                 theme: $activeTheme,
                 callback: function (token: string) {
@@ -169,7 +224,7 @@
                     captchaDone = true;
                     consola.info("Solved captcha");
                 }
-            });
+            }) ?? "";
         });
 
         if (data.referrerCode) {
@@ -237,7 +292,6 @@
         rel="preload"
         href="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
         as="script" />
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
 </svelte:head>
 
 <div class="login-holder bg-card m-auto mt-8 w-[100vw] max-w-[500px] rounded-lg p-8">
