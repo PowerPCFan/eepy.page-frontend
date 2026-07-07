@@ -28,6 +28,13 @@
     import type { components } from "../../../api";
     // You can create a type alias for easier use
     type AccountData = components["schemas"]["AccountData"];
+    type DomainRecord = {
+        name: string;
+        type: string;
+        ip: string[];
+        registered: number;
+        id: string | null;
+    };
 
     let collectedUserData: AccountData[] = $state([]);
     let searchString: string = $state("");
@@ -299,7 +306,7 @@
             {/if}
             {#each collectedUserData.toReversed() as user}
                 {@const createdAt = new Date(user.created * 1000)}
-                {@const obj = Object.keys(user.domains)}
+                {@const userDomains = user.domains as unknown as DomainRecord[]}
 
                 <div class="user mt-8">
                     <h2 class={`${user.banned ? "text-red-600" : ""} text-2xl font-semibold`}>
@@ -490,13 +497,12 @@
                         </div>
                     </div>
                     <div class="domains space-y-2">
-                        {#each obj as key}
-                            {@const val = user.domains[key]}
+                        {#each userDomains as domain}
                             <div class="domain space-y-1">
-                                <h4>{key.replaceAll("[dot]", ".")}</h4>
+                                <h4>{domain.name}</h4>
                                 <div class="domain-info flex space-x-2">
-                                    <Input class="w-24" disabled value={val?.type} />
-                                    <Input class="w-full" disabled value={val?.ip} />
+                                    <Input class="w-24" disabled value={domain.type} />
+                                    <Input class="w-full" disabled value={domain.ip} />
                                 </div>
                                 <div class="delete-bar flex w-full space-x-2">
                                     <Input
@@ -505,7 +511,7 @@
                                         placeholder="Reason" />
                                     <Button
                                         onclick={_ =>
-                                            deleteDomain(key, user.id, domainDeleteReason)}
+                                            deleteDomain(domain.name, user.id, domainDeleteReason)}
                                         variant={"destructive"}>Delete</Button>
                                 </div>
                             </div>

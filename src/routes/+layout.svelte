@@ -10,10 +10,8 @@
     import NProgress from "nprogress";
     import { onMount, type Component } from "svelte";
     import MaterialSymbolsAccountCircle from "~icons/material-symbols/account-circle";
-    import MaterialSymbolsCollectionsBookmarkOutlineRounded from "~icons/material-symbols/collections-bookmark-outline-rounded";
     import MaterialSymbolsFlagRounded from "~icons/material-symbols/flag-rounded";
     import MaterialSymbolsHomeRounded from "~icons/material-symbols/home-rounded";
-    import MaterialSymbolsMenuBookRounded from "~icons/material-symbols/menu-book-rounded";
     import MaterialSymbolsTeamDashboard from "~icons/material-symbols/team-dashboard";
 
     import Button from "$lib/components/ui/button/button.svelte";
@@ -23,8 +21,6 @@
     let { children } = $props();
     let localSponsorHidden = $state(false);
     let innerWidth = $state(0);
-    let adsVisible = $state(false);
-    let towerAdsVisible = $state(false);
     let navigationTrigger = $state(0);
 
     NProgress.configure({

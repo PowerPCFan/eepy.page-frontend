@@ -1,6 +1,5 @@
 <script lang="ts">
     import { getAuthToken, redirectToLogin } from "$lib";
-    import type { Domain } from "$lib/components/DomainTable.svelte";
     import { Button } from "$lib/components/ui/button";
     import * as Dialog from "$lib/components/ui/dialog/index.js";
     import InlineAlert from "$lib/components/ui/inline-alert/inline-alert.svelte";
@@ -15,6 +14,21 @@
     import MaterialSymbolsVisibility from "~icons/material-symbols/visibility";
     import MaterialSymbolsVisibilityOff from "~icons/material-symbols/visibility-off";
     import { AuthError, ServerContactor } from "../../../serverContactor";
+
+    interface Domain {
+        type: string;
+        domain: string;
+        value: string[];
+    }
+
+    interface DomainRecord {
+        name: string;
+        type: string;
+        ip: string[];
+        registered: number;
+        id: string | null;
+    }
+
     interface Key {
         hash: string;
         perms: ("delete" | "register" | "modify" | "list" | "userdetails")[];
@@ -149,13 +163,13 @@
             })
             .then(data => {
                 domainsLoaded = true;
-                // @ts-expect-error
-                const userDomains = Object.entries(data["domains"]);
-                
-                for (let [key, value] of userDomains) {
+                if (!data) return;
+                const userDomains = data["domains"] as unknown as DomainRecord[];
+
+                for (let value of userDomains) {
                     domains.push({
                         type: value.type,
-                        domain: key,
+                        domain: value.name,
                         value: value.ip
                     });
                 }
@@ -220,7 +234,7 @@
                     <p class="font-semibold">Domains:</p>
                     <ul class="list-disc [&>li]:ml-8">
                         {#each key.domains as domain}
-                            <li>{domain}.eepy.page</li>
+                            <li>{domain}</li>
                         {/each}
                     </ul>
 

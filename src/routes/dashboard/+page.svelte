@@ -24,12 +24,19 @@
     import consola from "consola";
     import Cookies from "js-cookie";
     import { fade } from "svelte/transition";
-    import type { components } from "../../api";
 
     interface Domain {
         type: string;
         domain: string;
         values: string[];
+    }
+
+    interface DomainRecord {
+        name: string;
+        type: string;
+        ip: string[];
+        registered: number;
+        id: string | null;
     }
 
     interface DashboardDomain extends Domain {
@@ -211,12 +218,12 @@
                 // @ts-expect-error
                 ownedTlds = data["owned-tlds"];
 
-                const userDomains: [string, components["schemas"]["DomainFormat"]][] =
-                    Object.entries(data["domains"]);
+                const userDomains = data["domains"] as unknown as DomainRecord[];
 
                 Cookies.set("domain-amount", userDomains.length.toString());
 
-                for (let [key, value] of userDomains) {
+                for (let value of userDomains) {
+                    const key = value.name;
                     const lastDot = key.lastIndexOf(".");
                     const secondLastDot = key.lastIndexOf(".", lastDot - 1);
 
