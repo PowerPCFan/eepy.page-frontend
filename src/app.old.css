@@ -14,29 +14,37 @@
   --card-foreground: oklch(19.574% 0.00002 271.152);
   --popover: rgb(233, 233, 233);
   --popover-foreground: oklch(0% 0 0);
-  --primary: #b952f9;
+  --primary: rgb(38, 143, 255);
   --primary-foreground: rgb(255,255,255);
-  --secondary: #f4cbff;
-  --secondary-foreground: #000000;
-  --muted: rgb(29, 41, 61);
+  --secondary: rgb(191, 221, 255);
+  --secondary-foreground: oklch(0% 0 0);
+  --muted: oklch(0.279 0.041 260.031);
   --muted-foreground: hsl(0, 0%, 50%);
-  --accent: #e08bff;
+  --accent: rgba(38, 143, 255, 0.253);
   --accent-foreground: oklch(0% 0 0);
   --destructive: #fc191c;
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgb(216, 216, 216);
-  --ring: #b952f9;
-  --chart-1: rgb(20, 71, 230);
-  --chart-2: rgb(0, 188, 125);
-  --chart-3: rgb(254, 154, 0);
-  --chart-4: rgb(173, 70, 255);
-  --chart-5: rgb(255, 32, 86);
-  --gradient-start: color-mix(in oklab, var(--primary), white 82%);
-  --gradient-end: color-mix(in oklab, var(--secondary), white 86%);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(88.224% 0.0001 271.152);
+  --ring: oklch(65.12% 0.18991 254.244);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.208 0.042 265.755);
+  --sidebar-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.279 0.041 260.031);
+  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.551 0.027 264.364);
+  --gradient-start: rgb(255, 255, 255);
+  --gradient-end: oklch(93.025% 0.0336 259.463);
   --tw-inset-shadow: 15px;
-  --footer: rgb(196, 183, 224);
+  --footer: rgb(183, 202, 224);
 }
-
+  
 .dark {
   --alert: rgba(240,12,12, 0.2);
   --note: rgba(0, 87, 199, 0.2);
@@ -46,25 +54,33 @@
   --card-foreground: oklch(0.984 0.003 247.858);
   --popover: rgb(28, 31, 34);
   --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: #862ede;
+  --primary: rgb(0,123,255);
   --primary-foreground: rgb(255,255,255);
-  --secondary: #4C1F79;
-  --secondary-foreground: rgb(248, 250, 252);
+  --secondary: oklch(0.279 0.041 260.031);
+  --secondary-foreground: oklch(0.984 0.003 247.858);
   --muted: oklch(0.279 0.041 260.031);
   --muted-foreground: hsl(0, 0%, 83%);
-  --accent: #d561ff;
+  --accent: oklch(0.279 0.041 260.031);
   --accent-foreground: oklch(0.984 0.003 247.858);
   --destructive: #b80003;
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: #862ede;
+  --ring: hsl(208, 35%, 29%);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --gradient-start: color-mix(in oklab, var(--primary), black 20%);
-  --gradient-end: color-mix(in oklab, var(--secondary), black 62%);
+  --sidebar: oklch(0.208 0.042 265.755);
+  --sidebar-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.279 0.041 260.031);
+  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.551 0.027 264.364);
+  --gradient-start: lch(61.66% 59.87 273.43 / 0.712);
+  --gradient-end: lch(2.43% 2.83 273.1);
   --footer: var(--secondary);
 }
 
@@ -98,33 +114,15 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
   --color-footer: var(--footer);
-
-  --font-sans: "Google Sans Flex",
-    "Inter",
-    "Geist",
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    "Open Sans",
-    "Helvetica Neue",
-    sans-serif;
-
-  --font-mono:
-    "Geist Mono",
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    Monaco,
-    Consolas,
-    "Liberation Mono",
-    "Courier New",
-    monospace;
 }
 
 @layer base {
@@ -135,3 +133,4 @@
     @apply bg-background text-foreground;
   }
 }
+ 

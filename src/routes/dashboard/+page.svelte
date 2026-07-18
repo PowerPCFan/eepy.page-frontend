@@ -8,14 +8,14 @@
     import Skeleton from "$lib/components/ui/skeleton/skeleton.svelte";
     import { toast } from "svelte-sonner";
     import MaterialSymbolsAttachMoneyRounded from "~icons/material-symbols/attach-money-rounded";
-    import { createFile, redirectToLogin } from "../../helperFuncs";
+    import { redirectToLogin } from "../../helperFuncs";
     import {
         AuthError,
         ConflictError,
         DNSError,
         LimitError,
         PermissionError,
-        ServerContactor
+        ServerContactor,
     } from "../../serverContactor";
 
     import { browser } from "$app/environment";
@@ -42,6 +42,7 @@
     interface DashboardDomain extends Domain {
         tld: string;
         name: string;
+        originalType: string;
         deletionWarned: boolean;
         isLoading: boolean;
         buttonDisabled: boolean;
@@ -74,13 +75,13 @@
     let serverContactor: ServerContactor;
     let loader: Loader;
 
-    const SupportedTypes = ["A", "AAAA", "CNAME", "TXT", "NS"];
+    const SupportedTypes = ["A", "AAAA", "CNAME", "TXT"];
 
-    function deleteDomain(domain: string, button: DashboardDomain) {
+    function deleteDomain(domain: string, type: string, button: DashboardDomain) {
         consola.info(`Deleting domain ${domain}`);
 
         serverContactor
-            .deleteDomain(domain)
+            .deleteDomain(domain, type)
             .catch(error => {
                 consola.info(`Failed to delete domain ${domain}`);
 
@@ -99,9 +100,9 @@
                 window.gtag?.("event", "domain_delete");
                 button.deletionLoading = false;
                 toast.success(`Successfully deleted ${domain}`, {
-                    description: `${domain} was deleted successfully.`
+                    description: `${domain} was deleted successfully.`,
                 });
-                removeDomain(domain);
+                removeDomain(domain, type);
             });
     }
 
@@ -116,36 +117,35 @@
                 registerErrorTitle = `Failed to register ${domain + tld}`;
 
                 if (error instanceof AuthError) redirectToLogin(460);
-                else if (error instanceof DNSError)
-                    registerErrorDescription = "The domain is invalid";
+                else if (error instanceof DNSError) registerErrorDescription = "The domain is invalid";
                 else if (error instanceof PermissionError)
                     registerErrorDescription = "You must own all parts of the requested domain.";
-                else if (error instanceof LimitError)
-                    registerErrorDescription = "You have exceeded your domain limit.";
+                else if (error instanceof LimitError) registerErrorDescription = "You have exceeded your domain limit.";
                 else if (error instanceof ConflictError)
                     registerErrorDescription = "The requested domain has already been registered!";
                 else {
                     registerErrorDescription = "An unhandled error occurred.";
                 }
                 alertUpdate++;
-                throw new Error("Failed to register dommain!");
+                throw new Error("Failed to register domain!");
             })
             .then(values => {
                 consola.info("Registered domain");
                 registerNewDomainLoading = false;
                 window.gtag?.("event", "domain_register");
                 toast.success(`Successfully registered ${domain + tld}!`);
-                domains.push({
-                    type,
-                    domain: domain + tld,
-                    values,
-                    isLoading: false,
-                    deletionWarned: false,
-                    buttonDisabled: false,
-                    deletionLoading: false,
-                    tld: tld,
-                    name: domain
-                });
+                    domains.push({
+                        type,
+                        domain: domain + tld,
+                        values,
+                        isLoading: false,
+                        deletionWarned: false,
+                        buttonDisabled: false,
+                        deletionLoading: false,
+                        tld: tld,
+                        name: domain,
+                        originalType: type,
+                    });
                 Cookies.set("domain-amount", domains.length.toString());
             });
     }
@@ -154,7 +154,7 @@
         consola.info(`Modifying domain ${domain.domain}`);
 
         serverContactor
-            .modifyDomain(domain.domain, domain.values, domain.type)
+            .modifyDomain(domain.domain, domain.values, domain.type, domain.originalType)
             .catch(error => {
                 consola.warn("Failed to modify domain");
                 domain.isLoading = false;
@@ -176,18 +176,14 @@
 
                 window.gtag?.("event", "domain_modify");
                 domain.isLoading = false;
+                domain.originalType = domain.type;
                 toast.success(`Successfully modified ${domain.domain}!`);
             });
     }
 
-    function removeDomain(name: string) {
+    function removeDomain(name: string, type: string) {
         consola.debug("Removing domain from frontend");
-
-        domains = domains.filter(domain => {
-            return domain.domain !== name;
-        });
-
-        // Triggers svelte's reactivity. This was a bug in svelte 4, but I'm not sure if its necessary anymore. Keeping in case.
+        domains = domains.filter((domain) => domain.domain !== name || domain.type !== type);
         domains = [...domains];
     }
 
@@ -196,10 +192,7 @@
     }
 
     if (browser) {
-        serverContactor = new ServerContactor(
-            getAuthToken() ?? "",
-            localStorage.getItem("server_url")
-        );
+        serverContactor = new ServerContactor(getAuthToken() ?? "", localStorage.getItem("server_url"));
         serverContactor
             .getDomains()
             .catch(error => {
@@ -238,7 +231,8 @@
                         buttonDisabled: false,
                         deletionLoading: false,
                         tld: tld,
-                        name: name
+                        name: name,
+                        originalType: value.type,
                     };
                     domains.push(domain);
                 }
@@ -285,8 +279,8 @@
 <div class="domain-holder bg-card max-w-8xl sentry-unmask mt-16 mr-auto ml-auto w-11/12 rounded-2xl p-6">
     <h1 class="text-3xl font-semibold">Your domains</h1>
     <p>
-        These are all the domains you own. You can modify each parameter of them by simply clicking
-        on their respective input field.
+        These are all the domains you own. You can modify each parameter of them by simply clicking on their respective
+        input field.
     </p>
 
     <InlineAlert
@@ -298,8 +292,8 @@
 
     <div class="domains space-y-4">
         {#each domainsLoaded ? domains : createPlaceholders(data.domainAmount) as domain}
-            <div transition:fade class="domain mt-1 mb-1 flex min-h-10 space-y-0.5 space-x-1">
-                <div class="basic-controls flex w-2/5 space-x-1">
+            <div transition:fade class="domain mt-1 mb-1 flex min-h-10 gap-1 space-y-0.5">
+                <div class="basic-controls flex w-2/5 gap-1">
                     {#if domainsLoaded}
                         <Select.Root type="single" name="domain" bind:value={domain.type}>
                             <Select.Trigger class="w-1/8 min-w-24">{domain.type}</Select.Trigger>
@@ -318,7 +312,7 @@
                         {#if domainsLoaded}
                             <Input class="rounded-r-none" value={domain.name} disabled={true} />
                             <Input
-                                class="w-1/4 min-w-20 rounded-l-none border-l-0"
+                                class="w-min max-w-[15ch] shrink-0 rounded-l-none border-l-0"
                                 value={domain.tld}
                                 disabled={true} />
                         {:else}
@@ -326,25 +320,21 @@
                         {/if}
                     </div>
                 </div>
-                <div class="value w-2/5">
+                <div class="value min-w-0 w-2/5">
                     {#if domainsLoaded && domain.values}
                         {#each domain.values as _, i}
-                            <div class="flex">
-                                <Input
-                                    class="mb-1 w-[90%] rounded-r-none"
-                                    bind:value={domain.values[i]} />
-                                <div class="flex w-[10%]">
+                            <div class="flex min-w-0 gap-0">
+                                <Input class="mb-1 min-w-0 flex-1 rounded-r-none" bind:value={domain.values[i]} />
+                                <div class="flex h-9 w-16 shrink-0">
                                     <Button
-                                        class="w-[50%] rounded-none"
+                                        class="w-1/2 min-w-0 rounded-none px-0"
                                         onclick={_ => domain.values.push("0.0.0.0")}
                                         variant="secondary">+</Button>
 
                                     <Button
-                                        class="bg-destructive/30! w-[50%] rounded-l-none"
+                                        class="bg-destructive/30! w-1/2 min-w-0 rounded-l-none px-0"
                                         onclick={_ => {
-                                            domain.values = domain.values.filter(
-                                                (val, idx) => idx != i
-                                            );
+                                            domain.values = domain.values.filter((val, idx) => idx != i);
                                         }}
                                         disabled={domain.values.length <= 1}
                                         variant="destructive">-</Button>
@@ -355,7 +345,7 @@
                         <Skeleton class="h-10 w-full" />
                     {/if}
                 </div>
-                <div class="actions flex h-full w-1/4 space-x-0.5">
+                <div class="actions flex h-full min-w-0 w-1/4 gap-0.5">
                     {#if domainsLoaded}
                         <Button
                             loading={domain.isLoading}
@@ -363,8 +353,7 @@
                                 domain.isLoading = true;
                                 modifyDomain(domain);
                             }}
-                            class="h-full min-h-8 w-1/2 max-w-40"
-                            >Save</Button>
+                            class="h-full min-h-8 w-1/2 max-w-40">Save</Button>
                         <Separator orientation={"vertical"} />
                         <Button
                             loading={domain.deletionLoading}
@@ -378,7 +367,7 @@
                                     }, 700);
                                 } else {
                                     domain.deletionLoading = true;
-                                    deleteDomain(domain.domain, domain);
+                                    deleteDomain(domain.domain, domain.type, domain);
                                 }
                             }}
                             class="h-full min-h-8 w-1/2 max-w-40"
@@ -398,7 +387,7 @@
     </div>
 </div>
 
-<div class="registrar bg-card max-w-8xl mt-8 mr-auto mb-8 ml-auto w-11/12 rounded-2xl p-6 sentry-unmask">
+<div class="registrar bg-card max-w-8xl sentry-unmask mt-8 mr-auto mb-8 ml-auto w-11/12 rounded-2xl p-6">
     <InlineAlert
         variant={"error"}
         title={registerErrorTitle}
@@ -412,7 +401,7 @@
         className="mb-6"
         trigger={alertUpdate}
         renderDescriptionAsHTML />
-    <div class="content flex space-y-2 space-x-2">
+    <div class="content flex gap-2 space-y-2">
         <Select.Root bind:value={newDomainType} type="single" name="domain">
             <Select.Trigger class="w-1/8 min-w-24">{newDomainType}</Select.Trigger>
             <Select.Content>
@@ -423,11 +412,11 @@
                 {/each}
             </Select.Content>
         </Select.Root>
-        <div class="domain-bar flex">
-            <Input bind:value={newDomain} class="max-w-2xl rounded-r-none" placeholder="domain" />
+        <div class="domain-bar flex min-w-0 flex-1">
+            <Input bind:value={newDomain} class="max-w-2xl min-w-0 rounded-r-none" placeholder="domain" />
             <Select.Root
                 onValueChange={val => {
-                    if (ownedTlds.indexOf(val.slice(1)) == -1) {
+                    if (!ownedTlds.includes(val.slice(1))) {
                         let link = AVAILABLE_TLDS.find(v => val === v.tld)?.purchaseLink;
                         consola.log(`Opening ${link}`);
                         newDomainTld = ".eepy.page";
@@ -437,16 +426,17 @@
                 bind:value={newDomainTld}
                 type="single"
                 name="domain">
-                <Select.Trigger class="w-1/8 min-w-24 rounded-l-none"
-                    >{newDomainTld}</Select.Trigger>
+                <Select.Trigger
+                    class="w-min max-w-[40ch] shrink-0 rounded-l-none">
+                    {newDomainTld}
+                </Select.Trigger>
                 <Select.Content>
                     {#each AVAILABLE_TLDS.filter(tld => !(tld.hidden && !ownedTlds.includes(tld.tld.slice(1)))) as tld}
                         <Select.Item value={tld.tld} label={tld.tld}>
                             <div class="flex flex-row items-center">
                                 {tld.tld}
-                                {#if tld.purchaseLink && ownedTlds.indexOf(tld.tld.slice(1)) == -1}
-                                    <MaterialSymbolsAttachMoneyRounded
-                                        class="text-primary-secondary" />
+                                {#if tld.purchaseLink && !ownedTlds.includes(tld.tld.slice(1))}
+                                    <MaterialSymbolsAttachMoneyRounded class="text-primary-secondary" />
                                 {/if}
                             </div>
                         </Select.Item>
@@ -467,12 +457,21 @@
 
 <style>
     @media (orientation: portrait), (max-width: 700px) {
+        .domain-holder,
+        .registrar {
+            margin-top: 1.5rem;
+            width: calc(100% - 1rem);
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+        }
+
         .basic-controls {
             width: 100%;
         }
         .domain {
             flex-direction: column;
-            min-height: 8rem;
+            min-height: 0;
+            gap: 0.5rem;
         }
         .domain div {
             min-height: 2.5em;
@@ -484,15 +483,22 @@
             width: 100%;
             justify-content: space-between;
         }
+        .actions :global(button) {
+            max-width: none;
+        }
 
         .content {
             flex-direction: column;
+            gap: 0.5rem;
         }
         :global(.registrar .content button) {
             width: 100%;
         }
-        .domain-holder {
-            padding: 0.5em;
+        .domain-bar {
+            width: 100%;
+        }
+        .domain-bar :global(input) {
+            min-width: 0;
         }
     }
 </style>

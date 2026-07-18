@@ -937,9 +937,7 @@ export interface components {
             /** Beta-Enroll */
             "beta-enroll": boolean;
             /** Sessions */
-            sessions: (components["schemas"]["NewSessionType"] | components["schemas"]["OldSessionType"])[] | {
-                [key: string]: unknown;
-            }[];
+            sessions: components["schemas"]["NewSessionType"][];
             /** Invites */
             invites: {
                 [key: string]: components["schemas"]["InviteType"];
@@ -953,9 +951,7 @@ export interface components {
             /** Owned-Tlds */
             "owned-tlds": string[];
             /** Domains */
-            domains: {
-                [key: string]: components["schemas"]["DomainFormat"];
-            };
+            domains: components["schemas"]["DomainRecord"][];
             /** Id */
             id: string;
             /** Banned */
@@ -1051,8 +1047,8 @@ export interface components {
             /** Longitude */
             longitude: string;
         };
-        /** DomainFormat */
-        DomainFormat: {
+        /** DomainRecord */
+        DomainRecord: {
             /** Ip */
             ip: string[] | string;
             /** Registered */
@@ -1061,16 +1057,16 @@ export interface components {
              * Type
              * @enum {string}
              */
-            type: "A" | "AAAA" | "CNAME" | "TXT" | "NS";
+            type: "A" | "AAAA" | "CNAME" | "TXT";
             /** Id */
             id: string | null;
+            /** Name */
+            name: string;
         };
         /** DomainRetrieve */
         DomainRetrieve: {
             /** Domains */
-            domains: {
-                [key: string]: components["schemas"]["DomainFormat"];
-            };
+            domains: components["schemas"]["DomainRecord"][];
             /** Owned Tlds */
             owned_tlds: string[];
         };
@@ -1084,7 +1080,9 @@ export interface components {
              * Type
              * @enum {string}
              */
-            type: "A" | "AAAA" | "CNAME" | "TXT" | "NS";
+            type: "A" | "AAAA" | "CNAME" | "TXT";
+            /** Old Type */
+            old_type?: ("A" | "AAAA" | "CNAME" | "TXT") | null;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -1151,17 +1149,6 @@ export interface components {
             /** Ip */
             ip: string;
         };
-        /** OldSessionType */
-        OldSessionType: {
-            /** User-Agent */
-            "user-agent": string;
-            /** Ip */
-            ip: string;
-            /** Expires */
-            expires: number;
-            /** Id */
-            id: string;
-        };
         /** PasswordReset */
         PasswordReset: {
             /** Code */
@@ -1203,9 +1190,7 @@ export interface components {
             /** Beta-Enroll */
             "beta-enroll": boolean;
             /** Sessions */
-            sessions: (components["schemas"]["NewSessionType"] | components["schemas"]["OldSessionType"])[] | {
-                [key: string]: unknown;
-            }[];
+            sessions: components["schemas"]["NewSessionType"][];
             /** Invites */
             invites: {
                 [key: string]: components["schemas"]["InviteType"];
@@ -1428,6 +1413,7 @@ export interface operations {
         parameters: {
             query: {
                 domain: string;
+                type?: string | null;
             };
             header?: never;
             path?: never;
@@ -1839,9 +1825,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: components["schemas"]["DomainFormat"] | null;
-                    };
+                    "application/json": components["schemas"]["DomainRecord"][];
                 };
             };
             /** @description Invalid API */

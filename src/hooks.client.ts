@@ -9,7 +9,7 @@ Sentry.init({
     sampleRate: 0.2,
     tracesSampleRate: 0.05,
     tunnel: "/sentry",
-    integrations: [replayIntegration()]
+    integrations: [replayIntegration()],
 });
 
 export const handleError = handleErrorWithSentry();

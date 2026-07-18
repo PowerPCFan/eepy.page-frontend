@@ -1,32 +1,30 @@
 <script lang="ts">
     import { afterNavigate, beforeNavigate } from "$app/navigation";
-    import Analytics from "$lib/components/Analytics.svelte";
     import Banner from "$lib/components/Banner.svelte";
+    import CookieConsent from "$lib/components/CookieConsent.svelte";
     import Header from "$lib/components/Header.svelte";
     import { Toaster } from "$lib/components/ui/sonner";
     import "$lib/nprogress.css";
     import { sidebarOpen } from "$lib/store";
     import consola from "consola";
     import NProgress from "nprogress";
-    import { onMount, type Component } from "svelte";
     import MaterialSymbolsAccountCircle from "~icons/material-symbols/account-circle";
     import MaterialSymbolsFlagRounded from "~icons/material-symbols/flag-rounded";
     import MaterialSymbolsHomeRounded from "~icons/material-symbols/home-rounded";
     import MaterialSymbolsTeamDashboard from "~icons/material-symbols/team-dashboard";
+    import type { Component } from "svelte";
 
-    import Button from "$lib/components/ui/button/button.svelte";
-    import { isBrowser } from "@sentry/core";
     import "../app.css";
+    import Donate from "$lib/components/Donate.svelte";
 
-    let { children } = $props();
-    let localSponsorHidden = $state(false);
+    let { children, data } = $props();
     let innerWidth = $state(0);
     let navigationTrigger = $state(0);
 
     NProgress.configure({
         minimum: 0.55,
         trickle: true,
-        trickleSpeed: 200
+        trickleSpeed: 200,
     });
 
     afterNavigate(() => {
@@ -41,17 +39,6 @@
     beforeNavigate(() => {
         consola.debug("Starting navigation");
         NProgress.start();
-    });
-
-    onMount(() => {
-        const dismissed = localStorage.getItem("donation-dismissed");
-        let dismissedTime = dismissed ? Number(dismissed) : 0;
-        const threeDaysSecs = 3 * 24 * 60 * 60;
-        const threeDaysMillis = threeDaysSecs * 1000;
-        if (dismissedTime > 0 && ((Date.now() - dismissedTime) > threeDaysMillis)) {
-            localStorage.removeItem("donation-dismissed");
-            dismissedTime = 0;
-        }
     });
 </script>
 
@@ -70,58 +57,26 @@
 
 <Header>
     {@render navbarLink(MaterialSymbolsHomeRounded, "/", "Home")}
-    {@render navbarLink(
-        MaterialSymbolsTeamDashboard,
-        "/dashboard",
-        "Dashboard",
-        false
-    )}
-    {@render navbarLink(
-        MaterialSymbolsAccountCircle,
-        "/account/manage",
-        "Account",
-        false
-    )}
+    {@render navbarLink(MaterialSymbolsTeamDashboard, "/dashboard", "Dashboard", false)}
+    {@render navbarLink(MaterialSymbolsAccountCircle, "/account/manage", "Account", false)}
     {@render navbarLink(MaterialSymbolsFlagRounded, "/report", "Report")}
 </Header>
 
 <Banner />
 
-<Analytics />
+<CookieConsent consentMode={data.consent.mode} />
 
-{#if isBrowser() && !localStorage.getItem("donation-dismissed") && !localSponsorHidden && !localStorage.getItem("already-donated")}
-    <div class="flex w-full items-center justify-around p-4">
-        <div>
-            <h1 class="text-2xl font-semibold">Have you considered donating?</h1>
-            <p class="max-w-[65ch]">
-                eepy.page has never been profitable, but due to raised domain prices and server costs, we are losing more money than ever. Even small donations would help out immensely.
-            </p>
-            <a href="https://ko-fi.com/powerpcfan">Donate on Ko-fi</a>
-        </div>
-
-        <Button
-            variant="destructive"
-            onclick={() => {
-                localSponsorHidden = true;
-                localStorage.setItem("donation-dismissed", Date.now().toString());
-            }}>Remind me later</Button>
-        <Button
-            variant={"secondary"}
-            onclick={() => {
-                localSponsorHidden = true;
-                localStorage.setItem("already-donated", Date.now().toString());
-            }}>I already donated</Button>
-    </div>
-{/if}
+<Donate />
 
 <svelte:head>
-    <link
-        rel="preload"
-        as="font"
-        href="/fonts/InterVariable.woff2"
-        type="font/woff2"
-        crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+    <!-- Geist Mono, Geist, Google Sans Flex -->
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:ital,wght@0,100..900;1,100..900&family=Geist:wght@100..900&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet">
+
+    <link rel="preload" as="font" href="/fonts/InterVariable.woff2" type="font/woff2" crossorigin="anonymous" />
 </svelte:head>
+
 <svelte:window bind:innerWidth={innerWidth} />
 
 <main class="h-full min-h-screen">
@@ -137,8 +92,13 @@
         font-display: swap;
     }
 
-    :global(*) {
-        font-family: "Inter", sans-serif;
+    :global(*, *::before, *::after) {
+        font-family: var(--font-sans);
+        box-sizing: border-box;
+    }
+
+    :global(code, pre, kbd, samp) {
+        font-family: var(--font-mono);
     }
 
     :global(a) {

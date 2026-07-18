@@ -411,13 +411,14 @@ export class ServerContactor {
     async modifyDomain(
         domain: string,
         values: string[],
-        type: string
+        type: string,
+        oldType: string
     ): Promise<
         paths["/domain/modify"]["patch"]["responses"]["200"]["content"]["application/json"]
     > {
         const { data, error, response } = await client.PATCH("/domain/modify", {
             // @ts-ignore
-            body: { domain, type, values: values },
+            body: { domain, type, old_type: oldType, values: values },
             params: {
                 //@ts-ignore
                 header: { "X-Auth-Token": getAuthToken() }
@@ -441,14 +442,15 @@ export class ServerContactor {
 
     async registerDomain(domain: string, type: string): Promise<string[]> {
         let value: string = "0.0.0.0";
-        if (type === "CNAME" || type === "NS") {
+        if (type === "CNAME") {
             value = "example.com";
         }
         if (type === "TXT") {
             value = "test-txt";
         }
         if (type === "AAAA") {
-            value = "0000:0000:0000:0000:0000:0000:0000:0000";
+            // value = "0000:0000:0000:0000:0000:0000:0000:0000";
+            value = "::";
         }
 
         const { data, error, response } = await client.POST("/domain/register", {
@@ -483,7 +485,8 @@ export class ServerContactor {
     }
 
     async deleteDomain(
-        domain: string
+        domain: string,
+        type: string
     ): Promise<
         paths["/domain/delete"]["delete"]["responses"]["200"]["content"]["application/json"]
     > {
@@ -491,7 +494,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: { "X-Auth-Token": getAuthToken() },
-                query: { domain: domain }
+                query: { domain: domain, type: type }
             }
         });
 
@@ -1272,7 +1275,7 @@ export class ServerContactor {
         return data;
     }
 
-    async adminDeleteDomain(account: string, domain: string, reason: string) {
+    async adminDeleteDomain(account: string, domain: string, type: string, reason: string) {
         const { data, error, response } = await client.DELETE("/admin/domain/delete", {
             params: {
                 //@ts-ignore
@@ -1282,7 +1285,9 @@ export class ServerContactor {
                 query: {
                     userid: account,
                     reason: reason,
-                    domain: domain
+                    domain: domain,
+                    // @ts-ignore
+                    type: type
                 }
             }
         });

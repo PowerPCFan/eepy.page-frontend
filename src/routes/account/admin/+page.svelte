@@ -82,9 +82,9 @@
         return input;
     }
 
-    function deleteDomain(domain: string, userId: string, reason: string) {
+    function deleteDomain(domain: string, type: string, userId: string, reason: string) {
         serverContactor
-            .adminDeleteDomain(userId, domain, reason)
+            .adminDeleteDomain(userId, domain, type, reason)
             .catch(error => {
                 if (error instanceof PermissionError) redirectToLogin(461);
                 if (error instanceof AuthError) redirectToLogin(460);
@@ -366,12 +366,7 @@
                                 <Accordion.Root type="multiple">
                                     {#each user.sessions as session}
                                         {@const date = new Date(session.expires * 1000)}
-                                        {@const ua =
-                                            "user-agent" in session
-                                                ? new UAParser(session["user-agent"])
-                                                : "agent" in session
-                                                    ? new UAParser(session["agent"])
-                                                    : new UAParser("")}
+                                        {@const ua = new UAParser(session["agent"])}
                                         <Accordion.Item>
                                             <Accordion.Trigger>
                                                 ({"user-agent" in session ? "Old" : "New"})
@@ -446,6 +441,7 @@
                                         updatePermission(
                                             user.id,
                                             permission,
+                                            // @ts-ignore
                                             user.permissions[permission] ?? 0
                                         )}>Update</Button>
                             </div>
@@ -511,7 +507,7 @@
                                         placeholder="Reason" />
                                     <Button
                                         onclick={_ =>
-                                            deleteDomain(domain.name, user.id, domainDeleteReason)}
+                                            deleteDomain(domain.name, domain.type, user.id, domainDeleteReason)}
                                         variant={"destructive"}>Delete</Button>
                                 </div>
                             </div>

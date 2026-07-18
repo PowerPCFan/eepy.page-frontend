@@ -27,6 +27,7 @@ export function redirectToLogin(
         }
     }, timeoutSeconds * 1000);
 }
+
 export function createFile(filename: string, content: string): boolean {
     consola.info("Creating a downloadable file");
 
@@ -35,19 +36,6 @@ export function createFile(filename: string, content: string): boolean {
     a.setAttribute("download", filename);
     a.click();
     return true;
-}
-export function getFlagEmoji(countryCode: String): string {
-    if (countryCode == "en") {
-        countryCode = "gb";
-    }
-    if (countryCode == "ar") {
-        countryCode = "sa";
-    }
-    let codePoints = countryCode
-        .toUpperCase()
-        .split("")
-        .map(char => 127397 + char.charCodeAt(0));
-    return String.fromCodePoint(...codePoints);
 }
 
 export function getAuthToken() {
@@ -100,16 +88,7 @@ export function formatLocalDateTime(date: Date | number | string): string {
     return localDateTimeFormatter.format(parsedDate);
 }
 
-export function getFlagImageSrcFromEmoji(emoji: string) {
-    const codePoint = Array.from(emoji)
-        // @ts-ignore
-        .map(c => c.codePointAt(0).toString(16))
-        .join("-");
-
-    return `https://twemoji.maxcdn.com/v/latest/svg/${codePoint}.svg`;
-}
-
-export function updateThemeBody(theme: string) {
+export function changeTheme(theme: string) {
     if (theme === "light") {
         document.body.classList.remove("dark");
     } else if (theme === "dark") {
@@ -121,10 +100,7 @@ export function updateThemeBody(theme: string) {
             document.body.classList.add("light");
         }
     }
-}
 
-export function changeTheme(theme: string) {
-    updateThemeBody(theme);
     activeTheme.set(theme);
     window.location.reload();
 }

@@ -11,7 +11,7 @@
         ConflictError,
         MFAError,
         ServerContactor,
-        UserError
+        UserError,
     } from "../../../serverContactor";
     import type { Session } from "./+page";
 
@@ -96,7 +96,7 @@
                 if (error instanceof CodeError) {
                     consola.warn("Invalid MFA code");
                     toast.error("Invalid code", {
-                        description: "This code has either expired, or is invalid."
+                        description: "This code has either expired, or is invalid.",
                     });
                     return;
                 }
@@ -129,13 +129,13 @@
                 if (error instanceof CodeError) {
                     consola.warn("Invalid MFA code while removing MFA");
                     toast.error("Invalid code", {
-                        description: "Please refresh and try again"
+                        description: "Please refresh and try again",
                     });
                     return;
                 }
 
                 toast.error("An unhandled error occurred.", {
-                    description: "Please contact support if this error persists."
+                    description: "Please contact support if this error persists.",
                 });
                 throw new Error("Failed to verify code");
             })
@@ -159,7 +159,7 @@
                 else if (err instanceof MFAError) toast.error("Invalid two-factor authentication code.");
                 else
                     toast.error("Failed to delete your account", {
-                        description: "Please contact support if this error persists."
+                        description: "Please contact support if this error persists.",
                     });
                 throw new Error("Failed to delete account");
             })
@@ -168,7 +168,7 @@
                 toast.success("Please check your email", {
                     description:
                         "A link to delete your account has been sent to your email. If you cannot find it, please check the spam folder",
-                    duration: 9000
+                    duration: 9000,
                 });
             });
     }
@@ -225,7 +225,7 @@
     <title>Manage your account | eepy.page</title>
 </svelte:head>
 
-<div class="account bg-card mt-16 mr-auto ml-auto w-11/12 max-w-5xl rounded-2xl p-6">
+<div class="account bg-card mt-16 mr-auto ml-auto w-11/12 max-w-5xl overflow-x-auto rounded-2xl p-6">
     <h1 class="text-3xl font-semibold">Hello, {data.username}!</h1>
     <p>Email: {data.email}</p>
     <h3 id="username">Username: {data.username}</h3>
@@ -281,9 +281,7 @@
                                 </InputOTP.Root>
                             {/if}
 
-                            <Button
-                                onclick={_ => (usingBackupCode = !usingBackupCode)}
-                                variant={"ghost"}
+                            <Button onclick={_ => (usingBackupCode = !usingBackupCode)} variant={"ghost"}
                                 >{#if usingBackupCode}Use authenticator app{:else}Use a backup code{/if}</Button>
                         </Dialog.Header>
 
@@ -313,17 +311,12 @@
                             {:else}
                                 <Dialog.Title>Setup 2Fa</Dialog.Title>
                                 {#if !mfaIsVerified}
-                                    <Dialog.Description>
-                                        Scan this QR code in your authenticator app
-                                    </Dialog.Description>
+                                    <Dialog.Description>Scan this QR code in your authenticator app</Dialog.Description>
 
                                     <QR backgroundFill="white" data={mfaUrl} />
-                                    <Button href={mfaUrl} variant={"link"}
-                                        >Or alternatively, use this link</Button>
+                                    <Button href={mfaUrl} variant={"link"}>Or alternatively, use this link</Button>
 
-                                    <h2 class="text-xl font-semibold">
-                                        Now enter your 2FA code
-                                    </h2>
+                                    <h2 class="text-xl font-semibold">Now enter your 2FA code</h2>
 
                                     <InputOTP.Root
                                         bind:value={mfaCode}
@@ -343,7 +336,8 @@
                                     </InputOTP.Root>
                                 {:else}
                                     <h2 class="text-xl font-semibold">
-                                        Please save these backup codes somewhere safe. If you get locked out, you cannot recover your account without these.
+                                        Please save these backup codes somewhere safe. If you get locked out, you cannot
+                                        recover your account without these.
                                     </h2>
                                     <ul class="list-disc [&>li]:ml-8">
                                         {#each backupCodes as code}
@@ -404,9 +398,7 @@
                                 </InputOTP.Root>
                             {/if}
 
-                            <Button
-                                onclick={_ => (usingBackupCode = !usingBackupCode)}
-                                variant={"ghost"}
+                            <Button onclick={_ => (usingBackupCode = !usingBackupCode)} variant={"ghost"}
                                 >{#if usingBackupCode}Use authenticator app{:else}Use a backup code{/if}</Button>
                         {/if}
                     </Dialog.Header>
@@ -414,8 +406,7 @@
                     <Dialog.Footer>
                         <div class="space-y-2">
                             <p class="text-sm">
-                                This is a destructive action which cannot be undone. Are you sure you want
-                                to continue?
+                                This is a destructive action which cannot be undone. Are you sure you want to continue?
                             </p>
                             <div class="flex space-x-2">
                                 <Checkbox bind:checked={deleteAccountChecked} id="understand" />
@@ -442,8 +433,7 @@
                 <Button onclick={_ => goto("/account/admin")}>Admin dashboard</Button>
             {/if}
             <Button onclick={_ => gpdrData()}>Download your data</Button>
-            <Button onclick={_ => goto("/api/dashboard")}
-                >Manage your API keys</Button>
+            <Button onclick={_ => goto("/api/dashboard")}>Manage your API keys</Button>
             <Button variant={"secondary"} onclick={_ => logOut()}>Log out</Button>
         </div>
     </div>
@@ -453,11 +443,11 @@
         <h1 class="text-2xl font-semibold">Referrals</h1>
         {#if data.referralCode}
             {@const link = `${window.origin}/login?ref=${data.referralCode}`}
-            <div>
+            <div class="overflow-x-auto">
                 <h2 class="bg-background w-fit rounded-md p-2 text-xl font-semibold">
                     {data.referralCode}
                 </h2>
-                <a class="ml-4" href={link}>{link}</a>
+                <a class="ml-4 break-all" href={link}>{link}</a>
                 <p class="ml-4">Referred users: {data.referredPeople}</p>
             </div>
         {:else}
@@ -504,9 +494,7 @@
         {#each sessions as session}
             {@const ua = new UAParser(session.user_agent)}
             {@const expires = new Date(session.expires * 1000)}
-            <div
-                transition:fade={{ duration: 100 }}
-                class="session bg-popover w-full max-w-96 rounded-xl p-4">
+            <div transition:fade={{ duration: 100 }} class="session bg-popover w-full max-w-96 rounded-xl p-4">
                 <div class="device flex items-center">
                     {#if ua.getDevice().type === "mobile"}
                         <MaterialSymbolsSmartphone class="text-foreground/70 text-4xl" />

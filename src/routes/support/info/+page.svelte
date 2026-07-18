@@ -30,14 +30,14 @@
 </script>
 
 <Holder>
-    <h1 class="text-2xl font-semibold">Technical information:</h1>
-    <code class="font-mono" bind:this={code}>
-        commit: {commit}<br>
-        server: {serverURL}<br>
-        width: {deviceWidth}<br>
-        height: {deviceHeight}<br>
-        user agent: {useragent}<br>
-        username: {userId}<br>
+    <h1 class="text-2xl font-semibold">Technical information</h1>
+    <code bind:this={code}>
+        Commit: {commit}<br>
+        Server: {serverURL}<br>
+        Width: {deviceWidth}<br>
+        Height: {deviceHeight}<br>
+        User agent: {useragent}<br>
+        Username: {userId}<br>
     </code>
     <Button onclick={_ => copy(code.innerText)}>Copy to clipboard</Button>
 </Holder>

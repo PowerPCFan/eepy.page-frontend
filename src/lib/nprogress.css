@@ -14,7 +14,6 @@
 }
 
 
-/* Remove these to get rid of the spinner */
 #nprogress .spinner {
     display: block;
     position: fixed;
@@ -26,7 +25,6 @@
 #nprogress .spinner-icon {
     width: 18px;
     height: 18px;
-    box-sizing: border-box;
 
     border: solid 2px transparent;
     border-top-color: var(--primary);

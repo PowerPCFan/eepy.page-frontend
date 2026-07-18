@@ -12,7 +12,7 @@
         register,
         resendEmail,
         setAuthToken,
-        UserError
+        UserError,
     } from "$lib";
     import favicon from "$lib/assets/favicon.svg";
     import { Button } from "$lib/components/ui/button/index";
@@ -133,8 +133,7 @@
                 errorTitle = "Sign up failed";
                 if (error instanceof ConflictError) errorDescription = "Username is taken";
                 if (error instanceof UserError) errorDescription = "Email is already in use";
-                if (error instanceof CaptchaError)
-                    errorDescription = "Please solve the captcha before continuing";
+                if (error instanceof CaptchaError) errorDescription = "Please solve the captcha before continuing";
 
                 resetTurnstile();
                 consola.warn(errorDescription);
@@ -168,7 +167,7 @@
                     captchaToken = token;
                     captchaDone = true;
                     consola.info("Solved captcha");
-                }
+                },
             });
         });
 
@@ -219,13 +218,7 @@
 
             consola.debug(`Checking login...: ${actionButtonDisabled}`);
         } else {
-            if (
-                repeatPassword !== password ||
-                !username ||
-                !email ||
-                emailInvalid ||
-                !agreementsChecked
-            )
+            if (repeatPassword !== password || !username || !email || emailInvalid || !agreementsChecked)
                 actionButtonDisabled = true;
             else actionButtonDisabled = false;
         }
@@ -233,14 +226,11 @@
 </script>
 
 <svelte:head>
-    <link
-        rel="preload"
-        href="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-        as="script" />
+    <link rel="preload" href="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" as="script" />
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
 </svelte:head>
 
-<div class="login-holder bg-card m-auto mt-8 w-[100vw] max-w-[500px] rounded-lg p-8">
+<div class="login-holder bg-card m-auto mt-8 w-[calc(100%-1rem)] max-w-[500px] rounded-lg p-4 sm:p-8">
     <div class="flex flex-col">
         <img class="w-8" src={favicon} alt="logo" />
         <h1 class="text-3xl font-bold">
@@ -269,8 +259,7 @@
                     .then(_ => {
                         resendEmailClicked = false;
                         alertTitle = "Please verify your account";
-                        alertDescription =
-                            "An email has been sent to your inbox. Please check your spam folder.";
+                        alertDescription = "An email has been sent to your inbox. Please check your spam folder.";
                     });
             }}>Resend email verification</Button>
     {/if}
@@ -287,10 +276,7 @@
                     {#snippet children({ cells })}
                         <InputOTP.Group>
                             {#each cells as cell (cell)}
-                                <InputOTP.Slot
-                                    class="h-14 text-2xl"
-                                    aria-invalid={mfaInvalid}
-                                    cell={cell} />
+                                <InputOTP.Slot class="h-14 text-2xl" aria-invalid={mfaInvalid} cell={cell} />
                             {/each}
                         </InputOTP.Group>
                     {/snippet}
@@ -314,12 +300,7 @@
             <div class="flex flex-col gap-6">
                 <div class="grid gap-2">
                     <Label for="username">Username</Label>
-                    <Input
-                        bind:value={username}
-                        id="username"
-                        type="text"
-                        placeholder="username"
-                        required />
+                    <Input bind:value={username} id="username" type="text" placeholder="username" required />
 
                     {#if !isLoggingIn}
                         <Label for="email">Email</Label>
@@ -343,12 +324,7 @@
                             </a>
                         {/if}
                     </div>
-                    <Input
-                        bind:value={password}
-                        id="password"
-                        type="password"
-                        placeholder="*********"
-                        required />
+                    <Input bind:value={password} id="password" type="password" placeholder="*********" required />
                     {#if !isLoggingIn}
                         <Label for="repeat-password">Confirm password</Label>
                         <Input
@@ -360,10 +336,7 @@
                             required />
 
                         <div class="agreement flex">
-                            <Checkbox
-                                bind:checked={agreementsChecked}
-                                class="mr-2"
-                                id="agreements" />
+                            <Checkbox bind:checked={agreementsChecked} class="mr-2" id="agreements" />
                             <Label for="agreements"
                                 >{@html 'I agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>'}</Label>
                         </div>
