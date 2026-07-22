@@ -242,8 +242,7 @@
     .content {
         background-color: var(--color-background);
         background:
-            radial-gradient(circle at -25% -25%, var(--gradient-start) 0%, var(--gradient-end) 85%),
-            url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            radial-gradient(circle at -25% -25%, var(--gradient-start) 0%, var(--gradient-end) 85%);
     }
 
     .introduction {

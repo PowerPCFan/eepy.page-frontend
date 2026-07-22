@@ -2,6 +2,7 @@
     import { getAuthToken } from "$lib";
     import Loader from "$lib/components/Loader.svelte";
     import Button from "$lib/components/ui/button/button.svelte";
+    import * as Dialog from "$lib/components/ui/dialog/index.js";
     import Input from "$lib/components/ui/input/input.svelte";
     import * as Select from "$lib/components/ui/select/index.js";
     import Separator from "$lib/components/ui/separator/separator.svelte";
@@ -43,10 +44,9 @@
         tld: string;
         name: string;
         originalType: string;
-        deletionWarned: boolean;
         isLoading: boolean;
-        buttonDisabled: boolean;
         deletionLoading: boolean;
+        dialogOpen: boolean;
     }
 
     let { data } = $props();
@@ -77,6 +77,28 @@
 
     const SupportedTypes = ["A", "AAAA", "CNAME", "TXT"];
 
+    function sortDomains(domainList: DashboardDomain[]): DashboardDomain[] {
+        return domainList.map((domain, index) => ({ domain, index })).sort((left, right) => {
+            const leftName = left.domain.domain.toLowerCase().replaceAll("_", "");
+            const rightName = right.domain.domain.toLowerCase().replaceAll("_", "");
+            if (leftName < rightName) {
+                return -1;
+            } else if (leftName > rightName) {
+                return 1;
+            }
+
+            const leftType = left.domain.type.toLowerCase();
+            const rightType = right.domain.type.toLowerCase();
+            if (leftType < rightType) {
+                return -1;
+            } else if (leftType > rightType) {
+                return 1;
+            }
+
+            return left.index - right.index;
+        }).map(({ domain }) => domain);
+    }
+
     function deleteDomain(domain: string, type: string, button: DashboardDomain) {
         consola.info(`Deleting domain ${domain}`);
 
@@ -99,6 +121,7 @@
 
                 window.gtag?.("event", "domain_delete");
                 button.deletionLoading = false;
+                button.dialogOpen = false;
                 toast.success(`Successfully deleted ${domain}`, {
                     description: `${domain} was deleted successfully.`,
                 });
@@ -134,18 +157,20 @@
                 registerNewDomainLoading = false;
                 window.gtag?.("event", "domain_register");
                 toast.success(`Successfully registered ${domain + tld}!`);
-                    domains.push({
-                        type,
-                        domain: domain + tld,
-                        values,
-                        isLoading: false,
-                        deletionWarned: false,
-                        buttonDisabled: false,
-                        deletionLoading: false,
-                        tld: tld,
-                        name: domain,
-                        originalType: type,
-                    });
+                    domains = sortDomains([
+                        ...domains,
+                        {
+                            type,
+                            domain: domain + tld,
+                            values,
+                            isLoading: false,
+                            deletionLoading: false,
+                            dialogOpen: false,
+                            tld: tld,
+                            name: domain,
+                            originalType: type,
+                        },
+                    ]);
                 Cookies.set("domain-amount", domains.length.toString());
             });
     }
@@ -215,6 +240,7 @@
 
                 Cookies.set("domain-amount", userDomains.length.toString());
 
+                const dashboardDomains: DashboardDomain[] = [];
                 for (let value of userDomains) {
                     const key = value.name;
                     const lastDot = key.lastIndexOf(".");
@@ -227,15 +253,15 @@
                         domain: key,
                         values: value.ip as string[],
                         isLoading: false,
-                        deletionWarned: false,
-                        buttonDisabled: false,
                         deletionLoading: false,
+                        dialogOpen: false,
                         tld: tld,
                         name: name,
                         originalType: value.type,
                     };
-                    domains.push(domain);
+                    dashboardDomains.push(domain);
                 }
+                domains = sortDomains(dashboardDomains);
             });
     }
 
@@ -276,12 +302,9 @@
 
 <Loader bind:this={loader} />
 
-<div class="domain-holder bg-card max-w-8xl sentry-unmask mt-16 mr-auto ml-auto w-11/12 rounded-2xl p-6">
+<div class="domain-holder bg-card max-w-8xl sentry-unmask mt-8 mr-auto ml-auto w-11/12 rounded-2xl p-6">
     <h1 class="text-3xl font-semibold">Your domains</h1>
-    <p>
-        These are all the domains you own. You can modify each parameter of them by simply clicking on their respective
-        input field.
-    </p>
+    <p class="mb-3">These are all of your domains. Modify them by using the dropdowns, fields, and buttons provided for each domain.</p>
 
     <InlineAlert
         variant={"error"}
@@ -291,116 +314,117 @@
         trigger={alertUpdate} />
 
     <div class="domains space-y-4">
-        {#each domainsLoaded ? domains : createPlaceholders(data.domainAmount) as domain}
-            <div transition:fade class="domain mt-1 mb-1 flex min-h-10 gap-1 space-y-0.5">
-                <div class="basic-controls flex w-2/5 gap-1">
-                    {#if domainsLoaded}
-                        <Select.Root type="single" name="domain" bind:value={domain.type}>
-                            <Select.Trigger class="w-1/8 min-w-24">{domain.type}</Select.Trigger>
-                            <Select.Content>
-                                {#each SupportedTypes as type}
-                                    <Select.Item value={type} label={type}>
-                                        {type}
-                                    </Select.Item>
-                                {/each}
-                            </Select.Content>
-                        </Select.Root>
-                    {:else}
-                        <Skeleton class="w-1/8 min-w-24" />
-                    {/if}
-                    <div class="domain-name flex w-full">
+        {#if domainsLoaded && domains.length === 0}
+            <div class="rounded-xl border border-dashed p-6 text-center">
+                <h2 class="text-xl font-semibold">No domains</h2>
+                <p class="text-muted-foreground">You don't have any domains &colon;&lpar;<br>Register one below to get started!</p>
+            </div>
+        {:else}
+            {#each domainsLoaded ? domains : createPlaceholders(data.domainAmount) as domain}
+                <div transition:fade class="domain mt-1 mb-1 flex min-h-10 gap-1 space-y-0.5">
+                    <div class="basic-controls flex w-2/5 gap-1">
                         {#if domainsLoaded}
-                            <Input class="rounded-r-none" value={domain.name} disabled={true} />
-                            <Input
-                                class="w-min max-w-[15ch] shrink-0 rounded-l-none border-l-0"
-                                value={domain.tld}
-                                disabled={true} />
+                            <Select.Root type="single" name="domain" bind:value={domain.type}>
+                                <Select.Trigger class="w-1/8 min-w-24">{domain.type}</Select.Trigger>
+                                <Select.Content>
+                                    {#each SupportedTypes as type}
+                                        <Select.Item value={type} label={type}>
+                                            {type}
+                                        </Select.Item>
+                                    {/each}
+                                </Select.Content>
+                            </Select.Root>
                         {:else}
-                            <Skeleton class="w-full" />
+                            <Skeleton class="w-1/8 min-w-24" />
+                        {/if}
+                        <div class="domain-name flex w-full">
+                            {#if domainsLoaded}
+                                <Input class="rounded-r-none" value={domain.name} disabled={true} />
+                                <Input
+                                    class="w-min max-w-[15ch] shrink-0 rounded-l-none border-l-0"
+                                    value={domain.tld}
+                                    disabled={true} />
+                            {:else}
+                                <Skeleton class="w-full" />
+                            {/if}
+                        </div>
+                    </div>
+                    <div class="value min-w-0 w-2/5">
+                        {#if domainsLoaded && domain.values}
+                            {#each domain.values as _, i}
+                                <div class="flex min-w-0 gap-0">
+                                    <Input class="mb-1 min-w-0 flex-1 rounded-r-none" bind:value={domain.values[i]} />
+                                    <div class="flex h-9 w-16 shrink-0">
+                                        <Button
+                                            class="text-xl w-1/2 min-w-0 rounded-none px-0"
+                                            onclick={_ => domain.values.push("0.0.0.0")}
+                                            variant="secondary">+</Button>
+
+                                        <Button
+                                            class="text-xl bg-destructive/30! w-1/2 min-w-0 rounded-l-none px-0"
+                                            onclick={_ => {
+                                                domain.values = domain.values.filter((val, idx) => idx != i);
+                                            }}
+                                            disabled={domain.values.length <= 1}
+                                            variant="destructive">-</Button>
+                                    </div>
+                                </div>
+                            {/each}
+                        {:else}
+                            <Skeleton class="h-10 w-full" />
+                        {/if}
+                    </div>
+                    <div class="actions flex h-full min-w-0 w-1/4 gap-0.5">
+                        {#if domainsLoaded}
+                            <Button
+                                loading={domain.isLoading}
+                                onclick={_ => {
+                                    domain.isLoading = true;
+                                    modifyDomain(domain);
+                                }}
+                                class="h-full min-h-8 w-1/2 max-w-40">Save</Button>
+                            <Separator orientation={"vertical"} />
+                            <Dialog.Root bind:open={domain.dialogOpen}>
+                                <Dialog.Trigger class="h-full min-h-8 w-1/2 max-w-40">
+                                    <Button
+                                        class="h-full min-h-8 w-full"
+                                        variant="destructive">Delete</Button>
+                                </Dialog.Trigger>
+                                <Dialog.Content>
+                                    <Dialog.Header>
+                                        <Dialog.Title>Delete {domain.domain}?</Dialog.Title>
+                                        <Dialog.Description>
+                                            This will permanently delete this {domain.type} record. This action cannot be undone.
+                                        </Dialog.Description>
+                                    </Dialog.Header>
+                                    <Dialog.Footer>
+                                        <Dialog.Close>
+                                            <Button variant="secondary">Cancel</Button>
+                                        </Dialog.Close>
+                                        <Button
+                                            loading={domain.deletionLoading}
+                                            onclick={_ => {
+                                                domain.deletionLoading = true;
+                                                deleteDomain(domain.domain, domain.type, domain);
+                                            }}
+                                            variant="destructive">Delete</Button>
+                                    </Dialog.Footer>
+                                </Dialog.Content>
+                            </Dialog.Root>
+                        {:else}
+                            <Skeleton class="h-full min-h-10 w-1/2 max-w-40"></Skeleton>
+                            <Skeleton class="h-full min-h-10 w-1/2 max-w-40"></Skeleton>
                         {/if}
                     </div>
                 </div>
-                <div class="value min-w-0 w-2/5">
-                    {#if domainsLoaded && domain.values}
-                        {#each domain.values as _, i}
-                            <div class="flex min-w-0 gap-0">
-                                <Input class="mb-1 min-w-0 flex-1 rounded-r-none" bind:value={domain.values[i]} />
-                                <div class="flex h-9 w-16 shrink-0">
-                                    <Button
-                                        class="w-1/2 min-w-0 rounded-none px-0"
-                                        onclick={_ => domain.values.push("0.0.0.0")}
-                                        variant="secondary">+</Button>
-
-                                    <Button
-                                        class="bg-destructive/30! w-1/2 min-w-0 rounded-l-none px-0"
-                                        onclick={_ => {
-                                            domain.values = domain.values.filter((val, idx) => idx != i);
-                                        }}
-                                        disabled={domain.values.length <= 1}
-                                        variant="destructive">-</Button>
-                                </div>
-                            </div>
-                        {/each}
-                    {:else}
-                        <Skeleton class="h-10 w-full" />
-                    {/if}
-                </div>
-                <div class="actions flex h-full min-w-0 w-1/4 gap-0.5">
-                    {#if domainsLoaded}
-                        <Button
-                            loading={domain.isLoading}
-                            onclick={_ => {
-                                domain.isLoading = true;
-                                modifyDomain(domain);
-                            }}
-                            class="h-full min-h-8 w-1/2 max-w-40">Save</Button>
-                        <Separator orientation={"vertical"} />
-                        <Button
-                            loading={domain.deletionLoading}
-                            disabled={domain.buttonDisabled}
-                            onclick={_ => {
-                                if (!domain.deletionWarned) {
-                                    domain.deletionWarned = true;
-                                    domain.buttonDisabled = true;
-                                    setTimeout(() => {
-                                        domain.buttonDisabled = false;
-                                    }, 700);
-                                } else {
-                                    domain.deletionLoading = true;
-                                    deleteDomain(domain.domain, domain.type, domain);
-                                }
-                            }}
-                            class="h-full min-h-8 w-1/2 max-w-40"
-                            variant={"destructive"}
-                            >{#if domain.deletionWarned}
-                                Confirm?
-                            {:else}
-                                Delete
-                            {/if}</Button>
-                    {:else}
-                        <Skeleton class="h-full min-h-10 w-1/2 max-w-40"></Skeleton>
-                        <Skeleton class="h-full min-h-10 w-1/2 max-w-40"></Skeleton>
-                    {/if}
-                </div>
-            </div>
-        {/each}
+            {/each}
+        {/if}
     </div>
 </div>
 
 <div class="registrar bg-card max-w-8xl sentry-unmask mt-8 mr-auto mb-8 ml-auto w-11/12 rounded-2xl p-6">
-    <InlineAlert
-        variant={"error"}
-        title={registerErrorTitle}
-        description={registerErrorDescription}
-        className="mb-6"
-        trigger={alertUpdate} />
-    <InlineAlert
-        variant={"note"}
-        title={registerNoteTitle}
-        description={registerNoteDescription}
-        className="mb-6"
-        trigger={alertUpdate}
-        renderDescriptionAsHTML />
+    <h1 class="text-3xl font-semibold">Register a domain</h1>
+    <p class="mb-3">You can register a new domain here. <em>Tip: Pick something short, memorable, and easy to type.</em></p>
     <div class="content flex gap-2 space-y-2">
         <Select.Root bind:value={newDomainType} type="single" name="domain">
             <Select.Trigger class="w-1/8 min-w-24">{newDomainType}</Select.Trigger>
@@ -413,7 +437,10 @@
             </Select.Content>
         </Select.Root>
         <div class="domain-bar flex min-w-0 flex-1">
-            <Input bind:value={newDomain} class="max-w-2xl min-w-0 rounded-r-none" placeholder="domain" />
+            <Input
+                bind:value={newDomain}
+                class="max-w-2xl min-w-0 rounded-r-none"
+                placeholder="enter a domain..." />
             <Select.Root
                 onValueChange={val => {
                     if (!ownedTlds.includes(val.slice(1))) {
@@ -453,6 +480,20 @@
             disabled={!newDomain}
             class="w-24">Register</Button>
     </div>
+
+    <InlineAlert
+        variant={"error"}
+        title={registerErrorTitle}
+        description={registerErrorDescription}
+        className="mt-3"
+        trigger={alertUpdate} />
+    <InlineAlert
+        variant={"note"}
+        title={registerNoteTitle}
+        description={registerNoteDescription}
+        className="mt-3"
+        trigger={alertUpdate}
+        renderDescriptionAsHTML />
 </div>
 
 <style>
@@ -468,10 +509,15 @@
         .basic-controls {
             width: 100%;
         }
+        .domains {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
         .domain {
             flex-direction: column;
             min-height: 0;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
         .domain div {
             min-height: 2.5em;

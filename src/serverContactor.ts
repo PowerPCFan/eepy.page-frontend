@@ -446,10 +446,9 @@ export class ServerContactor {
             value = "example.com";
         }
         if (type === "TXT") {
-            value = "test-txt";
+            value = "sample-value";
         }
         if (type === "AAAA") {
-            // value = "0000:0000:0000:0000:0000:0000:0000:0000";
             value = "::";
         }
 
