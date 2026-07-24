@@ -12,6 +12,7 @@
     import MaterialSymbolsFlagRounded from "~icons/material-symbols/flag-rounded";
     import MaterialSymbolsHomeRounded from "~icons/material-symbols/home-rounded";
     import MaterialSymbolsTeamDashboard from "~icons/material-symbols/team-dashboard";
+    import MaterialSymbolsArrowSplit from "~icons/material-symbols/arrow-split";
     import type { Component } from "svelte";
 
     import "../app.css";
@@ -58,6 +59,7 @@
 <Header>
     {@render navbarLink(MaterialSymbolsHomeRounded, "/", "Home")}
     {@render navbarLink(MaterialSymbolsTeamDashboard, "/dashboard", "Dashboard", false)}
+    {@render navbarLink(MaterialSymbolsArrowSplit, "/dashboard/tunneling", "Tunneling", false)}
     {@render navbarLink(MaterialSymbolsAccountCircle, "/account/manage", "Account", false)}
     {@render navbarLink(MaterialSymbolsFlagRounded, "/report", "Report")}
 </Header>

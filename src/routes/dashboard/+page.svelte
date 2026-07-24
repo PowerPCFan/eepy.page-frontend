@@ -47,6 +47,7 @@
         isLoading: boolean;
         deletionLoading: boolean;
         dialogOpen: boolean;
+        cloudflareTunnel: boolean;
     }
 
     let { data } = $props();
@@ -169,6 +170,7 @@
                             tld: tld,
                             name: domain,
                             originalType: type,
+                            cloudflareTunnel: false,
                         },
                     ]);
                 Cookies.set("domain-amount", domains.length.toString());
@@ -230,7 +232,7 @@
                     throw new Error("Failed to load domains");
                 }
             })
-            .then(data => {
+            .then(async data => {
                 if (!data) return;
                 domainsLoaded = true;
                 // @ts-expect-error
@@ -239,6 +241,19 @@
                 const userDomains = data["domains"] as unknown as DomainRecord[];
 
                 Cookies.set("domain-amount", userDomains.length.toString());
+
+                let cloudflareHosts = new Set<string>();
+                try {
+                    const cloudflareData = await serverContactor.cloudflareTunnels();
+                    cloudflareHosts = new Set(
+                        (cloudflareData.tunnels ?? []).map((tunnel: { hostname: string }) => tunnel.hostname),
+                    );
+                } catch (_) {
+                    // Ignore errors; cloudflare is not necessary
+
+                    // In the future maybe I want to differentiate between when someone simply
+                    // isn't using Cloudflare vs. when they are, but it errors out (real error)
+                }
 
                 const dashboardDomains: DashboardDomain[] = [];
                 for (let value of userDomains) {
@@ -258,6 +273,7 @@
                         tld: tld,
                         name: name,
                         originalType: value.type,
+                        cloudflareTunnel: cloudflareHosts.has(key),
                     };
                     dashboardDomains.push(domain);
                 }
@@ -384,33 +400,41 @@
                                 }}
                                 class="h-full min-h-8 w-1/2 max-w-40">Save</Button>
                             <Separator orientation={"vertical"} />
-                            <Dialog.Root bind:open={domain.dialogOpen}>
-                                <Dialog.Trigger class="h-full min-h-8 w-1/2 max-w-40">
-                                    <Button
-                                        class="h-full min-h-8 w-full"
-                                        variant="destructive">Delete</Button>
-                                </Dialog.Trigger>
-                                <Dialog.Content>
-                                    <Dialog.Header>
-                                        <Dialog.Title>Delete {domain.domain}?</Dialog.Title>
-                                        <Dialog.Description>
-                                            This will permanently delete this {domain.type} record. This action cannot be undone.
-                                        </Dialog.Description>
-                                    </Dialog.Header>
-                                    <Dialog.Footer>
-                                        <Dialog.Close>
-                                            <Button variant="secondary">Cancel</Button>
-                                        </Dialog.Close>
+                            {#if domain.cloudflareTunnel}
+                                <span
+                                    class="flex h-full min-h-8 w-1/2 max-w-40"
+                                    title="Delete the Cloudflare tunnel first to remove this domain">
+                                    <Button class="h-full w-full" disabled={true} variant="destructive">Delete</Button>
+                                </span>
+                            {:else}
+                                <Dialog.Root bind:open={domain.dialogOpen}>
+                                    <Dialog.Trigger class="h-full min-h-8 w-1/2 max-w-40">
                                         <Button
-                                            loading={domain.deletionLoading}
-                                            onclick={_ => {
-                                                domain.deletionLoading = true;
-                                                deleteDomain(domain.domain, domain.type, domain);
-                                            }}
+                                            class="h-full min-h-8 w-full"
                                             variant="destructive">Delete</Button>
-                                    </Dialog.Footer>
-                                </Dialog.Content>
-                            </Dialog.Root>
+                                    </Dialog.Trigger>
+                                    <Dialog.Content>
+                                        <Dialog.Header>
+                                            <Dialog.Title>Delete {domain.domain}?</Dialog.Title>
+                                            <Dialog.Description>
+                                                This will permanently delete this {domain.type} record. This action cannot be undone.
+                                            </Dialog.Description>
+                                        </Dialog.Header>
+                                        <Dialog.Footer>
+                                            <Dialog.Close>
+                                                <Button variant="secondary">Cancel</Button>
+                                            </Dialog.Close>
+                                            <Button
+                                                loading={domain.deletionLoading}
+                                                onclick={_ => {
+                                                    domain.deletionLoading = true;
+                                                    deleteDomain(domain.domain, domain.type, domain);
+                                                }}
+                                                variant="destructive">Delete</Button>
+                                        </Dialog.Footer>
+                                    </Dialog.Content>
+                                </Dialog.Root>
+                            {/if}
                         {:else}
                             <Skeleton class="h-full min-h-10 w-1/2 max-w-40"></Skeleton>
                             <Skeleton class="h-full min-h-10 w-1/2 max-w-40"></Skeleton>

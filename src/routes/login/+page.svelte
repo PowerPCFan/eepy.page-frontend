@@ -1,5 +1,6 @@
 <script lang="ts">
     import { browser } from "$app/environment";
+    import { pushState } from "$app/navigation";
     import { page } from "$app/state";
     import {
         AuthError,
@@ -162,6 +163,7 @@
             // @ts-ignore
             widgetId = turnstile.render("#turnstile-container", {
                 sitekey: "0x4AAAAAADviUbGPh--ynweX",
+                // sitekey: "1x00000000000000000000AA",
                 theme: $activeTheme,
                 callback: function (token: string) {
                     captchaToken = token;
@@ -337,8 +339,7 @@
 
                         <div class="agreement flex">
                             <Checkbox bind:checked={agreementsChecked} class="mr-2" id="agreements" />
-                            <Label for="agreements"
-                                >{@html 'I agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>'}</Label>
+                            <Label class="gap-1" for="agreements">I agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a></Label>
                         </div>
                     {/if}
                 </div>

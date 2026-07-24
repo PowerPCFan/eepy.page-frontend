@@ -6,6 +6,7 @@
     import Globe from "$lib/assets/click-globe.svg";
     import Dashboard from "$lib/assets/dash.svg";
     import Services from "$lib/assets/services.svg";
+    import Split from "$lib/assets/split.svg";
     import Footer from "$lib/components/Footer.svelte";
     import Button from "$lib/components/ui/button/button.svelte";
     import Input from "$lib/components/ui/input/input.svelte";
@@ -208,23 +209,43 @@
     <div class="selling-points mt-32 px-32">
         <div class="flex">
             <div class="visual flex w-2/5 items-center justify-start">
-                <img class="w-3/5" alt="GitHub's logo" src={GitHub} />
+                <img class="w-3/5" alt="Icon representing eepy.page tunneling" src={Split} />
             </div>
+            <div class="text w-3/5">
+                <h2 class="w-fit text-5xl font-semibold">Robust tunneling</h2>
+                <p class="mt-4 text-xl">
+                    No port forwarding? No public IP? Fear not, eepy.page provides a seamless tunneling experience! Easily forward local services to the internet with the click of a button.
+                    <br><br>
+                    Our tunneling service is powered by Cloudflare's stable global network.
+                    Simply connect a free Cloudflare account and use our simple dashboard to attach your local services to an eepy.page subdomain.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="selling-points mt-32 px-32">
+        <div class="flex">
             <div class="text w-3/5">
                 <h2 class="w-fit text-5xl font-semibold">Completely open-source</h2>
                 <p class="mt-4 text-xl">
                     Our frontend and backend are both completely open-source and open to contributions. Our backend is
-                    written in Python, and our frontend is written in SvelteKit.<br><br>
-                    Our authoritative nameservers are powered by PowerDNS, which is also open-source.
+                    written in Python (FastAPI), and our frontend uses SvelteKit.<br><br>
+                    The authoritative nameservers running our infrastructure are powered by PowerDNS, which is also open-source.
                 </p>
 
                 <Separator class="mt-4 mb-4" />
-                <p>Check out our repositories on GitHub:</p>
-                <Button href="https://github.com/PowerPCFan/eepy.page-frontend" variant={"ghost"}
-                    >Our frontend (PowerPCFan/eepy.page-frontend)</Button>
-                <br>
-                <Button href="https://github.com/PowerPCFan/eepy.page-backend" variant={"ghost"}
-                    >Our backend (PowerPCFan/eepy.page-backend)</Button>
+                <div class="flex flex-col gap-2">
+                    <p>Check out our repositories on GitHub:</p>
+                    <a href="https://github.com/PowerPCFan/eepy.page-frontend">
+                        Our frontend (PowerPCFan/eepy.page-frontend)
+                    </a>
+                    <a href="https://github.com/PowerPCFan/eepy.page-backend">
+                        Our backend (PowerPCFan/eepy.page-backend)
+                    </a>
+                </div>
+            </div>
+            <div class="visual flex w-2/5 items-center justify-end">
+                <img class="w-3/5" alt="GitHub's logo" src={GitHub} />
             </div>
         </div>
     </div>
@@ -369,13 +390,19 @@
         }
     }
 
+    @media (max-width: 900px) {
+        .selling-points {
+            padding-inline: 1rem !important;
+        }
+    }
+
     @media (max-width: 600px) {
         .introduction {
             min-height: auto;
             padding-top: 5rem;
         }
         .description h1 {
-            font-size: clamp(3.15rem, 15vw, 5.4rem);
+            font-size: clamp(2.5rem, 15vw, 5.4rem);
         }
         .about-us {
             font-size: 1.5em;
