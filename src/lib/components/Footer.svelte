@@ -14,6 +14,7 @@
         <Separator />
         <p><a href="/privacy">Privacy Policy</a></p>
         <p><a href="/terms">Terms of Service</a></p>
+        <p><a href="/faq">FAQ</a></p>
     </div>
 </div>
 

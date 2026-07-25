@@ -239,7 +239,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put?: never;
+        /** Update Tunnel */
+        put: operations["update_tunnel_serveo_tunnels__tunnel_id__put"];
         post?: never;
         /** Delete Tunnel */
         delete: operations["delete_tunnel_serveo_tunnels__tunnel_id__delete"];
@@ -1209,6 +1210,11 @@ export interface components {
             /** Ssh Fingerprint */
             ssh_fingerprint: string;
         };
+        /** TunnelUpdate */
+        TunnelUpdate: {
+            /** Local Port */
+            local_port: number;
+        };
         /** UserPageType */
         UserPageType: {
             /** Username */
@@ -1280,7 +1286,9 @@ export interface operations {
     register_domain_register_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1362,7 +1370,9 @@ export interface operations {
     modify_domain_modify_patch: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1457,7 +1467,9 @@ export interface operations {
                 domain: string;
                 type?: string | null;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1500,7 +1512,9 @@ export interface operations {
     get_domains_domain_get_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1513,6 +1527,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DomainRetrieve"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
             /** @description Invalid session */
@@ -1530,7 +1553,9 @@ export interface operations {
                 value: string;
                 tld: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1566,7 +1591,9 @@ export interface operations {
     vercel_queue_get_domain_vercel_get_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1587,6 +1614,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
             };
             /** @description Invalid session */
             460: {
@@ -1943,7 +1979,9 @@ export interface operations {
     list_tunnels_serveo_tunnels_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1960,12 +1998,30 @@ export interface operations {
                     };
                 };
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Invalid session */
+            460: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     create_tunnel_serveo_tunnels_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1995,12 +2051,67 @@ export interface operations {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Invalid session */
+            460: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    update_tunnel_serveo_tunnels__tunnel_id__put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
+            path: {
+                tunnel_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TunnelUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Invalid session */
+            460: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     delete_tunnel_serveo_tunnels__tunnel_id__delete: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path: {
                 tunnel_id: string;
             };
@@ -2026,12 +2137,21 @@ export interface operations {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Invalid session */
+            460: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     create_invite_create_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -2060,6 +2180,15 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
             /** @description Invalid session */
             460: {
                 headers: {
@@ -2072,7 +2201,9 @@ export interface operations {
     get_settings_settings_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -2085,6 +2216,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserPageType"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
             /** @description Invalid session */
@@ -2101,7 +2241,9 @@ export interface operations {
             query: {
                 code: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -2236,6 +2378,7 @@ export interface operations {
             query?: never;
             header: {
                 "x-mfa-code": string;
+                "X-Auth-Token"?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2395,7 +2538,9 @@ export interface operations {
     get_gdpr_gdpr_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -2412,6 +2557,15 @@ export interface operations {
                     };
                 };
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
             /** @description Invalid session */
             460: {
                 headers: {
@@ -2424,7 +2578,9 @@ export interface operations {
     year_wrapped_profile_wrapped_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -2437,6 +2593,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["YearWrapped"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
             /** @description Invalid session */
@@ -2453,7 +2618,9 @@ export interface operations {
             query: {
                 code: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -2510,7 +2677,9 @@ export interface operations {
     create_api_token_api_create_key_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -2557,7 +2726,9 @@ export interface operations {
     get_api_keys_api_get_keys_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -2574,6 +2745,15 @@ export interface operations {
                     };
                 };
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
             /** @description Invalid session */
             460: {
                 headers: {
@@ -2588,7 +2768,9 @@ export interface operations {
             query: {
                 hash: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -2624,7 +2806,9 @@ export interface operations {
     delete_api_key_api_delete_key_delete: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -2671,7 +2855,9 @@ export interface operations {
     create_mfa_mfa_create_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -2693,6 +2879,15 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
             /** @description Invalid session */
             460: {
                 headers: {
@@ -2707,6 +2902,7 @@ export interface operations {
             query?: never;
             header: {
                 "x-mfa-code": string;
+                "X-Auth-Token"?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2760,6 +2956,7 @@ export interface operations {
             header?: {
                 "x-mfa-code"?: string | null;
                 "x-backup-code"?: string | null;
+                "X-Auth-Token"?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3011,7 +3208,9 @@ export interface operations {
     logout_logout_patch: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3032,6 +3231,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
             };
             /** @description Invalid session */
             460: {
@@ -3096,7 +3304,9 @@ export interface operations {
                 userid: string;
                 reason: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3141,7 +3351,9 @@ export interface operations {
             query: {
                 user_id: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3207,7 +3419,9 @@ export interface operations {
             query: {
                 id: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3239,7 +3453,9 @@ export interface operations {
                 id: string;
                 tld: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3278,7 +3494,9 @@ export interface operations {
                 id: string;
                 tld: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3314,7 +3532,9 @@ export interface operations {
     can_access_admin_user_can_access_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3336,12 +3556,23 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
         };
     };
     delete_user_admin_user_delete_delete: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3390,7 +3621,9 @@ export interface operations {
             query: {
                 domain: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3443,7 +3676,9 @@ export interface operations {
                 record: string;
                 type: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3495,7 +3730,9 @@ export interface operations {
             query: {
                 id: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3547,7 +3784,9 @@ export interface operations {
             query: {
                 username: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3599,7 +3838,9 @@ export interface operations {
             query: {
                 email: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3649,7 +3890,9 @@ export interface operations {
     find_user_by_ips_admin_user_get_ips_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3705,7 +3948,9 @@ export interface operations {
             query: {
                 referral: string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3759,7 +4004,9 @@ export interface operations {
                 permission: string;
                 value: boolean | number | string;
             };
-            header?: never;
+            header?: {
+                "X-Auth-Token"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };

@@ -8,11 +8,12 @@
     import { sidebarOpen } from "$lib/store";
     import consola from "consola";
     import NProgress from "nprogress";
-    import MaterialSymbolsAccountCircle from "~icons/material-symbols/account-circle";
-    import MaterialSymbolsFlagRounded from "~icons/material-symbols/flag-rounded";
-    import MaterialSymbolsHomeRounded from "~icons/material-symbols/home-rounded";
-    import MaterialSymbolsTeamDashboard from "~icons/material-symbols/team-dashboard";
-    import MaterialSymbolsArrowSplit from "~icons/material-symbols/arrow-split";
+    import MSAccountCircle from "~icons/material-symbols/account-circle";
+    import MSFlagRounded from "~icons/material-symbols/flag-rounded";
+    import MSHomeRounded from "~icons/material-symbols/home-rounded";
+    import MSTeamDashboard from "~icons/material-symbols/team-dashboard";
+    import MSHelp from "~icons/material-symbols/help";
+    import MSArrowSplit from "~icons/material-symbols/arrow-split";
     import type { Component } from "svelte";
 
     import "../app.css";
@@ -57,11 +58,12 @@
 <Toaster />
 
 <Header>
-    {@render navbarLink(MaterialSymbolsHomeRounded, "/", "Home")}
-    {@render navbarLink(MaterialSymbolsTeamDashboard, "/dashboard", "Dashboard", false)}
-    {@render navbarLink(MaterialSymbolsArrowSplit, "/dashboard/tunneling", "Tunneling", false)}
-    {@render navbarLink(MaterialSymbolsAccountCircle, "/account/manage", "Account", false)}
-    {@render navbarLink(MaterialSymbolsFlagRounded, "/report", "Report")}
+    {@render navbarLink(MSHomeRounded, "/", "Home")}
+    {@render navbarLink(MSTeamDashboard, "/dashboard", "Dashboard", false)}
+    {@render navbarLink(MSArrowSplit, "/dashboard/tunneling", "Tunneling", false)}
+    {@render navbarLink(MSAccountCircle, "/account/manage", "Account", false)}
+    {@render navbarLink(MSFlagRounded, "/report", "Report")}
+    {@render navbarLink(MSHelp, "/faq", "FAQ")}
 </Header>
 
 <Banner />

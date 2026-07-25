@@ -157,6 +157,27 @@ export class CaptchaError extends Error {
     }
 }
 
+export type ServeoTunnel = {
+    id: string;
+    hostname: string;
+    subdomain: string;
+    service: string;
+    local_port: number;
+    ssh_fingerprint: string;
+    command: string;
+    serveo_auth_record: string;
+};
+
+type ServeoTunnelsResponse = {
+    connected: boolean;
+    tunnels: ServeoTunnel[];
+};
+
+type ServeoCreateResponse = {
+    tunnel: ServeoTunnel;
+    command: string;
+};
+
 export async function login(
     username: string,
     password: string,
@@ -562,13 +583,11 @@ export class ServerContactor {
     > {
         const { data, error } = await client.GET("/gdpr", {
             params: {
-                // @ts-expect-error
                 header: { "X-Auth-Token": getAuthToken() }
             }
         });
 
         if (error) {
-            // @ts-expect-error
             throw new Error(`Failed to get GDPR data. Status code: ${error.detail}`);
         }
 
@@ -1381,43 +1400,57 @@ export class ServerContactor {
         return data;
     }
 
-    async serveoTunnels() {
-        const response = await fetch(`${this.serverURL}/serveo/tunnels`, {
-            headers: { "X-Auth-Token": getAuthToken() ?? "" }
+    async serveoTunnels(): Promise<ServeoTunnelsResponse> {
+        const { data, error, response } = await client.GET("/serveo/tunnels", {
+            params: { header: { "X-Auth-Token": getAuthToken() ?? "" } }
         });
-        if (response.status === 460) throw new AuthError("Invalid session");
-        if (!response.ok) throw new Error("Failed to load Serveo tunnels");
-        return await response.json();
+        if (error) {
+            if (response.status === 460) throw new AuthError("Invalid session");
+            throw new Error("Failed to load Serveo tunnels");
+        }
+        return data as ServeoTunnelsResponse;
     }
 
-    async createServeoTunnel(subdomain: string, localPort: number, sshFingerprint: string) {
-        const response = await fetch(`${this.serverURL}/serveo/tunnels`, {
-            method: "POST",
-            headers: { "X-Auth-Token": getAuthToken() ?? "", "Content-Type": "application/json" },
-            body: JSON.stringify({ subdomain, local_port: localPort, ssh_fingerprint: sshFingerprint })
+    async createServeoTunnel(subdomain: string, localPort: number, sshFingerprint: string): Promise<ServeoCreateResponse> {
+        const { data, error, response } = await client.POST("/serveo/tunnels", {
+            params: { header: { "X-Auth-Token": getAuthToken() } },
+            body: { subdomain, local_port: localPort, ssh_fingerprint: sshFingerprint }
         });
-        if (response.status === 460) throw new AuthError("Invalid session");
-        if (!response.ok) throw new Error((await response.json()).detail ?? "Failed to create tunnel");
-        return await response.json();
+        if (error) {
+            if (response.status === 460) throw new AuthError("Invalid session");
+            if (response.status === 405) {
+                throw new LimitError(typeof error.detail === "string" ? error.detail : "Domain limit reached");
+            }
+            throw new Error(typeof error.detail === "string" ? error.detail : JSON.stringify(error.detail) ?? "Failed to create tunnel");
+        }
+        return data as ServeoCreateResponse;
     }
 
     async deleteServeoTunnel(id: string) {
-        const response = await fetch(`${this.serverURL}/serveo/tunnels/${encodeURIComponent(id)}`, {
-            method: "DELETE",
-            headers: { "X-Auth-Token": getAuthToken() ?? "" }
+        const { error, response } = await client.DELETE("/serveo/tunnels/{tunnel_id}", {
+            params: {
+                path: { tunnel_id: id },
+                header: { "X-Auth-Token": getAuthToken() }
+            }
         });
-        if (response.status === 460) throw new AuthError("Invalid session");
-        if (!response.ok) throw new Error("Failed to delete tunnel");
+        if (error) {
+            if (response.status === 460) throw new AuthError("Invalid session");
+            throw new Error("Failed to delete tunnel");
+        }
     }
 
-    async updateServeoTunnel(id: string, subdomain: string, localPort: number, sshFingerprint: string) {
-        const response = await fetch(`${this.serverURL}/serveo/tunnels/${encodeURIComponent(id)}`, {
-            method: "PUT",
-            headers: { "X-Auth-Token": getAuthToken() ?? "", "Content-Type": "application/json" },
-            body: JSON.stringify({ subdomain, local_port: localPort, ssh_fingerprint: sshFingerprint })
+    async updateServeoTunnel(id: string, localPort: number): Promise<ServeoCreateResponse> {
+        const { data, error, response } = await client.PUT("/serveo/tunnels/{tunnel_id}", {
+            params: {
+                path: { tunnel_id: id },
+                header: { "X-Auth-Token": getAuthToken() }
+            },
+            body: { local_port: localPort }
         });
-        if (response.status === 460) throw new AuthError("Invalid session");
-        if (!response.ok) throw new Error((await response.json()).detail ?? "Failed to update tunnel");
-        return await response.json();
+        if (error) {
+            if (response.status === 460) throw new AuthError("Invalid session");
+            throw new Error(typeof error.detail === "string" ? error.detail : JSON.stringify(error.detail) ?? "Failed to update tunnel");
+        }
+        return data as ServeoCreateResponse;
     }
 }

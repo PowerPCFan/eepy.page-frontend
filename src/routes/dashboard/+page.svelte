@@ -150,7 +150,8 @@
                 else if (error instanceof DNSError) registerErrorDescription = "The domain is invalid";
                 else if (error instanceof PermissionError)
                     registerErrorDescription = "You must own all parts of the requested domain.";
-                else if (error instanceof LimitError) registerErrorDescription = "You have exceeded your domain limit.";
+                else if (error instanceof LimitError)
+                    registerErrorDescription = "You have reached your domain limit. Delete an existing domain before registering another one.";
                 else if (error instanceof ConflictError)
                     registerErrorDescription = "The requested domain has already been registered!";
                 else {
@@ -252,11 +253,22 @@
                 Cookies.set("domain-amount", userDomains.length.toString());
 
                 let tunnelHosts = new Set<string>();
+                let tunnelRecords = new Set<string>();
                 try {
                     const tunnelData = await serverContactor.serveoTunnels();
-                    tunnelHosts = new Set(
-                        (tunnelData.tunnels ?? []).map((tunnel: { hostname: string }) => tunnel.hostname),
-                    );
+                    for (const tunnel of tunnelData.tunnels ?? []) {
+                        tunnelHosts.add(tunnel.hostname);
+                        tunnelRecords.add(tunnel.serveo_auth_record);
+                        if (!userDomains.some(domain => domain.name === tunnel.serveo_auth_record && domain.type === "TXT")) {
+                            userDomains.push({
+                                name: tunnel.serveo_auth_record,
+                                type: "TXT",
+                                ip: [tunnel.ssh_fingerprint],
+                                registered: 0,
+                                id: null,
+                            });
+                        }
+                    }
                 } catch (_) {
                     // Ignore errors; tunneling is not necessary
 
@@ -282,7 +294,7 @@
                         tld: tld,
                         name: name,
                         originalType: value.type,
-                        serveoTunnel: tunnelHosts.has(key),
+                        serveoTunnel: tunnelHosts.has(key) || tunnelRecords.has(key),
                     };
                     dashboardDomains.push(domain);
                 }
@@ -349,7 +361,7 @@
                 <div transition:fade class="domain mt-1 mb-1 flex min-h-10 gap-1 space-y-0.5">
                     <div class="basic-controls flex w-2/5 gap-1">
                         {#if domainsLoaded}
-                            <Select.Root type="single" name="domain" bind:value={domain.type}>
+                            <Select.Root type="single" name="domain" bind:value={domain.type} disabled={domain.serveoTunnel}>
                                 <Select.Trigger class="w-1/8 min-w-24">{domain.type}</Select.Trigger>
                                 <Select.Content>
                                     {#each SupportedTypes as type}
@@ -378,11 +390,12 @@
                         {#if domainsLoaded && domain.values}
                             {#each domain.values as _, i}
                                 <div class="flex min-w-0 gap-0">
-                                    <Input class="mb-1 min-w-0 flex-1 rounded-r-none" bind:value={domain.values[i]} />
+                                    <Input class="mb-1 min-w-0 flex-1 rounded-r-none" bind:value={domain.values[i]} disabled={domain.serveoTunnel} />
                                     <div class="flex h-9 w-16 shrink-0">
                                         <Button
                                             class="text-xl w-1/2 min-w-0 rounded-none px-0"
                                             onclick={_ => domain.values.push("0.0.0.0")}
+                                            disabled={domain.serveoTunnel}
                                             variant="secondary">+</Button>
 
                                         <Button
@@ -390,7 +403,7 @@
                                             onclick={_ => {
                                                 domain.values = domain.values.filter((val, idx) => idx != i);
                                             }}
-                                            disabled={domain.values.length <= 1}
+                                            disabled={domain.serveoTunnel || domain.values.length <= 1}
                                             variant="destructive">-</Button>
                                     </div>
                                 </div>
@@ -407,12 +420,14 @@
                                     domain.isLoading = true;
                                     modifyDomain(domain);
                                 }}
+                                disabled={domain.serveoTunnel}
                                 class="h-full min-h-8 w-1/2 max-w-40">Save</Button>
                             <Separator orientation={"vertical"} />
                             {#if domain.serveoTunnel}
                                 <span
-                                    class="flex h-full min-h-8 w-1/2 max-w-40"
-                                    title="Delete the tunnel first to remove this domain">
+                                    class="domain-delete-tooltip relative flex h-full min-h-8 w-1/2 max-w-40 cursor-not-allowed"
+                                    data-tooltip={`Delete the ${domain.name.startsWith("_serveo") ? domain.name.replaceAll("_serveo-authkey.", "") : domain.name}.eepy.page tunnel first to remove this domain`}
+                                    aria-label="Delete tunnel first to remove domain">
                                     <Button class="h-full w-full" disabled={true} variant="destructive">Delete</Button>
                                 </span>
                             {:else}
@@ -530,6 +545,32 @@
 </div>
 
 <style>
+    .domain-delete-tooltip::after {
+        position: absolute;
+        z-index: 10;
+        right: 0;
+        bottom: calc(100% + 0.5rem);
+        width: max-content;
+        max-width: 18rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        background: var(--foreground);
+        color: var(--background);
+        content: attr(data-tooltip);
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(0.25rem);
+        transition: opacity 150ms ease, transform 150ms ease;
+    }
+
+    .domain-delete-tooltip:hover::after,
+    .domain-delete-tooltip:focus-visible::after {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
     @media (orientation: portrait), (max-width: 700px) {
         .domain-holder,
         .registrar {

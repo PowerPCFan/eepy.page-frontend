@@ -8,7 +8,7 @@
 
 <Holder>
     <h1>Terms of Service</h1>
-    <p>Last updated: July 12, 2026</p>
+    <p>Last updated: July 25, 2026</p>
 
     <p>
         These Terms of Service apply to eepy.page and official eepy.page services, including the
@@ -58,6 +58,44 @@
         redirects to, or is used for.
     </p>
 
+    <h2>Tunneling</h2>
+    <p>
+        eepy.page may provide an optional tunneling feature that provisions DNS records for an SSH reverse tunnel
+        through the third-party Serveo service. Using this feature also requires you to create and maintain your own
+        Serveo account and configure your SSH public key and domain in the Serveo dashboard.
+    </p>
+
+    <p>
+        eepy.page does not receive or store your Serveo password, private SSH key, or other private credentials. You are
+        responsible for protecting those credentials and for following Serveo's terms, policies, and instructions.
+    </p>
+
+    <p>
+        You authorize eepy.page to publish and manage the DNS records needed for your configured tunnel, including a
+        CNAME record and a public TXT authorization record. SSH fingerprints and DNS records are not secrets; do not
+        enter a private key, password, token, or other confidential value into a tunnel field.
+    </p>
+
+    <p>
+        Tunnels are intended for personal, educational, hobbyist, and development use. Do not use them for illegal
+        activity, abuse, phishing, malware, credential theft, denial-of-service attacks, high-risk production systems,
+        or any activity prohibited by these Terms or Serveo's <a href="https://serveo.net/terms" target="_blank" rel="noopener noreferrer">policies</a>.
+    </p>
+
+    <p>
+        Serveo is an independent third-party service not affiliated with eepy.page in any way.
+        eepy.page does not guarantee tunnel availability, performance, security, compatibility,
+        or continued access to Serveo features. Some Serveo features may require a paid plan,
+        which, again, is independent of eepy.page.
+    </p>
+
+    <p>
+        When you delete a tunnel from eepy.page, you are also responsible for deleting its SSH key and domain from
+        your Serveo dashboard. eepy.page is not responsible for leftover third-party configuration, Serveo account
+        activity, or charges caused by failing to complete that cleanup. Failure to clean up may result in a suspension of
+        your eepy.page account if the leftover values interfere with domains that have been reclaimed.
+    </p>
+
     <h2>Acceptable Use</h2>
     <p>You may not use eepy.page, its API, nameservers, or any registered subdomain for:</p>
 
@@ -72,6 +110,7 @@
         <li>Evading bans, limits, rate limits, or abuse protections.</li>
         <li>Denial-of-service attacks, stress testing, scraping abuse, or excessive requests.</li>
         <li>Attempting to exploit, disrupt, reverse engineer, or gain unauthorized access to eepy.page.</li>
+        <li>Using a tunnel or Serveo configuration for activity prohibited by these Terms or Serveo's policies.</li>
         <li>Anything that harms eepy.page, its users, its infrastructure, or the public internet.</li>
     </ul>
 

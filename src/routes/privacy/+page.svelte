@@ -8,7 +8,7 @@
 
 <Holder>
     <h1>Privacy Policy</h1>
-    <p>Last updated: July 14, 2026</p>
+    <p>Last updated: July 25, 2026</p>
 
     <p>
         This Privacy Policy explains how eepy.page collects, uses, stores, and shares information when you use
@@ -30,6 +30,10 @@
         <li>Account username, email address, password, and browser language.</li>
         <li>Login, signup, password recovery, email verification, and account deletion codes.</li>
         <li>Domain names, DNS record types, DNS record values, registration timestamps, and TLD access.</li>
+        <li>
+            Tunnel configuration data, including the selected eepy.page hostname, subdomain, local port, SSH public-key
+            fingerprint, Serveo authorization record, generated SSH command, and tunnel timestamps.
+        </li>
         <li>API key comments, API key permissions, and domain scopes.</li>
         <li>Two-factor authentication setup data, including TOTP secrets and backup recovery codes.</li>
         <li>Invite codes, referral codes, referral relationships, and reward code redemptions.</li>
@@ -58,6 +62,10 @@
         <li>
             Provide subdomain registration, DNS record management, API access, invites, referrals, rewards, and optional
             TLD benefits.
+        </li>
+        <li>
+            Provision, display, update, and remove tunnel DNS records and generate the SSH command needed to use the
+            optional Serveo-based tunneling feature.
         </li>
         <li>
             Send account emails, including verification, password recovery, deletion, purchase, abuse, ban, domain
@@ -125,6 +133,13 @@
             <strong>DNS infrastructure providers</strong>, including PowerDNS-compatible APIs, to publish and manage DNS
             records.
         </li>
+        <li>
+            <strong>Serveo</strong> as the third-party provider used for optional SSH reverse tunneling. You create and
+            manage the Serveo account, SSH key, and domain directly with Serveo. eepy.page does not receive or store
+            your Serveo password or private SSH key, but Serveo may process information under its own policies when you
+            use its dashboard or tunnel service. Serveo's Terms of Service can be found
+            <a href="https://serveo.net/terms" target="_blank" rel="noopener noreferrer">here</a>.
+        </li>
     </ul>
 
     <p>
@@ -145,6 +160,12 @@
         to protect the service, but we cannot guarantee absolute security.
     </p>
 
+    <p>
+        Tunnel SSH fingerprints and authorization TXT records are intended to be public verification data. Do not submit
+        private SSH keys, passwords, access tokens, or other confidential credentials to eepy.page. Protect private keys
+        and Serveo account credentials on your own devices and in your Serveo account.
+    </p>
+
     <h2>How Long We Keep Information</h2>
     <p>
         Account data is kept while your account exists. Session records and login tokens expire automatically.
@@ -156,6 +177,13 @@
         Some logs, analytics, backups, provider records, email delivery records, DNS records, and security records may
         remain for longer where needed for operations, security, abuse prevention, legal compliance, or provider
         retention schedules.
+    </p>
+
+    <p>
+        Tunnel configuration data is retained while the tunnel or account remains active and may be removed when you
+        delete the tunnel or account, subject to backups, logs, legal obligations, abuse investigations, and provider
+        retention schedules. Deleting a tunnel from eepy.page does not delete your separate Serveo account, SSH key,
+        domain, or Serveo-side records; you must remove those from Serveo directly.
     </p>
 
     <h2>Sharing and Disclosure</h2>
@@ -243,6 +271,8 @@
     }
 
     h2 {
+        margin-top: 1.25rem;
+        margin-bottom: 0.25rem;
         font-size: 1.25rem;
         font-weight: 600;
     }
@@ -250,9 +280,14 @@
     ul {
         list-style: disc;
         margin-left: 2rem;
+        margin-bottom: 1rem;
     }
 
     ul li {
         margin-top: 0.5rem;
+    }
+
+    p {
+        margin-bottom: 0.5rem;
     }
 </style>

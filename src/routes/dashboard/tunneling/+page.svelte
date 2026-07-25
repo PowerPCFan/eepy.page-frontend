@@ -11,7 +11,7 @@
     import Skeleton from "$lib/components/ui/skeleton/skeleton.svelte";
     import { onMount } from "svelte";
     import { toast } from "svelte-sonner";
-    import { AuthError, ServerContactor } from "../../../serverContactor";
+    import { AuthError, LimitError, ServerContactor } from "../../../serverContactor";
 
     type Tunnel = { id: string; hostname: string; subdomain: string; service: string; local_port: number; ssh_fingerprint: string; command: string };
     let client: ServerContactor;
@@ -23,17 +23,20 @@
     let subdomain = $state("");
     let localPort = $state("");
     let sshFingerprint = $state("");
+    let subdomainErrorTitle = $state("Could not create tunnel");
     let subdomainError = $state("");
     let subdomainNote = $state("");
     let alertUpdate = $state(0);
     let settingsOpen = $state(false);
     let settingsTunnel: Tunnel | null = $state(null);
+    let settingsOriginalPort = $state(0);
     let settingsSubdomain = $state("");
-    let settingsSubdomainNote = $state("");
     let settingsPort = $state("");
     let settingsFingerprint = $state("");
     let settingsError = $state("");
     let settingsSaving = $state(false);
+    let deletionOpen = $state(false);
+    let deletedTunnel: Tunnel | null = $state(null);
     let validLocalPort = $derived(
         localPort.trim() !== "" && /^\d+$/.test(localPort.trim()) && Number(localPort) >= 1 && Number(localPort) <= 65535,
     );
@@ -41,18 +44,15 @@
         settingsPort.trim() !== "" && /^\d+$/.test(settingsPort.trim()) && Number(settingsPort) >= 1 && Number(settingsPort) <= 65535,
     );
     let settingsChanged = $derived(
-        settingsTunnel !== null &&
-        (settingsSubdomain !== settingsTunnel.subdomain ||
-            Number(settingsPort) !== settingsTunnel.local_port ||
-            settingsFingerprint !== settingsTunnel.ssh_fingerprint),
+        settingsTunnel !== null && Number(settingsPort) !== settingsOriginalPort,
     );
 
     function openSettings(tunnel: Tunnel) {
         settingsTunnel = tunnel;
+        settingsOriginalPort = tunnel.local_port;
         settingsSubdomain = tunnel.subdomain;
         settingsPort = String(tunnel.local_port);
         settingsFingerprint = tunnel.ssh_fingerprint;
-        settingsSubdomainNote = getSubdomainNote(tunnel.subdomain);
         settingsError = "";
         settingsOpen = true;
     }
@@ -68,15 +68,10 @@
         settingsError = "";
         settingsSaving = true;
         try {
-            const result = await client.updateServeoTunnel(
-                settingsTunnel.id,
-                settingsSubdomain,
-                Number(settingsPort),
-                settingsFingerprint,
-            );
+            const result = await client.updateServeoTunnel(settingsTunnel.id, Number(settingsPort));
             tunnels = tunnels.map(tunnel => tunnel.id === settingsTunnel?.id ? result.tunnel : tunnel);
             settingsOpen = false;
-            toast.success("Tunnel settings updated", { description: "Restart the SSH process with the updated command." });
+            toast.success("Tunnel port updated", { description: "Restart the SSH process with the updated command." });
         } catch (error) {
             settingsError = error instanceof Error ? error.message : "Could not update tunnel";
         } finally {
@@ -90,10 +85,6 @@
             subdomainNote = nextDescription;
             alertUpdate++;
         }
-    });
-
-    $effect(() => {
-        settingsSubdomainNote = getSubdomainNote(settingsSubdomain);
     });
 
     async function load() {
@@ -114,6 +105,7 @@
             return;
         }
         subdomainError = "";
+        subdomainErrorTitle = "Could not create tunnel";
         subdomainNote = "";
         alertUpdate++;
         provisioning = true;
@@ -127,7 +119,12 @@
             subdomainError = "";
             toast.success("Tunnel configured", { description: "Run the generated SSH command to connect to the tunnel." });
         } catch (error) {
-            subdomainError = error instanceof Error ? error.message : "Could not create tunnel";
+            if (error instanceof LimitError) {
+                subdomainErrorTitle = "Domain limit reached";
+                subdomainError = "You have reached your domain limit. Delete an existing domain from the dashboard before creating another tunnel.";
+            } else {
+                subdomainError = error instanceof Error ? error.message : "Could not create tunnel";
+            }
             alertUpdate++;
         } finally {
             provisioning = false;
@@ -140,7 +137,8 @@
         try {
             await client.deleteServeoTunnel(tunnel.id);
             tunnels = tunnels.filter((item) => item.id !== tunnel.id);
-            toast.success("Tunnel deleted");
+            deletedTunnel = tunnel;
+            deletionOpen = true;
         } catch (_) {
             toast.error("Could not delete tunnel");
         }
@@ -170,7 +168,32 @@
     </div>
 
     {#if loading}
-        <Skeleton class="mt-8 h-32 rounded-lg" />
+        <div class="mt-8 grid gap-4 md:grid-cols-2">
+            {#each Array(2) as _}
+                <article class="border-border bg-card rounded-lg border p-6">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="min-w-0 flex-1 space-y-2">
+                            <Skeleton class="h-7 w-3/5" />
+                            <Skeleton class="h-4 w-2/5" />
+                        </div>
+                        <Skeleton class="h-10 w-10 shrink-0 rounded-md" />
+                    </div>
+                    <div class="mt-5 space-y-3">
+                        <Skeleton class="h-4 w-4/5" />
+                        <div class="space-y-2 pl-5">
+                            <Skeleton class="h-4 w-full" />
+                            <Skeleton class="h-4 w-11/12" />
+                            <Skeleton class="h-4 w-4/5" />
+                            <Skeleton class="h-4 w-11/12" />
+                            <Skeleton class="h-4 w-3/4" />
+                        </div>
+                        <Skeleton class="h-12 w-full rounded-md" />
+                        <Skeleton class="h-12 w-full rounded-md" />
+                    </div>
+                    <Skeleton class="mt-5 h-10 w-36 rounded-md" />
+                </article>
+            {/each}
+        </div>
     {:else if tunnels.length === 0}
         <div class="border-border text-muted-foreground mt-8 rounded-lg border border-dashed p-8">
             No tunnels yet. Create one to publish a local service.
@@ -191,7 +214,22 @@
                             title="Tunnel settings"
                             onclick={() => openSettings(tunnel)}><Settings /></Button>
                     </div>
-                    <div class="mt-5">
+                    <div class="text-muted-foreground mt-5 space-y-3 text-sm">
+                        <p>Complete these steps in the Serveo dashboard before connecting:</p>
+                        <ol class="list-inside list-decimal space-y-2">
+                            <li><a class="underline" href="https://console.serveo.net/signup" target="_blank" rel="noreferrer">Create a Serveo account</a> using your name, email, and password. Alternatively, you can sign in with GitHub or Google.</li>
+                            <li>
+                                Open <strong>SSH keys</strong> in the sidebar, choose <strong>Add SSH key</strong>, and paste this:
+                                <Codeblock class="mt-2 w-full" text={tunnel.ssh_fingerprint} />
+                            </li>
+                            <li>In the popup, enter the key name and click <strong>Add SSH key</strong> to confirm.</li>
+                            <li>Open <strong>Domains</strong> in the sidebar and choose <strong>Add domain</strong>.</li>
+                            <li>Delete the existing text in the domain field, paste <strong>{tunnel.hostname}</strong>, and click <strong>Add domain</strong>.</li>
+                        </ol>
+                        <p class="text-foreground text-base font-semibold">
+                            If you have already set up the domain and SSH key in the Serveo dashboard, simply run the
+                            SSH command below to reconnect to the tunnel.
+                        </p>
                         <Codeblock class="w-full" text={tunnel.command} />
                     </div>
                     <Button class="mt-5" variant="destructive" onclick={() => remove(tunnel)}>Delete Tunnel</Button>
@@ -310,7 +348,7 @@
         </div>
         <InlineAlert
             variant="error"
-            title="Could not create tunnel"
+            title={subdomainErrorTitle}
             description={subdomainError}
             trigger={alertUpdate} />
         <Dialog.Footer
@@ -321,21 +359,37 @@
     </Dialog.Content>
 </Dialog.Root>
 
+<Dialog.Root bind:open={deletionOpen}>
+    <Dialog.Content>
+        <Dialog.Header>
+            <Dialog.Title>Tunnel Deleted</Dialog.Title>
+            <Dialog.Description>
+                Please complete the following steps to finish deleting
+                {deletedTunnel ? ` ${deletedTunnel.hostname}` : " this tunnel"}.
+            </Dialog.Description>
+        </Dialog.Header>
+        <ol class="list-inside list-decimal space-y-3 py-4 text-sm">
+            <li>Stop the SSH process running the tunnel command, if it is still running.</li>
+            <li>In the <a class="underline" href="https://console.serveo.net" target="_blank" rel="noreferrer">Serveo dashboard</a>, open <strong>SSH keys</strong> and remove the key used for this tunnel.</li>
+            <li>Open <strong>Domains</strong> and remove the tunnel domain{deletedTunnel ? ` (${deletedTunnel.hostname})` : ""}.</li>
+        </ol>
+        <p class="text-muted-foreground text-sm">
+            These Serveo resources are managed separately from eepy.page. Leaving them in place may result in your
+            eepy.page account being suspended.
+        </p>
+        <Dialog.Footer>
+            <Button onclick={() => (deletionOpen = false)}>Done</Button>
+        </Dialog.Footer>
+    </Dialog.Content>
+</Dialog.Root>
+
 <Dialog.Root bind:open={settingsOpen}>
     <Dialog.Content>
         <Dialog.Header>
             <Dialog.Title>Tunnel settings</Dialog.Title>
-            <Dialog.Description>Change the hostname, local port, or SSH key used by this tunnel.</Dialog.Description>
+            <Dialog.Description>Change the local port used by this tunnel.</Dialog.Description>
         </Dialog.Header>
         <div class="space-y-4 py-4">
-            <div class="flex flex-col gap-1.5">
-                <Label for="settings-subdomain">Subdomain</Label>
-                <Input id="settings-subdomain" bind:value={settingsSubdomain} placeholder="Subdomain to use for the tunnel" />
-                <InlineAlert
-                    variant="note"
-                    title="Remove the eepy.page suffix"
-                    description={settingsSubdomainNote} />
-            </div>
             <div class="flex flex-col gap-1.5">
                 <Label for="settings-port">Local port</Label>
                 <Input
@@ -350,10 +404,6 @@
                 {#if settingsPort !== "" && !validSettingsPort}
                     <p class="text-destructive text-sm">Enter a whole number from 1 to 65535.</p>
                 {/if}
-            </div>
-            <div class="flex flex-col gap-1.5">
-                <Label for="settings-fingerprint">SSH public key fingerprint</Label>
-                <Input id="settings-fingerprint" bind:value={settingsFingerprint} placeholder="SHA256:..." />
             </div>
             <InlineAlert variant="error" title="Could not update tunnel" description={settingsError} />
             {#if settingsChanged}
