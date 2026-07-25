@@ -213,58 +213,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/cloudflare/connect": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Connect */
-        post: operations["connect_cloudflare_connect_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/cloudflare/callback": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Callback */
-        get: operations["callback_cloudflare_callback_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/cloudflare/disconnect": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Disconnect */
-        delete: operations["disconnect_cloudflare_disconnect_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/cloudflare/tunnels": {
+    "/serveo/tunnels": {
         parameters: {
             query?: never;
             header?: never;
@@ -272,17 +221,17 @@ export interface paths {
             cookie?: never;
         };
         /** List Tunnels */
-        get: operations["list_tunnels_cloudflare_tunnels_get"];
+        get: operations["list_tunnels_serveo_tunnels_get"];
         put?: never;
         /** Create Tunnel */
-        post: operations["create_tunnel_cloudflare_tunnels_post"];
+        post: operations["create_tunnel_serveo_tunnels_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/cloudflare/tunnels/{tunnel_id}": {
+    "/serveo/tunnels/{tunnel_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -293,24 +242,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** Delete Tunnel */
-        delete: operations["delete_tunnel_cloudflare_tunnels__tunnel_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/cloudflare/tunnels/{tunnel_id}/token": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Tunnel Token */
-        post: operations["tunnel_token_cloudflare_tunnels__tunnel_id__token_post"];
-        delete?: never;
+        delete: operations["delete_tunnel_serveo_tunnels__tunnel_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1272,11 +1204,10 @@ export interface components {
         TunnelCreate: {
             /** Subdomain */
             subdomain: string;
-            /**
-             * Service
-             * Format: uri
-             */
-            service: string;
+            /** Local Port */
+            local_port: number;
+            /** Ssh Fingerprint */
+            ssh_fingerprint: string;
         };
         /** UserPageType */
         UserPageType: {
@@ -2009,79 +1940,7 @@ export interface operations {
             };
         };
     };
-    connect_cloudflare_connect_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    callback_cloudflare_callback_get: {
-        parameters: {
-            query: {
-                code: string;
-                state: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    disconnect_cloudflare_disconnect_delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    list_tunnels_cloudflare_tunnels_get: {
+    list_tunnels_serveo_tunnels_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -2103,7 +1962,7 @@ export interface operations {
             };
         };
     };
-    create_tunnel_cloudflare_tunnels_post: {
+    create_tunnel_serveo_tunnels_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -2138,7 +1997,7 @@ export interface operations {
             };
         };
     };
-    delete_tunnel_cloudflare_tunnels__tunnel_id__delete: {
+    delete_tunnel_serveo_tunnels__tunnel_id__delete: {
         parameters: {
             query?: never;
             header?: never;
@@ -2156,39 +2015,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    tunnel_token_cloudflare_tunnels__tunnel_id__token_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                tunnel_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
                 };
             };
             /** @description Validation Error */

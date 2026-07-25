@@ -214,10 +214,10 @@
             <div class="text w-3/5">
                 <h2 class="w-fit text-5xl font-semibold">Robust tunneling</h2>
                 <p class="mt-4 text-xl">
-                    No port forwarding? No public IP? Fear not, eepy.page provides a seamless tunneling experience! Easily forward local services to the internet with the click of a button.
+                    No port forwarding? No public IP? Fear not, eepy.page provides a seamless tunneling experience, allowing you to forward your local services to the internet!
                     <br><br>
-                    Our tunneling service is powered by Cloudflare's stable global network.
-                    Simply connect a free Cloudflare account and use our simple dashboard to attach your local services to an eepy.page subdomain.
+                    Our tunneling service is powered by Serveo.
+                    Simply visit our simple dashboard for easy instructions on attaching your local services to an eepy.page subdomain.
                 </p>
             </div>
         </div>

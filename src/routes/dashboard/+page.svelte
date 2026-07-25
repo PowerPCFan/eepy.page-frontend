@@ -47,7 +47,7 @@
         isLoading: boolean;
         deletionLoading: boolean;
         dialogOpen: boolean;
-        cloudflareTunnel: boolean;
+        serveoTunnel: boolean;
     }
 
     let { data } = $props();
@@ -102,6 +102,9 @@
 
     function deleteDomain(domain: string, type: string, button: DashboardDomain) {
         consola.info(`Deleting domain ${domain}`);
+        domainErrorTitle = "";
+        domainErrorDescription = "";
+        alertUpdate++;
 
         serverContactor
             .deleteDomain(domain, type)
@@ -132,6 +135,9 @@
 
     function registerDomain(domain: string, type: string, tld: string) {
         consola.info("Regsitering a domain");
+        registerErrorTitle = "";
+        registerErrorDescription = "";
+        alertUpdate++;
 
         serverContactor
             .registerDomain(domain + tld, type)
@@ -170,7 +176,7 @@
                             tld: tld,
                             name: domain,
                             originalType: type,
-                            cloudflareTunnel: false,
+                            serveoTunnel: false,
                         },
                     ]);
                 Cookies.set("domain-amount", domains.length.toString());
@@ -178,6 +184,9 @@
     }
 
     function modifyDomain(domain: DashboardDomain) {
+        domainErrorTitle = "";
+        domainErrorDescription = "";
+        alertUpdate++;
         consola.info(`Modifying domain ${domain.domain}`);
 
         serverContactor
@@ -242,17 +251,17 @@
 
                 Cookies.set("domain-amount", userDomains.length.toString());
 
-                let cloudflareHosts = new Set<string>();
+                let tunnelHosts = new Set<string>();
                 try {
-                    const cloudflareData = await serverContactor.cloudflareTunnels();
-                    cloudflareHosts = new Set(
-                        (cloudflareData.tunnels ?? []).map((tunnel: { hostname: string }) => tunnel.hostname),
+                    const tunnelData = await serverContactor.serveoTunnels();
+                    tunnelHosts = new Set(
+                        (tunnelData.tunnels ?? []).map((tunnel: { hostname: string }) => tunnel.hostname),
                     );
                 } catch (_) {
-                    // Ignore errors; cloudflare is not necessary
+                    // Ignore errors; tunneling is not necessary
 
                     // In the future maybe I want to differentiate between when someone simply
-                    // isn't using Cloudflare vs. when they are, but it errors out (real error)
+                    // isn't using tunneling vs. when it errors out (real error)
                 }
 
                 const dashboardDomains: DashboardDomain[] = [];
@@ -273,7 +282,7 @@
                         tld: tld,
                         name: name,
                         originalType: value.type,
-                        cloudflareTunnel: cloudflareHosts.has(key),
+                        serveoTunnel: tunnelHosts.has(key),
                     };
                     dashboardDomains.push(domain);
                 }
@@ -400,10 +409,10 @@
                                 }}
                                 class="h-full min-h-8 w-1/2 max-w-40">Save</Button>
                             <Separator orientation={"vertical"} />
-                            {#if domain.cloudflareTunnel}
+                            {#if domain.serveoTunnel}
                                 <span
                                     class="flex h-full min-h-8 w-1/2 max-w-40"
-                                    title="Delete the Cloudflare tunnel first to remove this domain">
+                                    title="Delete the tunnel first to remove this domain">
                                     <Button class="h-full w-full" disabled={true} variant="destructive">Delete</Button>
                                 </span>
                             {:else}

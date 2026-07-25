@@ -79,6 +79,11 @@
     }
 
     function logIn() {
+        errorTitle = "";
+        errorDescription = "";
+        alertTitle = "";
+        alertDescription = "";
+        accountNeedsEmailVerification = false;
         login(username, password, captchaToken, mfaCode ? mfaCode : undefined)
             .catch(error => {
                 buttonLoadingState = false;
@@ -86,7 +91,7 @@
                 if (error instanceof AuthError || error instanceof UserError)
                     errorDescription = "Username and password do not match.";
                 else if (error instanceof PermissionError) {
-                    errorDescription = "Please verify your account";
+                    errorDescription = "Please verify your account. You should have received an email with a verification link.";
                     accountNeedsEmailVerification = true;
                 } else if (error instanceof MFAError) {
                     if (!requiresMfa) {
@@ -128,6 +133,10 @@
     }
 
     function signUp() {
+        errorTitle = "";
+        errorDescription = "";
+        alertTitle = "";
+        alertDescription = "";
         register(username, password, email, captchaToken)
             .catch(error => {
                 buttonLoadingState = false;
@@ -144,7 +153,7 @@
                 buttonLoadingState = false;
                 window.gtag?.("event", "sign_up");
                 alertTitle = "Successfully registered!";
-                alertDescription = "Please log in.";
+                alertDescription = "Check your email and verify your account before signing in.";
 
                 isLoggingIn = true;
                 resetTurnstile();

@@ -1381,37 +1381,28 @@ export class ServerContactor {
         return data;
     }
 
-    async cloudflareConnect(): Promise<string> {
-        const response = await fetch(`${this.serverURL}/cloudflare/connect`, {
-            method: "POST",
-            headers: { "X-Auth-Token": getAuthToken() ?? "" }
-        });
-        if (!response.ok) throw new Error("Failed to connect Cloudflare");
-        return (await response.json()).url;
-    }
-
-    async cloudflareTunnels() {
-        const response = await fetch(`${this.serverURL}/cloudflare/tunnels`, {
+    async serveoTunnels() {
+        const response = await fetch(`${this.serverURL}/serveo/tunnels`, {
             headers: { "X-Auth-Token": getAuthToken() ?? "" }
         });
         if (response.status === 460) throw new AuthError("Invalid session");
-        if (!response.ok) throw new Error("Failed to load Cloudflare tunnels");
+        if (!response.ok) throw new Error("Failed to load Serveo tunnels");
         return await response.json();
     }
 
-    async createCloudflareTunnel(subdomain: string, service: string) {
-        const response = await fetch(`${this.serverURL}/cloudflare/tunnels`, {
+    async createServeoTunnel(subdomain: string, localPort: number, sshFingerprint: string) {
+        const response = await fetch(`${this.serverURL}/serveo/tunnels`, {
             method: "POST",
             headers: { "X-Auth-Token": getAuthToken() ?? "", "Content-Type": "application/json" },
-            body: JSON.stringify({ subdomain, service })
+            body: JSON.stringify({ subdomain, local_port: localPort, ssh_fingerprint: sshFingerprint })
         });
         if (response.status === 460) throw new AuthError("Invalid session");
         if (!response.ok) throw new Error((await response.json()).detail ?? "Failed to create tunnel");
         return await response.json();
     }
 
-    async deleteCloudflareTunnel(id: string) {
-        const response = await fetch(`${this.serverURL}/cloudflare/tunnels/${encodeURIComponent(id)}`, {
+    async deleteServeoTunnel(id: string) {
+        const response = await fetch(`${this.serverURL}/serveo/tunnels/${encodeURIComponent(id)}`, {
             method: "DELETE",
             headers: { "X-Auth-Token": getAuthToken() ?? "" }
         });
@@ -1419,11 +1410,14 @@ export class ServerContactor {
         if (!response.ok) throw new Error("Failed to delete tunnel");
     }
 
-    async disconnectCloudflare() {
-        const response = await fetch(`${this.serverURL}/cloudflare/disconnect`, {
-            method: "DELETE",
-            headers: { "X-Auth-Token": getAuthToken() ?? "" }
+    async updateServeoTunnel(id: string, subdomain: string, localPort: number, sshFingerprint: string) {
+        const response = await fetch(`${this.serverURL}/serveo/tunnels/${encodeURIComponent(id)}`, {
+            method: "PUT",
+            headers: { "X-Auth-Token": getAuthToken() ?? "", "Content-Type": "application/json" },
+            body: JSON.stringify({ subdomain, local_port: localPort, ssh_fingerprint: sshFingerprint })
         });
-        if (!response.ok) throw new Error("Failed to disconnect Cloudflare");
+        if (response.status === 460) throw new AuthError("Invalid session");
+        if (!response.ok) throw new Error((await response.json()).detail ?? "Failed to update tunnel");
+        return await response.json();
     }
 }
