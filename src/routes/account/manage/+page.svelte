@@ -429,7 +429,7 @@
                     </Dialog.Footer>
                 </Dialog.Content>
             </Dialog.Root>
-            {#if data.permissions?.get("admin") === true}
+            {#if data.admin?.enabled === true}
                 <Button onclick={_ => goto("/account/admin")}>Admin dashboard</Button>
             {/if}
             <Button onclick={_ => gpdrData()}>Download your data</Button>

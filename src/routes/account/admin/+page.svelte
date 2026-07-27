@@ -412,19 +412,35 @@
                         </Accordion.Item>
                     </Accordion.Root>
 
-                    <h4 class="text-xl font-semibold">Permission</h4>
-                    {#each Object.keys(user.permissions) as permission}
+                    <h4 class="text-xl font-semibold">Admin capabilities</h4>
+                    <div class="permission flex max-w-full items-center space-y-2 space-x-2">
+                        <p class="permission-key">enabled -&gt;</p>
+                        <Select.Root
+                            onValueChange={value => (user.permissions.admin.enabled = value === "true")}
+                            type="single"
+                            name="admin-enabled">
+                            <Select.Trigger class="w-1/8 min-w-24">{user.permissions.admin.enabled ? "Yes" : "No"}</Select.Trigger>
+                            <Select.Content>
+                                <Select.Item value="false" label="false">No</Select.Item>
+                                <Select.Item value="true" label="true">Yes</Select.Item>
+                            </Select.Content>
+                        </Select.Root>
+                        <div class="mr-2 ml-auto">
+                            <Button onclick={_ => updatePermission(user.id, "enabled", user.permissions.admin.enabled)}>Update</Button>
+                        </div>
+                    </div>
+                    {#each Object.keys(user.permissions.admin.permissions) as permission}
                         <div class="permission flex max-w-full items-center space-y-2 space-x-2">
                             <p class="permission-key">{permission} -&gt;</p>
-                            {#if typeof user.permissions[permission] === "boolean"}
+                            {#if typeof user.permissions.admin.permissions[permission] === "boolean"}
                                 <Select.Root
                                     onValueChange={value => (
                                         // @ts-ignore
-                                        user.permissions[permission] = value === "true")}
+                                        user.permissions.admin.permissions[permission] = value === "true")}
                                     type="single"
                                     name="domain">
                                     <Select.Trigger class="w-1/8 min-w-24"
-                                        >{user.permissions[permission]
+                                        >{user.permissions.admin.permissions[permission]
                                             ? "Yes"
                                             : "No"}</Select.Trigger>
                                     <Select.Content>
@@ -433,7 +449,7 @@
                                     </Select.Content>
                                 </Select.Root>
                             {:else}
-                                <Input bind:value={user.permissions[permission]} />
+                                <Input bind:value={user.permissions.admin.permissions[permission]} />
                             {/if}
                             <div class="mr-2 ml-auto">
                                 <Button
@@ -442,7 +458,7 @@
                                             user.id,
                                             permission,
                                             // @ts-ignore
-                                            user.permissions[permission] ?? 0
+                                            user.permissions.admin.permissions[permission] ?? 0
                                         )}>Update</Button>
                             </div>
                         </div>
@@ -463,6 +479,17 @@
                                     )}>Create</Button>
                         </div>
                     </div>
+
+                    <h4 class="text-xl font-semibold">Account limits</h4>
+                    {#each Object.keys(user.permissions.limits) as limit}
+                        <div class="permission flex max-w-full items-center space-y-2 space-x-2">
+                            <p class="permission-key">{limit} -&gt;</p>
+                            <Input bind:value={user.permissions.limits[limit]} />
+                            <div class="mr-2 ml-auto">
+                                <Button onclick={_ => updatePermission(user.id, limit, Number(user.permissions.limits[limit]))}>Update</Button>
+                            </div>
+                        </div>
+                    {/each}
 
                     <div class="space-y-2">
                         <h2>TLDs</h2>
