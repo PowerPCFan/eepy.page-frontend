@@ -12,9 +12,9 @@ export function redirectToLogin(
         consola.info(`Redirecting to login with code ${code}`);
 
         Cookies.remove("logged-in");
-        Cookies.remove("auth-token", {
+        Cookies.remove("__Host-auth-token", {
             secure: !dev,
-            domain: window.origin,
+            path: "/",
             sameSite: "Strict"
         });
 
@@ -40,7 +40,7 @@ export function createFile(filename: string, content: string): boolean {
 
 export function getAuthToken() {
     consola.debug("Getting auth token");
-    return Cookies.get("auth-token");
+    return Cookies.get("__Host-auth-token");
 }
 
 export function setAuthToken(token: string) {
@@ -49,7 +49,7 @@ export function setAuthToken(token: string) {
 
     consola.debug(`Creating a new token that expires on ${expires}`);
 
-    Cookies.set("auth-token", token, {
+    Cookies.set("__Host-auth-token", token, {
         secure: !dev,
         expires: expires,
         sameSite: "Strict",

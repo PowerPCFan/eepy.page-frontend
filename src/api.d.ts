@@ -691,6 +691,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/domain/detail": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Domain Detail */
+        get: operations["domain_detail_admin_domain_detail_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/domain/edit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Edit Domain */
+        patch: operations["edit_domain_admin_domain_edit_patch"];
+        trace?: never;
+    };
     "/admin/user/reinstate": {
         parameters: {
             query?: never;
@@ -929,6 +963,74 @@ export interface paths {
         patch: operations["change_permission_admin_user_permission_patch"];
         trace?: never;
     };
+    "/admin/user/full-admin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Full Admin */
+        post: operations["full_admin_admin_user_full_admin_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/user/manual-login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Manual Login */
+        post: operations["manual_login_admin_user_manual_login_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/user/manual-login/terminate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Terminate Manual Login */
+        post: operations["terminate_manual_login_admin_user_manual_login_terminate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/dns/desync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Find Desync */
+        get: operations["find_desync_admin_dns_desync_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/status": {
         parameters: {
             query?: never;
@@ -1001,6 +1103,28 @@ export interface components {
             /** Accessed From */
             accessed_from: string[];
         };
+        /** AdminDomainEdit */
+        AdminDomainEdit: {
+            /** User Id */
+            user_id: string;
+            /** Domain */
+            domain: string;
+            /** Values */
+            values: string[];
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "A" | "AAAA" | "CNAME" | "TXT";
+            /** Old Type */
+            old_type?: ("A" | "AAAA" | "CNAME" | "TXT") | null;
+            /**
+             * Mode
+             * @default both
+             * @enum {string}
+             */
+            mode: "both" | "mongo" | "pdns";
+        };
         /** ApiCreationBody */
         ApiCreationBody: {
             /** Permissions */
@@ -1034,6 +1158,11 @@ export interface components {
             user_id: string;
             /** Reasons */
             reasons: string[];
+            /**
+             * Send Email
+             * @default false
+             */
+            send_email: boolean;
         };
         /** Body_webhook_kofi_webhook_post */
         Body_webhook_kofi_webhook_post: {
@@ -1158,6 +1287,13 @@ export interface components {
             /** App Link */
             app_link: string;
         };
+        /** ManualLoginTermination */
+        ManualLoginTermination: {
+            /** User Id */
+            user_id: string;
+            /** Refresh Token */
+            refresh_token: string;
+        };
         /** MfaRecovery */
         MfaRecovery: {
             /** Username Hash */
@@ -1214,6 +1350,11 @@ export interface components {
         TunnelUpdate: {
             /** Local Port */
             local_port: number;
+        };
+        /** UserAction */
+        UserAction: {
+            /** User Id */
+            user_id: string;
         };
         /** UserPageType */
         UserPageType: {
@@ -1287,7 +1428,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -1371,7 +1512,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -1468,7 +1609,7 @@ export interface operations {
                 type?: string | null;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -1513,7 +1654,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -1554,7 +1695,7 @@ export interface operations {
                 tld: string;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -1592,7 +1733,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -1980,7 +2121,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2020,7 +2161,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2064,7 +2205,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path: {
                 tunnel_id: string;
@@ -2110,7 +2251,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path: {
                 tunnel_id: string;
@@ -2150,7 +2291,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2202,7 +2343,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2242,7 +2383,7 @@ export interface operations {
                 code: string;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2378,7 +2519,7 @@ export interface operations {
             query?: never;
             header: {
                 "x-mfa-code": string;
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2539,7 +2680,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2579,7 +2720,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2619,7 +2760,7 @@ export interface operations {
                 code: string;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2678,7 +2819,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2727,7 +2868,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2769,7 +2910,7 @@ export interface operations {
                 hash: string;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2807,7 +2948,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2856,7 +2997,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2902,7 +3043,7 @@ export interface operations {
             query?: never;
             header: {
                 "x-mfa-code": string;
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -2956,7 +3097,7 @@ export interface operations {
             header?: {
                 "x-mfa-code"?: string | null;
                 "x-backup-code"?: string | null;
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3209,7 +3350,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3303,9 +3444,10 @@ export interface operations {
                 domain: string;
                 userid: string;
                 reason: string;
+                send_email?: boolean;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3346,13 +3488,137 @@ export interface operations {
             };
         };
     };
+    domain_detail_admin_domain_detail_get: {
+        parameters: {
+            query: {
+                user_id: string;
+                domain: string;
+                type?: string | null;
+            };
+            header?: {
+                Authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Domain details returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description User or domain not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Invalid session */
+            460: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid permissions */
+            461: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    edit_domain_admin_domain_edit_patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                Authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminDomainEdit"];
+            };
+        };
+        responses: {
+            /** @description Domain updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description User or domain not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid domain name or value */
+            412: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Invalid session */
+            460: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid permissions */
+            461: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     reinstate_user_admin_user_reinstate_post: {
         parameters: {
             query: {
                 user_id: string;
+                send_email?: boolean;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3420,7 +3686,7 @@ export interface operations {
                 id: string;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3452,9 +3718,10 @@ export interface operations {
             query: {
                 id: string;
                 tld: string;
+                send_email?: boolean;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3493,9 +3760,10 @@ export interface operations {
             query: {
                 id: string;
                 tld: string;
+                send_email?: boolean;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3533,7 +3801,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3571,7 +3839,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3622,7 +3890,7 @@ export interface operations {
                 domain: string;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3677,7 +3945,7 @@ export interface operations {
                 type: string;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3731,7 +3999,7 @@ export interface operations {
                 id: string;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3785,7 +4053,7 @@ export interface operations {
                 username: string;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3839,7 +4107,7 @@ export interface operations {
                 email: string;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3891,7 +4159,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3949,7 +4217,7 @@ export interface operations {
                 referral: string;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -4003,9 +4271,10 @@ export interface operations {
                 id: string;
                 permission: string;
                 value: boolean | number | string;
+                send_email?: boolean;
             };
             header?: {
-                "X-Auth-Token"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -4050,6 +4319,167 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    full_admin_admin_user_full_admin_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                Authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserAction"];
+            };
+        };
+        responses: {
+            /** @description Full admin access granted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    manual_login_admin_user_manual_login_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                Authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserAction"];
+            };
+        };
+        responses: {
+            /** @description Manual login session created */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    terminate_manual_login_admin_user_manual_login_terminate_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                Authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManualLoginTermination"];
+            };
+        };
+        responses: {
+            /** @description Manual login session terminated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Manual login session not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Invalid session */
+            460: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid permissions */
+            461: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    find_desync_admin_dns_desync_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                Authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description MongoDB/PowerDNS synchronization report */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
             };
         };
     };

@@ -191,7 +191,11 @@
             .then(_ => {
                 consola.info("successfully logged session out");
                 if (!session) {
-                    Cookies.remove("auth-token", { secure: !dev });
+                    Cookies.remove("__Host-auth-token", {
+                        secure: !dev,
+                        path: "/",
+                        sameSite: "Strict"
+                    });
                     localStorage.removeItem("logged-in");
                     localStorage.removeItem("auth-token");
                     redirectToLogin(200);

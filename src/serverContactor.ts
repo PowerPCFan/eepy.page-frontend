@@ -40,7 +40,7 @@ const JWTAuthMiddleware: Middleware = {
 
                 setAuthToken(authCode);
                 let req = request.clone();
-                req.headers.set("X-Auth-Token", authCode);
+                req.headers.set("Authorization", `Bearer ${authCode}`);
                 return await options.fetch(req);
             }
         } else {
@@ -442,7 +442,7 @@ export class ServerContactor {
             body: { domain, type, old_type: oldType, values: values },
             params: {
                 //@ts-ignore
-                header: { "X-Auth-Token": getAuthToken() }
+                header: { Authorization: `Bearer ${getAuthToken()}` }
             }
         });
 
@@ -478,7 +478,7 @@ export class ServerContactor {
             body: { domain, type, values: [value] },
             params: {
                 //@ts-ignore
-                header: { "X-Auth-Token": getAuthToken() }
+                header: { Authorization: `Bearer ${getAuthToken()}` }
             }
         });
 
@@ -513,7 +513,7 @@ export class ServerContactor {
         const { data, error, response } = await client.DELETE("/domain/delete", {
             params: {
                 //@ts-ignore
-                header: { "X-Auth-Token": getAuthToken() },
+                header: { Authorization: `Bearer ${getAuthToken()}` },
                 query: { domain: domain, type: type }
             }
         });
@@ -540,7 +540,7 @@ export class ServerContactor {
         const { data, error, response } = await client.DELETE("/deletion/send", {
             params: {
                 //@ts-ignore
-                header: { "X-Auth-Token": getAuthToken(), "X-MFA-Code": mfaCode }
+                header: { Authorization: `Bearer ${getAuthToken()}`, "X-MFA-Code": mfaCode }
             }
         });
 
@@ -562,7 +562,7 @@ export class ServerContactor {
         const { data, error, response } = await client.GET("/settings", {
             params: {
                 //@ts-ignore
-                header: { "X-Auth-Token": getAuthToken() }
+                header: { Authorization: `Bearer ${getAuthToken()}` }
             }
         });
 
@@ -583,7 +583,7 @@ export class ServerContactor {
     > {
         const { data, error } = await client.GET("/gdpr", {
             params: {
-                header: { "X-Auth-Token": getAuthToken() }
+                header: { Authorization: `Bearer ${getAuthToken()}` }
             }
         });
 
@@ -600,7 +600,7 @@ export class ServerContactor {
         const { data, error, response } = await client.POST("/invite/create", {
             params: {
                 //@ts-ignore
-                header: { "X-Auth-Token": getAuthToken() }
+                header: { Authorization: `Bearer ${getAuthToken()}` }
             }
         });
 
@@ -625,7 +625,7 @@ export class ServerContactor {
         const { data, error, response } = await client.GET("/domain/get", {
             params: {
                 //@ts-ignore
-                header: { "X-Auth-Token": getAuthToken() }
+                header: { Authorization: `Bearer ${getAuthToken()}` }
             }
         });
 
@@ -650,7 +650,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken(),
+                    Authorization: `Bearer ${getAuthToken()}`,
                     specific: id !== undefined,
                     id: id
                 }
@@ -684,7 +684,7 @@ export class ServerContactor {
                 //@ts-ignore
 
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 }
             }
         });
@@ -712,7 +712,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 }
             }
         });
@@ -735,7 +735,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 },
                 query: {
                     hash: hash
@@ -760,7 +760,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 }
             },
             body: {
@@ -789,7 +789,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 }
             },
             body: {
@@ -817,7 +817,7 @@ export class ServerContactor {
                 query: { value: value, tld: tld },
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 }
             }
         });
@@ -839,7 +839,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 }
             }
         });
@@ -865,7 +865,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 }
             }
         });
@@ -889,7 +889,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken(),
+                    Authorization: `Bearer ${getAuthToken()}`,
                     "x-mfa-code": code
                 }
             }
@@ -916,7 +916,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken(),
+                    Authorization: `Bearer ${getAuthToken()}`,
                     "x-mfa-code": code,
                     "x-backup-code": backupCode
                 }
@@ -942,7 +942,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 },
                 query: {
                     id: id
@@ -971,7 +971,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 },
                 query: {
                     username: username
@@ -1003,7 +1003,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 }
             },
             body: { ips: ips }
@@ -1032,7 +1032,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 },
                 query: {
                     domain: domain
@@ -1061,7 +1061,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 },
                 query: {
                     referral: referral
@@ -1090,7 +1090,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 },
                 query: {
                     email: email
@@ -1119,9 +1119,10 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 }
             },
+            // @ts-ignore
             body: {
                 user_id: account,
                 reasons: reasons
@@ -1151,7 +1152,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 },
                 query: {
                     user_id: account
@@ -1184,7 +1185,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 },
                 query: {
                     id: account,
@@ -1215,7 +1216,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 },
                 query: {
                     id: account,
@@ -1243,7 +1244,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 },
                 query: {
                     id: account,
@@ -1271,7 +1272,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 },
                 query: {
                     id: account
@@ -1298,7 +1299,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 },
                 query: {
                     userid: account,
@@ -1331,7 +1332,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 }
             }
         });
@@ -1353,7 +1354,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 },
                 query: {
                     code: code
@@ -1380,7 +1381,7 @@ export class ServerContactor {
             params: {
                 //@ts-ignore
                 header: {
-                    "X-Auth-Token": getAuthToken()
+                    Authorization: `Bearer ${getAuthToken()}`
                 }
             }
         });
@@ -1402,7 +1403,7 @@ export class ServerContactor {
 
     async serveoTunnels(): Promise<ServeoTunnelsResponse> {
         const { data, error, response } = await client.GET("/serveo/tunnels", {
-            params: { header: { "X-Auth-Token": getAuthToken() ?? "" } }
+            params: { header: { Authorization: `Bearer ${getAuthToken()}` } }
         });
         if (error) {
             if (response.status === 460) throw new AuthError("Invalid session");
@@ -1413,7 +1414,7 @@ export class ServerContactor {
 
     async createServeoTunnel(subdomain: string, localPort: number, sshFingerprint: string): Promise<ServeoCreateResponse> {
         const { data, error, response } = await client.POST("/serveo/tunnels", {
-            params: { header: { "X-Auth-Token": getAuthToken() } },
+            params: { header: { Authorization: `Bearer ${getAuthToken()}` } },
             body: { subdomain, local_port: localPort, ssh_fingerprint: sshFingerprint }
         });
         if (error) {
@@ -1430,7 +1431,7 @@ export class ServerContactor {
         const { error, response } = await client.DELETE("/serveo/tunnels/{tunnel_id}", {
             params: {
                 path: { tunnel_id: id },
-                header: { "X-Auth-Token": getAuthToken() }
+                header: { Authorization: `Bearer ${getAuthToken()}` }
             }
         });
         if (error) {
@@ -1443,7 +1444,7 @@ export class ServerContactor {
         const { data, error, response } = await client.PUT("/serveo/tunnels/{tunnel_id}", {
             params: {
                 path: { tunnel_id: id },
-                header: { "X-Auth-Token": getAuthToken() }
+                header: { Authorization: `Bearer ${getAuthToken()}` }
             },
             body: { local_port: localPort }
         });
