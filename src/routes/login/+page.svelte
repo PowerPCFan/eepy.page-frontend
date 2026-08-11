@@ -1,6 +1,5 @@
 <script lang="ts">
     import { browser } from "$app/environment";
-    import { pushState } from "$app/navigation";
     import { page } from "$app/state";
     import {
         AuthError,
@@ -22,14 +21,17 @@
     import * as InputOTP from "$lib/components/ui/input-otp/index.js";
     import { Input } from "$lib/components/ui/input/index";
     import { Label } from "$lib/components/ui/label/index";
-    import { activeTheme } from "$lib/store";
     import { REGEXP_ONLY_DIGITS } from "bits-ui";
     import consola from "consola";
     import Cookies from "js-cookie";
     import { onMount } from "svelte";
     import { fade } from "svelte/transition";
+    import { turnstile, type TurnstileEventAttributes } from '@svelte-put/cloudflare-turnstile';
 
     let { data } = $props();
+
+    let token = $state('');
+    let detail = $state({});
 
     let isLoggingIn: boolean = $state(true);
     let username: string = $state("");
@@ -52,13 +54,27 @@
     let mfaInvalid: boolean = $state(false);
     let mfaCode: string = $state("");
 
-    let widgetId: string = "";
-
-    // forces svelte to load the div before onMount
-    let turnstileWidget: HTMLDivElement;
+    let currentWidgetId: string = "";
 
     let captchaToken: string = "";
     let captchaDone: boolean = $state(false);
+
+    let turnstileInstance: any = null;
+
+    const handleTurnstile: TurnstileEventAttributes['onturnstile'] = (e) => {
+        const { token, turnstile, widgetId } = e.detail;
+        captchaToken = token;
+        captchaDone = true;
+        turnstileInstance = turnstile;
+        currentWidgetId = widgetId;
+    };
+
+    function handleResetClick() {
+        if (turnstileInstance && currentWidgetId) {
+            captchaDone = false;
+            turnstileInstance.reset(currentWidgetId);
+        }
+    }
 
     let accountNeedsEmailVerification: boolean = $state(false);
     let resendEmailClicked: boolean = $state(false);
@@ -69,13 +85,6 @@
             .match(
                 /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             );
-    }
-
-    function resetTurnstile() {
-        consola.debug("Resetting captcha");
-        captchaDone = false;
-        // @ts-ignore
-        turnstile.reset(widgetId);
     }
 
     function logIn() {
@@ -98,7 +107,7 @@
                         errorTitle = "";
                         errorDescription = "";
                         requiresMfa = true;
-                        resetTurnstile();
+                        // resetTurnstile();
                         return;
                     } else {
                         errorDescription = "Invalid two-factor authentication code.";
@@ -110,7 +119,7 @@
                         "There was an error while logging in. If this continues, please contact support.";
                 consola.warn(errorDescription);
 
-                resetTurnstile();
+                // resetTurnstile();
                 throw new Error("Login failed");
             })
             .then(session => {
@@ -145,7 +154,7 @@
                 if (error instanceof UserError) errorDescription = "Email is already in use";
                 if (error instanceof CaptchaError) errorDescription = "Please solve the captcha before continuing";
 
-                resetTurnstile();
+                // resetTurnstile();
                 consola.warn(errorDescription);
                 throw new Error("Signup failed");
             })
@@ -156,32 +165,11 @@
                 alertDescription = "Check your email and verify your account before signing in.";
 
                 isLoggingIn = true;
-                resetTurnstile();
+                // resetTurnstile();
             });
     }
 
     onMount(() => {
-        // if using synchronous loading, will be called once the DOM is ready
-        //@ts-ignore
-        turnstile.ready(function () {
-            let container = document.getElementById("turnstile-container");
-
-            if (container) {
-                container.innerHTML = "";
-            }
-            // @ts-ignore
-            widgetId = turnstile.render("#turnstile-container", {
-                sitekey: "0x4AAAAAADviUbGPh--ynweX",
-                // sitekey: "1x00000000000000000000AA",
-                theme: $activeTheme,
-                callback: function (token: string) {
-                    captchaToken = token;
-                    captchaDone = true;
-                    consola.info("Solved captcha");
-                },
-            });
-        });
-
         if (data.referrerCode) {
             Cookies.set("referrer", data.referrerCode, { expires: 14 });
         }
@@ -235,11 +223,6 @@
         }
     });
 </script>
-
-<svelte:head>
-    <link rel="preload" href="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" as="script" />
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
-</svelte:head>
 
 <div class="login-holder bg-card m-auto mt-8 w-[calc(100%-1rem)] max-w-[500px] rounded-lg p-4 sm:p-8">
     <div class="flex flex-col">
@@ -372,8 +355,17 @@
             {isLoggingIn ? "Sign up instead" : "Log in instead"}
         </a>
     {/if}
+
+    <div
+        use:turnstile
+        turnstile-sitekey="0x4AAAAAADviUbGPh--ynweX"
+        turnstile-theme="auto"
+        turnstile-size="normal"
+        turnstile-language="en"
+        turnstile-response-field-name="turnstile"
+        turnstile-response-field
+        onturnstile={handleTurnstile}
+        class="mx-auto mt-6 w-fit"
+    ></div>
 </div>
 
-<div bind:this={turnstileWidget} class="m-auto mt-6 w-fit" id="turnstile-container">
-    <p>Loading captcha..</p>
-</div>
