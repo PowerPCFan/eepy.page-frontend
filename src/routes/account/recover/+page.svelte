@@ -26,6 +26,8 @@
     }
 
     function handleButton(event: any) {
+        modal.close();
+
         if (generatingNew) {
             if (password !== cPassword) {
                 modal.open("Passwords don't match.", "Please confirm that your passwords match.");

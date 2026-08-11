@@ -34,7 +34,7 @@
     let serverContactor: ServerContactor;
 
     let { data } = $props();
-    let sessions: Session[] | undefined = $state(data.sessions);
+    let sessions: Session[] | undefined = $state(undefined);
 
     let mfaIsVerified: boolean = $state(false);
     let backupCodes: string[] = $state([]);
@@ -212,6 +212,18 @@
         usingBackupCode; // Since svelte5 doesnt let you declare dependencies $effect
         dialogOpen; // same with this
         mfaCode = "";
+        mfaInvalid = false;
+    });
+
+    $effect(() => {
+        sessions = data.sessions;
+    });
+
+    $effect(() => {
+        mfaCode;
+        if (mfaInvalid) {
+            mfaInvalid = false;
+        }
     });
 
     $effect(() => {

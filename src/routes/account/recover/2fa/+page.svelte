@@ -14,6 +14,7 @@
     let loader: Loader;
 
     function sendRemoval() {
+        modal.close();
         loader.show();
         recoverMfaCode(username, password, backupCode)
             .catch(error => {

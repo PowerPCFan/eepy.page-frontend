@@ -11,6 +11,7 @@ export const load: PageServerLoad = ({ url, cookies }) => {
     return {
         redirectURL: url.searchParams.get("r"),
         statusCode: url.searchParams.get("c"),
-        referrerCode: url.searchParams.get("ref")
+        referrerCode: url.searchParams.get("ref"),
+        registerMode: url.searchParams.get("register") === "true",
     };
 };

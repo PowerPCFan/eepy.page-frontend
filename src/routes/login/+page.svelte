@@ -30,10 +30,8 @@
 
     let { data } = $props();
 
-    let token = $state('');
-    let detail = $state({});
-
     let isLoggingIn: boolean = $state(true);
+    let lastRegisterMode: boolean | null = $state(null);
     let username: string = $state("");
     let email: string = $state("");
     let password: string = $state("");
@@ -87,12 +85,25 @@
             );
     }
 
-    function logIn() {
+    function clearAuthFeedback() {
         errorTitle = "";
         errorDescription = "";
         alertTitle = "";
         alertDescription = "";
         accountNeedsEmailVerification = false;
+    }
+
+    function switchAuthMode() {
+        clearAuthFeedback();
+        requiresMfa = false;
+        mfaInvalid = false;
+        mfaCode = "";
+        buttonLoadingState = false;
+        isLoggingIn = !isLoggingIn;
+    }
+
+    function logIn() {
+        clearAuthFeedback();
         login(username, password, captchaToken, mfaCode ? mfaCode : undefined)
             .catch(error => {
                 buttonLoadingState = false;
@@ -145,10 +156,7 @@
     }
 
     function signUp() {
-        errorTitle = "";
-        errorDescription = "";
-        alertTitle = "";
-        alertDescription = "";
+        clearAuthFeedback();
         register(username, password, email, captchaToken)
             .catch(error => {
                 buttonLoadingState = false;
@@ -223,6 +231,20 @@
             if (repeatPassword !== password || !username || !email || emailInvalid || !agreementsChecked)
                 actionButtonDisabled = true;
             else actionButtonDisabled = false;
+        }
+    });
+
+    $effect(() => {
+        const registerMode = data.registerMode;
+
+        if (registerMode !== lastRegisterMode) {
+            lastRegisterMode = registerMode;
+            clearAuthFeedback();
+            requiresMfa = false;
+            mfaInvalid = false;
+            mfaCode = "";
+            buttonLoadingState = false;
+            isLoggingIn = !registerMode;
         }
     });
 </script>
@@ -352,7 +374,7 @@
         </form>
 
         <a
-            onclick={_ => (isLoggingIn = !isLoggingIn)}
+            onclick={switchAuthMode}
             href="##"
             class="ml-auto inline-block text-sm underline-offset-4 hover:underline">
             {isLoggingIn ? "Sign up instead" : "Log in instead"}

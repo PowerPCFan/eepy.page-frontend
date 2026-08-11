@@ -15,13 +15,19 @@
     let inputValue: string = $state("");
     let inputRequired: boolean = $state(false);
 
-    if (browser) {
-        if (!data["code"]) {
+    $effect(() => {
+        if (!browser) return;
+
+        const code = data["code"];
+
+        if (!code) {
             inputRequired = true;
-        } else {
-            redeem(data["code"]);
+            success = undefined;
+            return;
         }
-    }
+
+        redeem(code);
+    });
 
     async function redeem(code: string) {
         inputRequired = false;
