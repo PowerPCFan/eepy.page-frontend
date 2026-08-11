@@ -15,7 +15,7 @@
 
 <header
     id="header"
-    class="bg-card sentry-unmask flex min-h-14 w-full max-w-full items-center gap-4 overflow-x-clip px-4 py-1">
+    class="header bg-card sentry-unmask flex min-h-14 w-full max-w-full items-center gap-4 overflow-x-clip px-4 py-1">
     <button id="popout-toggle" class="relative hidden h-12 w-12" onclick={_ => ($sidebarOpen = !$sidebarOpen)}>
         {#key $sidebarOpen}
             <div transition:fade={{ duration: 100 }} class="absolute top-0">

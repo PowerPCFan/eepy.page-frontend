@@ -14,7 +14,7 @@
     import MSTeamDashboard from "~icons/material-symbols/team-dashboard";
     import MSHelp from "~icons/material-symbols/help";
     import MSArrowSplit from "~icons/material-symbols/arrow-split";
-    import type { Component } from "svelte";
+    import { onMount, type Component } from "svelte";
 
     import "../app.css";
     import Donate from "$lib/components/Donate.svelte";
@@ -41,6 +41,55 @@
     beforeNavigate(() => {
         consola.debug("Starting navigation");
         NProgress.start();
+    });
+
+    // ugh i hate this
+    let bannerHeight = $state(0);
+    let donationHeight = $state(0);
+    // let headerHeight = $state(0);
+    onMount(() => {
+        const updateOffset = () => {
+            // const totalOffset = bannerHeight + donationHeight + headerHeight;
+            const totalOffset = bannerHeight + donationHeight;
+            document.documentElement.style.setProperty('--vpOffset', `${totalOffset}px`);
+        };
+
+        const resizeObserver = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                const target = entry.target as HTMLElement;
+                const height = target.offsetHeight;
+                if (target.matches('.banner')) bannerHeight = height;
+                if (target.matches('.donation-banner')) donationHeight = height;
+                // if (target.matches('.header')) headerHeight = height;
+            }
+            updateOffset();
+        });
+
+        const mutationObserver = new MutationObserver(() => {
+            const banner = document.querySelector('.banner') as HTMLElement | null;
+            const donation = document.querySelector('.donation-banner') as HTMLElement | null;
+            // const header = document.querySelector('.header') as HTMLElement | null;
+            if (banner) resizeObserver.observe(banner); else bannerHeight = 0;
+            if (donation) resizeObserver.observe(donation); else donationHeight = 0;
+            // if (header) resizeObserver.observe(header); else headerHeight = 0;
+            updateOffset();
+        });
+
+        mutationObserver.observe(document.body, { childList: true, subtree: true });
+        mutationObserver.disconnect();
+        const initialBanner = document.querySelector('.banner') as HTMLElement | null;
+        const initialDonation = document.querySelector('.donation-banner') as HTMLElement | null;
+        // const initialHeader = document.querySelector('.header') as HTMLElement | null;
+        if (initialBanner) { resizeObserver.observe(initialBanner); bannerHeight = initialBanner.offsetHeight; }
+        if (initialDonation) { resizeObserver.observe(initialDonation); donationHeight = initialDonation.offsetHeight; }
+        // if (initialHeader) { resizeObserver.observe(initialHeader); headerHeight = initialHeader.offsetHeight; }
+        updateOffset();
+        mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+        return () => {
+            mutationObserver.disconnect();
+            resizeObserver.disconnect();
+        };
     });
 </script>
 

@@ -48,7 +48,7 @@
 </script>
 
 {#if loaded && danger && !hidden}
-    <div class="flex items-center bg-primary gap-2 min-w-0 w-full py-2 px-3 top-0 left-0 h-min [&_*]:text-foreground">
+    <div class="banner flex items-center bg-primary gap-2 min-w-0 w-full py-2 px-3 top-0 left-0 h-min [&_*]:text-foreground">
         <MaterialSymbolsInfo class="h-6 w-6 flex-none" />
         <p class="text-sm sm:text-base min-w-0 wrap-anywhere">{message}</p>
 

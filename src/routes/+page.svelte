@@ -61,7 +61,7 @@
 <svelte:window bind:scrollY={scrollY} />
 
 <div class="content pb-44">
-    <div class="introduction mr-auto ml-auto flex min-h-screen w-full max-w-screen items-center p-10 lg:w-11/12">
+    <div class="introduction mr-auto ml-auto flex w-full max-w-screen items-center p-10 lg:w-11/12">
         <div class="description w-3/5">
             <h1 class="w-fit text-9xl font-bold">
                 <img alt="" aria-hidden="true" src="/favicon.svg" />
@@ -270,6 +270,7 @@
         align-items: center;
         gap: clamp(2rem, 5vw, 5rem);
         justify-content: center;
+        height: calc(100dvh - var(--vpOffset, 0px) - 1.5rem);
     }
 
     .description {
