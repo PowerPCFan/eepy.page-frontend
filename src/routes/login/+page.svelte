@@ -69,7 +69,7 @@
         currentWidgetId = widgetId;
     };
 
-    function handleResetClick() {
+    function resetTurnstile() {
         if (turnstileInstance && currentWidgetId) {
             captchaDone = false;
             turnstileInstance.reset(currentWidgetId);
@@ -107,7 +107,7 @@
                         errorTitle = "";
                         errorDescription = "";
                         requiresMfa = true;
-                        // resetTurnstile();
+                        resetTurnstile();
                         return;
                     } else {
                         errorDescription = "Invalid two-factor authentication code.";
@@ -119,11 +119,11 @@
                         "There was an error while logging in. If this continues, please contact support.";
                 consola.warn(errorDescription);
 
-                // resetTurnstile();
+                resetTurnstile();
                 throw new Error("Login failed");
             })
             .then(session => {
-                // @ts-expect-error no types implemented for this
+                // @ts-expect-error: no types implemented for this
                 const sessionId: string = session["auth-token"];
                 window.gtag?.("event", "log_in");
 
@@ -135,9 +135,12 @@
                 setAuthToken(sessionId);
                 localStorage.setItem("logged-in", "y");
                 setTimeout(() => {
-                    // 3s timeout is for firefox, since an immediate redirect can cause a bug where localStorage doesnt save
+                    // fix localstorage bug, i'm not sure if this is
+                    // necessary anymore but it was here before and
+                    // i'll just keep it with a shortened 750ms delay
+                    // to be safe lol
                     window.location.href = data.redirectURL ?? "/";
-                }, 3000);
+                }, 750);
             });
     }
 
@@ -154,7 +157,7 @@
                 if (error instanceof UserError) errorDescription = "Email is already in use";
                 if (error instanceof CaptchaError) errorDescription = "Please solve the captcha before continuing";
 
-                // resetTurnstile();
+                resetTurnstile();
                 consola.warn(errorDescription);
                 throw new Error("Signup failed");
             })
@@ -165,7 +168,7 @@
                 alertDescription = "Check your email and verify your account before signing in.";
 
                 isLoggingIn = true;
-                // resetTurnstile();
+                resetTurnstile();
             });
     }
 
