@@ -10,6 +10,7 @@
     import { toast } from "svelte-sonner";
     import MaterialSymbolsAttachMoneyRounded from "~icons/material-symbols/attach-money-rounded";
     import { redirectToLogin } from "../../helperFuncs";
+    import { shouldRedirectToLogin } from "../../authGuard";
     import {
         AuthError,
         ConflictError,
@@ -229,9 +230,13 @@
     }
 
     if (browser) {
-        serverContactor = new ServerContactor(getAuthToken() ?? "", localStorage.getItem("server_url"));
-        serverContactor
-            .getDomains()
+        const authToken = getAuthToken() ?? null;
+        if (shouldRedirectToLogin(authToken, window.location.pathname)) {
+            redirectToLogin(460);
+        } else {
+            serverContactor = new ServerContactor(authToken, localStorage.getItem("server_url") ?? null);
+            serverContactor
+                .getDomains()
             .catch(error => {
                 if (error instanceof AuthError) {
                     redirectToLogin(460);
@@ -300,6 +305,7 @@
                 }
                 domains = sortDomains(dashboardDomains);
             });
+        }
     }
 
     $effect(() => {

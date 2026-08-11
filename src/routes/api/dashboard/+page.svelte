@@ -123,7 +123,13 @@
     }
 
     onMount(() => {
-        serverContactor = new ServerContactor(getAuthToken() ?? null);
+        const authToken = getAuthToken() ?? null;
+        if (!authToken) {
+            redirectToLogin(460);
+            return;
+        }
+
+        serverContactor = new ServerContactor(authToken);
         serverContactor
             .getApiKeys()
             .catch(error => {

@@ -3,6 +3,7 @@ import consola from "consola";
 import Cookies from "js-cookie";
 import createClient, { type Middleware } from "openapi-fetch";
 import type { paths } from "./api";
+import { isAuthFailureStatus } from "./authGuard";
 import { getAuthToken, redirectToLogin, setAuthToken } from "./helperFuncs";
 
 
@@ -424,7 +425,7 @@ export class ServerContactor {
             this.serverURL = urlOverride;
         }
 
-        if (getAuthToken() === null && window.location.pathname !== "/account") {
+        if (!getAuthToken() && window.location.pathname !== "/account") {
             redirectToLogin(302);
         }
     }
@@ -631,13 +632,12 @@ export class ServerContactor {
 
         if (error) {
             //@ts-ignore
-            switch (response.status) {
-                case 460:
-                    throw new AuthError("Invalid session");
-                default:
-                    // @ts-ignore
-                    throw new Error(`Failed to get domains. Status code: ${response.status}`);
+            if (isAuthFailureStatus(response.status)) {
+                throw new AuthError("Invalid session");
             }
+
+            // @ts-ignore
+            throw new Error(`Failed to get domains. Status code: ${response.status}`);
         }
 
         //@ts-ignore
@@ -719,12 +719,11 @@ export class ServerContactor {
 
         if (error) {
             // @ts-ignore
-            switch (response.status) {
-                case 460:
-                    throw new AuthError("Invalid session");
-                default:
-                    throw new Error("Failed to get api keys");
+            if (isAuthFailureStatus(response.status)) {
+                throw new AuthError("Invalid session");
             }
+
+            throw new Error("Failed to get api keys");
         }
 
         return data;
