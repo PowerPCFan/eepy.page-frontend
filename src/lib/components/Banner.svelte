@@ -4,6 +4,7 @@
     import MaterialSymbolsInfo from "~icons/material-symbols/info";
     import MaterialSymbolsClose from "~icons/material-symbols/close";
     import { getStatus } from "../../serverContactor";
+    import { cyrb53 } from "../../helperFuncs";
 
     let loaded: boolean = $state(false);
     let danger: boolean = $state(false);
@@ -24,26 +25,26 @@
                 // @ts-ignore
                 message = status["message"];
             }
+
+            hidden = calcIsHidden();
+            loaded = true;
         });
-    loaded = true;
 
     let hidden: boolean = $state(false);
 
     function setHidden() {
         localStorage.setItem("notification-hidden", "true");
-        localStorage.setItem("notification-hidden-message", message);
+        localStorage.setItem("notification-hidden-message", cyrb53(message).toString());
         hidden = true;
     }
 
     function calcIsHidden(): boolean {
         if (!browser) return false;
         return (
-            ((localStorage.getItem("notification-hidden") ?? false) as boolean)
-            && localStorage.getItem("notification-hidden-message") === message
+            (localStorage.getItem("notification-hidden") ?? "false").toLowerCase() === "true"
+            && localStorage.getItem("notification-hidden-message") === cyrb53(message).toString()
         );
     }
-
-    calcIsHidden();
 </script>
 
 {#if loaded && danger && !hidden}
