@@ -27,6 +27,7 @@
     import { onMount } from "svelte";
     import { fade } from "svelte/transition";
     import { turnstile, type TurnstileEventAttributes } from '@svelte-put/cloudflare-turnstile';
+    import { activeTheme } from "$lib/store";
 
     let { data } = $props();
 
@@ -384,7 +385,7 @@
     <div
         use:turnstile
         turnstile-sitekey="0x4AAAAAADviUbGPh--ynweX"
-        turnstile-theme="auto"
+        turnstile-theme={$activeTheme}
         turnstile-size="normal"
         turnstile-language="en"
         turnstile-response-field-name="turnstile"
