@@ -11,7 +11,7 @@
     import Skeleton from "$lib/components/ui/skeleton/skeleton.svelte";
     import { onMount } from "svelte";
     import { toast } from "svelte-sonner";
-    import { AuthError, LimitError, ServerContactor } from "../../../serverContactor";
+    import { AuthError, LimitError, RateLimitError, ServerContactor } from "../../../serverContactor";
 
     type Tunnel = { id: string; hostname: string; subdomain: string; service: string; local_port: number; ssh_fingerprint: string; command: string };
     let client: ServerContactor;
@@ -73,7 +73,9 @@
             settingsOpen = false;
             toast.success("Tunnel port updated", { description: "Restart the SSH process with the updated command." });
         } catch (error) {
-            settingsError = error instanceof Error ? error.message : "Could not update tunnel";
+            settingsError = error instanceof RateLimitError
+                ? error.message
+                : error instanceof Error ? error.message : "Could not update tunnel";
         } finally {
             settingsSaving = false;
         }
@@ -94,6 +96,11 @@
             tunnels = data.tunnels ?? [];
         } catch (error) {
             if (error instanceof AuthError) redirectToLogin(460);
+            else if (error instanceof RateLimitError) {
+                subdomainErrorTitle = "Could not load tunnels";
+                subdomainError = error.message;
+                alertUpdate++;
+            }
             else toast.error("Could not load tunnels");
         } finally {
             loading = false;
@@ -122,6 +129,9 @@
             if (error instanceof LimitError) {
                 subdomainErrorTitle = "Domain limit reached";
                 subdomainError = "You have reached your domain limit. Delete an existing domain from the dashboard before creating another tunnel.";
+            } else if (error instanceof RateLimitError) {
+                subdomainErrorTitle = error.title;
+                subdomainError = error.message;
             } else {
                 subdomainError = error instanceof Error ? error.message : "Could not create tunnel";
             }
@@ -139,8 +149,14 @@
             tunnels = tunnels.filter((item) => item.id !== tunnel.id);
             deletedTunnel = tunnel;
             deletionOpen = true;
-        } catch (_) {
-            toast.error("Could not delete tunnel");
+        } catch (error) {
+            if (error instanceof RateLimitError) {
+                subdomainErrorTitle = "Could not delete tunnel";
+                subdomainError = error.message;
+                alertUpdate++;
+            } else {
+                toast.error("Could not delete tunnel");
+            }
         }
     }
 

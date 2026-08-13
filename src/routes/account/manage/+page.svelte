@@ -10,6 +10,7 @@
         CodeError,
         ConflictError,
         MFAError,
+        RateLimitError,
         ServerContactor,
         UserError,
     } from "../../../serverContactor";
@@ -57,6 +58,15 @@
     let alertDescription = $state("");
     let alertTrigger = $state(0);
 
+    function showRateLimitError(error: unknown) {
+        if (!(error instanceof RateLimitError)) return false;
+
+        alertTitle = error.title;
+        alertDescription = error.message;
+        alertTrigger++;
+        return true;
+    }
+
     onMount(() => {
         serverContactor = new ServerContactor(getAuthToken() ?? null);
     });
@@ -67,6 +77,7 @@
         serverContactor
             .createMfaCode()
             .catch(error => {
+                if (showRateLimitError(error)) return;
                 if (error instanceof AuthError) {
                     redirectToLogin(460);
                     return;
@@ -89,6 +100,7 @@
             .verifyMfaCode(code)
             .catch(error => {
                 mfaButtonLoading = false;
+                if (showRateLimitError(error)) return;
                 if (error instanceof AuthError) {
                     redirectToLogin(460);
                     return;
@@ -122,6 +134,7 @@
 
                 mfaButtonLoading = false;
                 mfaInvalid = true;
+                if (showRateLimitError(error)) return;
                 if (error instanceof AuthError) {
                     redirectToLogin(460);
                     return;
@@ -155,6 +168,7 @@
                 consola.warn("Failed to send account deletion email");
                 mfaButtonLoading = false;
 
+                if (showRateLimitError(err)) return;
                 if (err instanceof AuthError) redirectToLogin(460);
                 else if (err instanceof MFAError) toast.error("Invalid two-factor authentication code.");
                 else
@@ -184,6 +198,7 @@
         serverContactor
             .logOut(session?.hash)
             .catch(err => {
+                if (showRateLimitError(err)) return;
                 throw new Error(
                     "Failed to delete session. Please file an issue report over on our github (PowerPCFan/eepy.page-frontend)"
                 );
@@ -454,7 +469,11 @@
         </div>
     </div>
 
-    <InlineAlert variant={"error"} title={alertTitle} description={alertDescription} />
+    <InlineAlert
+        variant={"error"}
+        title={alertTitle}
+        description={alertDescription}
+        trigger={alertTrigger} />
     <div class="referrals mt-4 space-y-2">
         <h1 class="text-2xl font-semibold">Referrals</h1>
         {#if data.referralCode}
@@ -485,6 +504,7 @@
                     serverContactor
                         .createReferral(referralCode)
                         .catch(err => {
+                            if (showRateLimitError(err)) return;
                             if (err instanceof UserError || err instanceof TypeError) {
                                 alertTitle = "An unhandled error occurred.";
                                 alertDescription = "Please contact support if this error persists.";

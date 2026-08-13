@@ -17,6 +17,7 @@
         DNSError,
         LimitError,
         PermissionError,
+        RateLimitError,
         ServerContactor,
     } from "../../serverContactor";
 
@@ -116,7 +117,9 @@
                 if (error instanceof AuthError) redirectToLogin(460);
 
                 domainErrorTitle = "Could not delete domain";
-                domainErrorDescription = "An unhandled error occurred.";
+                domainErrorDescription = error instanceof RateLimitError
+                    ? error.message
+                    : "An unhandled error occurred.";
                 alertUpdate++;
 
                 throw new Error("Failed to delete domain");
@@ -155,6 +158,8 @@
                     registerErrorDescription = "You have reached your domain limit. Delete an existing domain before registering another one.";
                 else if (error instanceof ConflictError)
                     registerErrorDescription = "The requested domain has already been registered!";
+                else if (error instanceof RateLimitError)
+                    registerErrorDescription = error.message;
                 else {
                     registerErrorDescription = "An unhandled error occurred.";
                 }
@@ -203,6 +208,8 @@
                     domainErrorDescription = "Please ensure the 'value' field is correct.";
                 else if (error instanceof PermissionError)
                     domainErrorDescription = "You must own all parts of the requested domain.";
+                else if (error instanceof RateLimitError)
+                    domainErrorDescription = error.message;
                 else {
                     domainErrorDescription = "An unhandled error occurred.";
                 }
@@ -240,6 +247,9 @@
             .catch(error => {
                 if (error instanceof AuthError) {
                     redirectToLogin(460);
+                } else if (error instanceof RateLimitError) {
+                    domainErrorTitle = "Failed to load domains";
+                    domainErrorDescription = error.message;
                 } else {
                     console.error(error);
                     domainErrorTitle = "Failed to load domains";

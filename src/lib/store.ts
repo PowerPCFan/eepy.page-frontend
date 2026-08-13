@@ -33,15 +33,3 @@ activeTheme.subscribe(value => {
 });
 
 export const sidebarOpen = writable(false);
-
-export type RateLimitAlert = {
-    title: string;
-    description: string;
-    trigger: number;
-};
-
-export const rateLimitAlert = writable<RateLimitAlert>({
-    title: "",
-    description: "",
-    trigger: 0,
-});

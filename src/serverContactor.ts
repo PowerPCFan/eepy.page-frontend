@@ -5,7 +5,6 @@ import createClient, { type Middleware } from "openapi-fetch";
 import type { paths } from "./api";
 import { isAuthFailureStatus } from "./authGuard";
 import { getAuthToken, redirectToLogin, setAuthToken } from "./helperFuncs";
-import { rateLimitAlert } from "$lib/store";
 
 
 export let serverURL = "https://api.eepy.page";
@@ -34,7 +33,7 @@ const RATE_LIMIT_ALERTS = [
         description: "Give it {}, then try again.",
     },
     {
-        title: "Our servers aren't <em>that</em> fast...",
+        title: "Our servers aren't THAT fast...",
         description: "Slow down! Try again in {}.",
     },
     {
@@ -66,26 +65,23 @@ function rateLimitWait(response: Response): string {
     return `${hours} ${hours === 1 ? "hour" : "hours"}`;
 }
 
-function rateLimitMessage(response: Response): string {
-    return `Try again in ${rateLimitWait(response)}.`;
+export function notifyRateLimit(response: Response): { title: string; description: string } {
+    const alert = RATE_LIMIT_ALERTS[Math.floor(Math.random() * RATE_LIMIT_ALERTS.length)];
+    return {
+        title: alert?.title ?? "Too many requests",
+        description: alert?.description.replace("{}", rateLimitWait(response)) ?? `Please try again in ${rateLimitWait(response)}.`,
+    };
 }
 
-function notifyRateLimit(response: Response): void {
-    if (browser) {
-        const alert = RATE_LIMIT_ALERTS[Math.floor(Math.random() * RATE_LIMIT_ALERTS.length)];
-        rateLimitAlert.set({
-            title: alert?.title ?? "Too many requests",
-            description: alert?.description.replace("{}", rateLimitWait(response)) ?? `You're sending requests too fast. Please wait ${rateLimitWait(response)} before trying again.`,
-            trigger: Date.now(),
-        });
-    }
+function rateLimitError(response: Response): RateLimitError {
+    const alert = notifyRateLimit(response);
+    return new RateLimitError(alert.description, alert.title);
 }
 
 const JWTAuthMiddleware: Middleware = {
     async onResponse({ request, response, options }) {
         if (response.status === 429) {
-            notifyRateLimit(response);
-            return response;
+            throw rateLimitError(response);
         }
 
         if (response.status === 460) {
@@ -123,7 +119,6 @@ async function tryRefreshToken(): Promise<string | false> {
             credentials: "include"
         });
 
-        if (res.status === 429) notifyRateLimit(res);
         if (!res.ok) return false;
 
         const data = await res.json();
@@ -223,7 +218,7 @@ export class CaptchaError extends Error {
 }
 
 export class RateLimitError extends Error {
-    constructor(message: string) {
+    constructor(message: string, public title: string = "Too many requests") {
         super(message);
         this.name = "RateLimitError";
     }
@@ -286,7 +281,7 @@ export async function login(
             case 422:
                 throw new CaptchaError(error.detail);
             case 429:
-                throw new RateLimitError(rateLimitMessage(response));
+                throw rateLimitError(response);
             default:
                 throw new Error(`An unexpected error occurred. Status code: ${response.status}`);
         }
@@ -317,7 +312,7 @@ export async function register(
             case 422:
                 throw new UserError(error.detail);
             case 429:
-                throw new RateLimitError(rateLimitMessage(response));
+                throw rateLimitError(response);
             default:
                 throw new Error(`Failed to register. Status code: ${response.status}`);
         }
@@ -352,7 +347,7 @@ export async function sendForgotCode(
             case 404:
                 throw new UserError("User not found.");
             case 429:
-                throw new RateLimitError(rateLimitMessage(response));
+                throw rateLimitError(response);
             default:
                 throw new Error(`Failed to send forgot code. Status code: ${error.detail}`);
         }
@@ -376,7 +371,7 @@ export async function confirmPasswordChange(
             case 404:
                 throw new UserError("User not found");
             case 429:
-                throw new RateLimitError(rateLimitMessage(response));
+                throw rateLimitError(response);
             default:
                 throw new Error(
                     `Failed to confirm password change. Status code: ${response.status}`

@@ -275,9 +275,12 @@
             onclick={_ => {
                 resendEmailClicked = true;
                 resendEmail(username)
-                    .catch(_ => {
+                    .catch(error => {
                         resendEmailClicked = false;
-                        errorDescription = "Failed to send verification";
+                        errorTitle = "Failed to send verification";
+                        errorDescription = error instanceof RateLimitError
+                            ? error.message
+                            : "Please try again later.";
                         throw new Error("Failed to send resend email");
                     })
                     .then(_ => {

@@ -13,7 +13,7 @@
     import { fade } from "svelte/transition";
     import MaterialSymbolsVisibility from "~icons/material-symbols/visibility";
     import MaterialSymbolsVisibilityOff from "~icons/material-symbols/visibility-off";
-    import { AuthError, ServerContactor } from "../../../serverContactor";
+    import { AuthError, RateLimitError, ServerContactor } from "../../../serverContactor";
 
     interface Domain {
         type: string;
@@ -70,11 +70,21 @@
 
     let serverContactor: ServerContactor;
 
+    function showRateLimitError(error: unknown) {
+        if (!(error instanceof RateLimitError)) return false;
+
+        apiErrorTitle = error.title;
+        apiErrorDescription = error.message;
+        alertUpdate++;
+        return true;
+    }
+
     function getKey(key: Key) {
         key.decrypted = "Loading..";
         serverContactor
             .getApiKey(key.hash)
             .catch(error => {
+                if (showRateLimitError(error)) throw error;
                 if (error instanceof AuthError) {
                     redirectToLogin(460);
                 }
@@ -91,6 +101,7 @@
             .deleteApiKey(key.hash)
             .catch(error => {
                 key.deletionLoading = false;
+                if (showRateLimitError(error)) throw error;
                 if (error instanceof AuthError) {
                     redirectToLogin(460);
                 }
@@ -108,6 +119,7 @@
             .createApiKey(comment, selectedDomains, selectedPermissions)
             .catch(error => {
                 apiCreationLoading = false;
+                if (showRateLimitError(error)) throw error;
 
                 if (error instanceof AuthError) {
                     redirectToLogin(460);
@@ -133,6 +145,7 @@
         serverContactor
             .getApiKeys()
             .catch(error => {
+                if (showRateLimitError(error)) throw error;
                 if (error instanceof AuthError) {
                     redirectToLogin(460);
                 }
@@ -160,6 +173,8 @@
             .catch(error => {
                 if (error instanceof AuthError) {
                     redirectToLogin(460);
+                } else if (showRateLimitError(error)) {
+                    return;
                 } else {
                     console.error(error);
                     apiErrorTitle = "Failed to load domains";
