@@ -9,6 +9,7 @@
         login,
         MFAError,
         PermissionError,
+        RateLimitError,
         register,
         resendEmail,
         setAuthToken,
@@ -125,7 +126,9 @@
                         errorDescription = "Invalid two-factor authentication code.";
                     }
                 } else if (error instanceof CaptchaError)
-                    errorDescription = "Please solve the captcha before continuing";
+                    errorDescription = error.message;
+                else if (error instanceof RateLimitError)
+                    errorDescription = error.message;
                 else
                     errorDescription =
                         "There was an error while logging in. If this continues, please contact support.";
@@ -163,8 +166,9 @@
                 buttonLoadingState = false;
                 errorTitle = "Sign up failed";
                 if (error instanceof ConflictError) errorDescription = "Username is taken";
-                if (error instanceof UserError) errorDescription = "Email is already in use";
-                if (error instanceof CaptchaError) errorDescription = "Please solve the captcha before continuing";
+                if (error instanceof UserError) errorDescription = error.message;
+                if (error instanceof CaptchaError) errorDescription = error.message;
+                if (error instanceof RateLimitError) errorDescription = error.message;
 
                 resetTurnstile();
                 consola.warn(errorDescription);

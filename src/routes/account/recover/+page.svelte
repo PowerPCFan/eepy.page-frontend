@@ -12,6 +12,7 @@
     import {
         CodeError,
         confirmPasswordChange,
+        RateLimitError,
         sendForgotCode,
         UserError
     } from "./../../../serverContactor";
@@ -39,6 +40,8 @@
                     if (err instanceof CodeError)
                         modal.open("Failed to change password", "Perhaps the code has expired?");
                     if (err instanceof UserError) redirectToLogin(404);
+                    if (err instanceof RateLimitError)
+                        modal.open("Too many attempts", err.message);
 
                     throw new Error("Failed to reset password");
                 })
@@ -52,11 +55,12 @@
             sendForgotCode(username)
                 .catch(err => {
                     if (err instanceof UserError) redirectToLogin(404);
-
-                    modal.open(
-                        "Failed to send verification code",
-                        "Did you double-check your username? eepy.page usernames are case-sensitive."
-                    );
+                    if (err instanceof RateLimitError) modal.open("Too many requests", err.message);
+                    else
+                        modal.open(
+                            "Failed to send verification code",
+                            "Did you double-check your username? eepy.page usernames are case-sensitive."
+                        );
                     throw new Error("Failed to send password reset");
                 })
                 .then(_ => {

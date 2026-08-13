@@ -5,7 +5,7 @@
     import Header from "$lib/components/Header.svelte";
     import { Toaster } from "$lib/components/ui/sonner";
     import "$lib/nprogress.css";
-    import { sidebarOpen } from "$lib/store";
+    import { rateLimitAlert, sidebarOpen } from "$lib/store";
     import consola from "consola";
     import NProgress from "nprogress";
     import MSAccountCircle from "~icons/material-symbols/account-circle";
@@ -18,6 +18,7 @@
 
     import "../app.css";
     import Donate from "$lib/components/Donate.svelte";
+    import InlineAlert from "$lib/components/ui/inline-alert/inline-alert.svelte";
 
     let { children, data } = $props();
     let innerWidth = $state(0);
@@ -120,6 +121,14 @@
 <CookieConsent consentMode={data.consent.mode} />
 
 <Donate />
+
+<div class="mx-auto w-11/12 max-w-5xl">
+    <InlineAlert
+        variant="error"
+        title={$rateLimitAlert.title}
+        description={$rateLimitAlert.description}
+        trigger={$rateLimitAlert.trigger} />
+</div>
 
 <svelte:head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
