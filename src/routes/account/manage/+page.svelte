@@ -325,7 +325,7 @@
 <div class="mx-auto w-11/12 max-w-6xl py-8 sm:py-12">
     <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-            <h1 class="text-3xl font-bold tracking-tight text-foreground">Account Settings</h1>
+            <h1 class="text-3xl font-bold text-foreground">Account Settings</h1>
             <p class="text-sm text-muted-foreground">Manage your profile, security preferences, and more</p>
         </div>
     </div>
@@ -383,7 +383,6 @@
                 </div>
 
                 <div class="hidden flex-col gap-1 md:flex">
-                    <p class="px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Resources</p>
                     <a
                         href="/api/dashboard"
                         target="_blank"
@@ -395,10 +394,12 @@
                         <MaterialSymbolsOpenInNew class="size-3.5 opacity-60" />
                     </a>
 
-                    {#if data.admin?.enabled === true}
+                    {#if !data.admin?.enabled === true}
                         <a
-                            href="/account/admin"
-                            class="flex items-center justify-between gap-2.5 rounded-lg px-3.5 py-2 text-sm text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
+                            href="https://panel.eepy.page/"
+                            target="_blank"
+                            class="flex items-center justify-between gap-2.5 rounded-lg px-3.5 py-2 text-sm text-muted-foreground transition-all hover:bg-muted hover:text-foreground"
+                        >
                             <div class="flex items-center gap-2">
                                 <MaterialSymbolsAdminPanelSettings class="size-4 shrink-0" />
                                 <span>Admin Panel</span>
@@ -407,12 +408,15 @@
                         </a>
                     {/if}
 
-                    <button
-                        onclick={() => logOut()}
-                        class="mt-2 flex w-full items-center gap-2.5 rounded-lg px-3.5 py-2 text-left text-sm text-destructive transition-all hover:bg-destructive/10">
-                        <MaterialSymbolsLogout class="size-4 shrink-0" />
-                        <span>Log out</span>
-                    </button>
+                    <div class="flex items-center justify-between gap-2.5 rounded-lg px-3.5 py-2 text-left text-sm text-destructive transition-all hover:bg-destructive/15">
+                        <button
+                            onclick={() => logOut()}
+                            class="flex w-full items-center gap-2.5"
+                        >
+                            <MaterialSymbolsLogout class="size-4 shrink-0" />
+                            <span>Log out</span>
+                        </button>
+                    </div>
                 </div>
             </nav>
         </aside>
@@ -470,7 +474,7 @@
                     <Card.Root class="border-destructive/30 bg-destructive/5 gap-4">
                         <Card.Header>
                             <Card.Title class="text-destructive/90">Delete Account</Card.Title>
-                            <Card.Description class="text-muted-foreground">
+                            <Card.Description class="text-muted-foreground leading-relaxed">
                                 Permanently deletes your account. Clicking below will open a review dialog to verify your request before any action is taken.
                             </Card.Description>
                         </Card.Header>
@@ -482,7 +486,7 @@
                                 <Dialog.Content class="sm:max-w-md">
                                     <Dialog.Header>
                                         <Dialog.Title class="text-destructive">Permanently Delete Account</Dialog.Title>
-                                        <Dialog.Description>
+                                        <Dialog.Description class="leading-normal">
                                             Please review the consequences below before confirming your deletion request.
                                         </Dialog.Description>
                                     </Dialog.Header>
@@ -490,7 +494,7 @@
                                     <div class="space-y-3 text-sm text-muted-foreground">
                                         <div class="space-y-2">
                                             <p class="font-semibold text-foreground">What will happen when you delete your account:</p>
-                                            <ul class="space-y-1.5 list-disc pl-6 text-foreground/80">
+                                            <ul class="space-y-1.5 list-disc pl-6 text-foreground/80 leading-relaxed">
                                                 <li>
                                                     <strong class="text-foreground">Domains & DNS:</strong>
                                                     All registered subdomains and DNS records will be permanently deleted from our nameservers and released for anyone else to claim.
@@ -505,7 +509,7 @@
                                                 </li>
                                             </ul>
                                         </div>
-                                        <p class="text-muted-foreground">
+                                        <p class="text-muted-foreground leading-relaxed">
                                             A confirmation link will be sent to <strong>{data.email}</strong> to finalize the deletion.
                                         </p>
                                     </div>
@@ -513,7 +517,7 @@
                                     {#if data.mfaEnabled}
                                         <div class="space-y-2 pt-2 border-t border-border">
                                             <Label class="text-xs">Two-Factor Authentication Required</Label>
-                                            <p class="text-xs text-muted-foreground">
+                                            <p class="text-xs text-muted-foreground leading-normal">
                                                 Enter your 6-digit authenticator code to authorize sending the deletion email.
                                             </p>
 
@@ -552,7 +556,7 @@
                                     <Dialog.Footer class="sm:flex-col gap-3 pt-2">
                                         <div class="flex items-center space-x-2">
                                             <Checkbox bind:checked={deleteAccountChecked} id="understand" />
-                                            <Label for="understand" class="text-xs cursor-pointer font-medium text-destructive">
+                                            <Label for="understand" class="text-xs cursor-pointer font-medium text-destructive leading-snug">
                                                 I understand that this action is irreversible and will permanently delete all my domains and account data.
                                             </Label>
                                         </div>
@@ -597,11 +601,11 @@
                         </Card.Header>
                         <Card.Content class="space-y-4">
                             {#if data.mfaEnabled}
-                                <p class="text-sm text-muted-foreground">
+                                <p class="text-sm text-muted-foreground leading-relaxed">
                                     Your account is protected by two-factor authentication! You will be prompted for a 6-digit verification code whenever you log in.
                                 </p>
                             {:else}
-                                <p class="text-sm text-muted-foreground">
+                                <p class="text-sm text-muted-foreground leading-relaxed">
                                     Protect your account from unauthorized access by requiring an authenticator app code alongside your password.
                                 </p>
                             {/if}
@@ -669,7 +673,7 @@
                                         {#if mfaIsVerified}
                                             <Dialog.Header>
                                                 <Dialog.Title class="text-xl font-bold">Two-Factor Authentication Enabled</Dialog.Title>
-                                                <Dialog.Description>
+                                                <Dialog.Description class="leading-relaxed">
                                                     Please save these backup codes somewhere safe. If you lose your authenticator app, these are the only way to recover your account.
                                                 </Dialog.Description>
                                             </Dialog.Header>
@@ -698,7 +702,7 @@
                                         {:else if !mfaUrl}
                                             <Dialog.Header>
                                                 <Dialog.Title class="text-xl font-bold">Enable two-factor authentication</Dialog.Title>
-                                                <Dialog.Description>Make your account safer in just 3 easy steps:</Dialog.Description>
+                                                <Dialog.Description class="leading-normal">Make your account safer in just 3 easy steps:</Dialog.Description>
                                             </Dialog.Header>
                                             <div class="flex flex-col items-center justify-center gap-3 py-12">
                                                 <div class="border-primary size-6 animate-spin rounded-full border-2 border-t-transparent"></div>
@@ -707,7 +711,7 @@
                                         {:else}
                                             <Dialog.Header>
                                                 <Dialog.Title class="text-xl font-bold">Enable two-factor authentication</Dialog.Title>
-                                                <Dialog.Description>Make your account safer in just 3 simple steps!</Dialog.Description>
+                                                <Dialog.Description class="leading-normal">Make your account safer in just 3 simple steps!</Dialog.Description>
                                             </Dialog.Header>
 
                                             <div class="flex flex-col gap-4 py-2">
@@ -719,7 +723,7 @@
                                                         <h3 class="text-foreground text-sm font-semibold sm:text-base">
                                                             Download an authenticator app
                                                         </h3>
-                                                        <p class="text-muted-foreground text-xs sm:text-sm">
+                                                        <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
                                                             Download and install an authenticator app of your choice, such as 
                                                             <a
                                                                 href="https://support.google.com/accounts/answer/1066447"
@@ -740,7 +744,7 @@
                                                         <h3 class="text-foreground text-sm font-semibold sm:text-base">
                                                             Scan the QR code
                                                         </h3>
-                                                        <p class="text-muted-foreground text-xs sm:text-sm">
+                                                        <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
                                                             Open your authenticator app and scan the QR code to the left using your phone's camera.
                                                         </p>
                                                         <div class="pt-1">
@@ -750,7 +754,7 @@
                                                             <Codeblock
                                                                 variant="inline"
                                                                 scrollbar="none"
-                                                                class="text-muted-foreground font-mono text-xs tracking-wider break-all select-all"
+                                                                class="text-muted-foreground font-mono text-xs break-all select-all"
                                                                 text={secretKey || mfaUrl}
                                                             />
                                                         </div>
@@ -767,7 +771,7 @@
                                                         <h3 class="text-foreground text-sm font-semibold sm:text-base">
                                                             Log in with your code
                                                         </h3>
-                                                        <p class="text-muted-foreground text-xs sm:text-sm">
+                                                        <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
                                                             Enter the 6-digit verification code, generated by your authenticator app.
                                                         </p>
                                                         <div class="flex flex-wrap items-center gap-3 pt-2">
@@ -906,7 +910,7 @@
                                     </div>
                                     <div class="space-y-1">
                                         <h4 class="text-base font-semibold text-foreground">Earn 1 Domain per 2 Verified Referrals</h4>
-                                        <p class="text-xs sm:text-sm text-muted-foreground">
+                                        <p class="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                                             For every 2 people who sign up with your referral link and verify their account, you'll automatically receive an extra domain (up to a maximum of 5 bonus domains).
                                         </p>
                                     </div>
@@ -947,7 +951,7 @@
                                 <div class="space-y-4">
                                     <div class="space-y-2">
                                         <Label for="referral" class="text-sm font-semibold">Choose Your Custom Referral Code</Label>
-                                        <p class="text-xs text-muted-foreground">Only letters, numbers, and dashes (3 to 50 characters).</p>
+                                        <p class="text-xs text-muted-foreground leading-normal">Only letters, numbers, and dashes (3 to 50 characters).</p>
                                         <Input
                                             disabled={referralCreating}
                                             bind:value={referralCode}
