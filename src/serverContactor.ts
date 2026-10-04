@@ -112,7 +112,7 @@ const JWTAuthMiddleware: Middleware = {
 // Automatically refresh auth tokens
 client.use(JWTAuthMiddleware);
 
-async function tryRefreshToken(): Promise<string | false> {
+export async function tryRefreshToken(): Promise<string | false> {
     try {
         const res = await fetch(`${serverURL}/refresh`, {
             method: "POST",

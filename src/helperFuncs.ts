@@ -17,6 +17,8 @@ export function cyrb53(str: string, seed = 0) {
     return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 }
 
+export const AUTH_COOKIE_NAME = dev ? "auth-token" : "__Host-auth-token";
+
 export function redirectToLogin(
     code: number = 0,
     timeoutSeconds: number = 0,
@@ -26,11 +28,14 @@ export function redirectToLogin(
         consola.info(`Redirecting to login with code ${code}`);
 
         Cookies.remove("logged-in");
-        Cookies.remove("__Host-auth-token", {
+        Cookies.remove(AUTH_COOKIE_NAME, {
             secure: !dev,
             path: "/",
             sameSite: "Strict"
         });
+        if (dev) {
+            Cookies.remove("auth-token", { path: "/" });
+        }
 
         if (code === 461) {
             window.location.href = `/account/warn?reason=permission`;
@@ -54,18 +59,18 @@ export function createFile(filename: string, content: string): boolean {
 
 export function getAuthToken() {
     consola.debug("Getting auth token");
+    if (dev) {
+        return Cookies.get("auth-token") || Cookies.get("__Host-auth-token");
+    }
     return Cookies.get("__Host-auth-token");
 }
 
 export function setAuthToken(token: string) {
-    const tokenExpirationMin = 10;
-    const expires = new Date(new Date().getTime() + tokenExpirationMin * 60000);
+    consola.debug("Setting auth token");
 
-    consola.debug(`Creating a new token that expires on ${expires}`);
-
-    Cookies.set("__Host-auth-token", token, {
+    Cookies.set(AUTH_COOKIE_NAME, token, {
         secure: !dev,
-        expires: expires,
+        expires: 14,
         sameSite: "Strict",
         path: "/"
     });

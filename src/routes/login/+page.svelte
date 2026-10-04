@@ -142,13 +142,14 @@
                 const sessionId: string = session["auth-token"];
                 window.gtag?.("event", "log_in");
 
-                const date = new Date(Date.now() + 604800 * 1000).toUTCString();
+                setAuthToken(sessionId);
+                Cookies.set("logged-in", "yes");
+                localStorage.setItem("logged-in", "y");
+
                 if (!getAuthToken()) {
                     console.error("Browser did not accept cookies...");
                 }
-                Cookies.set("logged-in", "yes");
-                setAuthToken(sessionId);
-                localStorage.setItem("logged-in", "y");
+
                 setTimeout(() => {
                     // fix localstorage bug, i'm not sure if this is
                     // necessary anymore but it was here before and
