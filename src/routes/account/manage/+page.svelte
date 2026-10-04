@@ -394,7 +394,7 @@
                         <MaterialSymbolsOpenInNew class="size-3.5 opacity-60" />
                     </a>
 
-                    {#if !data.admin?.enabled === true}
+                    {#if data.admin?.enabled === true}
                         <a
                             href="https://panel.eepy.page/"
                             target="_blank"
