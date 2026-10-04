@@ -5,6 +5,9 @@
     import * as InputOTP from "$lib/components/ui/input-otp/index.js";
     import MaterialSymbolsLockOutline from "~icons/material-symbols/lock-outline";
     import MaterialSymbolsSmartphone from "~icons/material-symbols/smartphone";
+    import MaterialSymbolsDesktopMac from "~icons/material-symbols/desktop-mac";
+    import MaterialSymbolsSecurity from "~icons/material-symbols/security";
+    import MaterialSymbolsLogin from "~icons/material-symbols/login";
     import {
         AuthError,
         CodeError,
@@ -22,15 +25,17 @@
     import InlineAlert from "$lib/components/ui/inline-alert/inline-alert.svelte";
     import { Input } from "$lib/components/ui/input";
     import { Label } from "$lib/components/ui/label";
+    import { Separator } from "$lib/components/ui/separator";
     import QR from "@svelte-put/qr/img/QR.svelte";
     import { REGEXP_ONLY_DIGITS } from "bits-ui";
+    import copy from "clipboard-copy";
     import consola from "consola";
     import Cookies from "js-cookie";
     import { onMount } from "svelte";
     import { toast } from "svelte-sonner";
     import { fade } from "svelte/transition";
     import { UAParser } from "ua-parser-js";
-    import MaterialSymbolsDesktopMac from "~icons/material-symbols/desktop-mac";
+    import { Codeblock } from "$lib/components/ui/codeblock";
 
     let serverContactor: ServerContactor;
 
@@ -71,156 +76,183 @@
         serverContactor = new ServerContactor(getAuthToken() ?? null);
     });
 
-    function mfaSetup() {
+    function getSecretKey(url: string): string {
+        if (!url) return "";
+        try {
+            if (url.startsWith("otpauth://")) {
+                const parsed = new URL(url);
+                return parsed.searchParams.get("secret") || "";
+            }
+        } catch {
+            // ignore
+        }
+        const match = url.match(/[?&]secret=([^&]+)/i);
+        if (match) return match[1];
+        return url;
+    }
+
+    function formatSecretKey(secret: string): string {
+        if (!secret) return "";
+        const clean = secret.replace(/\s+/g, "").toLowerCase();
+        return clean.match(/.{1,4}/g)?.join(" ") || clean;
+    }
+
+    let secretKey = $derived(formatSecretKey(getSecretKey(mfaUrl)));
+
+    async function mfaSetup() {
         consola.info("Starting MFA setup");
-        // get backup codes & setup authenticator
-        serverContactor
-            .createMfaCode()
-            .catch(error => {
-                if (showRateLimitError(error)) return;
-                if (error instanceof AuthError) {
-                    redirectToLogin(460);
-                    return;
-                }
-                if (error instanceof ConflictError) {
-                    toast.error("Two-factor authentication is already enabled");
-                    return;
-                }
-                throw new Error("Failed to begin 2fa setup");
-            })
-            .then(data => {
-                mfaUrl = data?.app_link!;
-                backupCodes = data?.backup_codes!;
-            });
-    }
-
-    function verifyMfa(code: string) {
-        // verify that the user's authenticator app actually worked and scanned the qr properly
-        serverContactor
-            .verifyMfaCode(code)
-            .catch(error => {
-                mfaButtonLoading = false;
-                if (showRateLimitError(error)) return;
-                if (error instanceof AuthError) {
-                    redirectToLogin(460);
-                    return;
-                }
-                if (error instanceof CodeError) {
-                    consola.warn("Invalid MFA code");
-                    toast.error("Invalid code", {
-                        description: "This code has either expired, or is invalid.",
-                    });
-                    return;
-                }
-                if (error instanceof ConflictError) {
-                    consola.error("MFA code already exist. This shouldn't be able to happen");
-                }
-                throw new Error("Failed to verify code");
-            })
-            .then(_ => {
-                mfaButtonLoading = false;
-                toast.success("Successfully enabled two-factor authentication!", { duration: 9000 });
-                mfaIsVerified = true;
-            });
-    }
-
-    function removeMfa(code: string) {
+        mfaUrl = "";
+        backupCodes = [];
+        mfaCode = "";
         mfaInvalid = false;
-        serverContactor
-            .deleteMfaCode(usingBackupCode ? undefined : code, usingBackupCode ? code : undefined)
-            .catch(error => {
-                // loader.hide();
-                consola.warn("Failed to remove MFA");
+        mfaIsVerified = false;
+        try {
+            const res = await serverContactor.createMfaCode();
+            if (res) {
+                mfaUrl = res.app_link;
+                backupCodes = res.backup_codes;
+            }
+        } catch (error) {
+            if (showRateLimitError(error)) return;
+            if (error instanceof AuthError) {
+                redirectToLogin(460);
+                return;
+            }
+            if (error instanceof ConflictError) {
+                toast.error("Two-factor authentication is already enabled");
+                return;
+            }
+            toast.error("Failed to begin 2FA setup");
+        }
+    }
 
-                mfaButtonLoading = false;
-                mfaInvalid = true;
-                if (showRateLimitError(error)) return;
-                if (error instanceof AuthError) {
-                    redirectToLogin(460);
-                    return;
-                }
-                if (error instanceof CodeError) {
-                    consola.warn("Invalid MFA code while removing MFA");
-                    toast.error("Invalid code", {
-                        description: "Please refresh and try again",
-                    });
-                    return;
-                }
+    async function verifyMfa(code: string) {
+        // verify that the user's authenticator app actually worked and scanned the qr properly
+        mfaInvalid = false;
+        mfaButtonLoading = true;
+        try {
+            await serverContactor.verifyMfaCode(code);
+            mfaButtonLoading = false;
+            toast.success("Successfully enabled two-factor authentication!", { duration: 9000 });
+            mfaIsVerified = true;
+            data.mfaEnabled = true;
+        } catch (error) {
+            mfaButtonLoading = false;
+            mfaInvalid = true;
+            if (showRateLimitError(error)) return;
+            if (error instanceof AuthError) {
+                redirectToLogin(460);
+                return;
+            }
+            if (error instanceof CodeError) {
+                consola.warn("Invalid MFA code");
+                toast.error("Invalid code", {
+                    description: "This code has either expired, or is invalid.",
+                });
+                return;
+            }
+            if (error instanceof ConflictError) {
+                consola.error("MFA code already exists. This shouldn't be able to happen");
+                toast.error("Two-factor authentication is already enabled");
+                return;
+            }
+            toast.error("Failed to verify code");
+        }
+    }
 
-                toast.error("An unhandled error occurred.", {
+    async function removeMfa(code: string) {
+        mfaInvalid = false;
+        mfaButtonLoading = true;
+        try {
+            await serverContactor.deleteMfaCode(
+                usingBackupCode ? undefined : code,
+                usingBackupCode ? code : undefined
+            );
+            mfaIsVerified = false;
+            mfaButtonLoading = false;
+            dialogOpen = false;
+            data.mfaEnabled = false;
+            toast.success("Two-factor authentication is now disabled");
+        } catch (error) {
+            consola.warn("Failed to remove MFA");
+            mfaButtonLoading = false;
+            mfaInvalid = true;
+            if (showRateLimitError(error)) return;
+            if (error instanceof AuthError) {
+                redirectToLogin(460);
+                return;
+            }
+            if (error instanceof CodeError) {
+                consola.warn("Invalid MFA code while removing MFA");
+                toast.error("Invalid code", {
+                    description: "Please refresh and try again",
+                });
+                return;
+            }
+            toast.error("An unhandled error occurred.", {
+                description: "Please contact support if this error persists.",
+            });
+        }
+    }
+
+    async function handleDelete(mfaCode: string) {
+        // sends an account deletion email to the user
+        mfaButtonLoading = true;
+        try {
+            await serverContactor.deleteAccount(mfaCode);
+            mfaButtonLoading = false;
+            toast.success("Please check your email", {
+                description:
+                    "A link to delete your account has been sent to your email. If you cannot find it, please check the spam folder",
+                duration: 9000,
+            });
+        } catch (err) {
+            consola.warn("Failed to send account deletion email");
+            mfaButtonLoading = false;
+            mfaInvalid = true;
+            if (showRateLimitError(err)) return;
+            if (err instanceof AuthError) redirectToLogin(460);
+            else if (err instanceof MFAError) toast.error("Invalid two-factor authentication code.");
+            else
+                toast.error("Failed to delete your account", {
                     description: "Please contact support if this error persists.",
                 });
-                throw new Error("Failed to verify code");
-            })
-            .then(_ => {
-                mfaIsVerified = false;
-                mfaButtonLoading = false;
-                dialogOpen = false;
-                toast.success("Two-factor authentication is now disabled");
-            });
+        }
     }
 
-    function handleDelete(mfaCode: string) {
-        // sends an account deletion email to the user
-        serverContactor
-            .deleteAccount(mfaCode)
-            .catch(err => {
-                consola.warn("Failed to send account deletion email");
-                mfaButtonLoading = false;
-
-                if (showRateLimitError(err)) return;
-                if (err instanceof AuthError) redirectToLogin(460);
-                else if (err instanceof MFAError) toast.error("Invalid two-factor authentication code.");
-                else
-                    toast.error("Failed to delete your account", {
-                        description: "Please contact support if this error persists.",
-                    });
-                throw new Error("Failed to delete account");
-            })
-            .then(_ => {
-                mfaButtonLoading = false;
-                toast.success("Please check your email", {
-                    description:
-                        "A link to delete your account has been sent to your email. If you cannot find it, please check the spam folder",
-                    duration: 9000,
-                });
-            });
-    }
-    function gpdrData() {
-        // We don't store that much data so we can just fetch it from the server
-        serverContactor.getGDPR().then(data => {
+    async function gpdrData() {
+        try {
+            const data = await serverContactor.getGDPR();
             createFile("data.json", JSON.stringify(data));
-        });
+        } catch {
+            toast.error("Failed to download your data");
+        }
     }
-    function logOut(session?: Session) {
-        // If session isn't specified, the user is logging themselves out
+
+    async function logOut(session?: Session) {
         consola.info("Logging out a session");
-        serverContactor
-            .logOut(session?.hash)
-            .catch(err => {
-                if (showRateLimitError(err)) return;
-                throw new Error(
-                    "Failed to delete session. Please file an issue report over on our github (PowerPCFan/eepy.page-frontend)"
-                );
-            })
-            .then(_ => {
-                consola.info("successfully logged session out");
-                if (!session) {
-                    Cookies.remove("__Host-auth-token", {
-                        secure: !dev,
-                        path: "/",
-                        sameSite: "Strict"
-                    });
-                    localStorage.removeItem("logged-in");
-                    localStorage.removeItem("auth-token");
-                    redirectToLogin(200);
-                } else {
-                    session.loading = false;
-                    sessions = sessions?.filter(sess => {
-                        return sess.hash !== session.hash;
-                    });
-                }
-            });
+        try {
+            await serverContactor.logOut(session?.hash);
+            consola.info("successfully logged session out");
+            if (!session) {
+                Cookies.remove("__Host-auth-token", {
+                    secure: !dev,
+                    path: "/",
+                    sameSite: "Strict",
+                });
+                localStorage.removeItem("logged-in");
+                localStorage.removeItem("auth-token");
+                redirectToLogin(200);
+            } else {
+                session.loading = false;
+                sessions = sessions?.filter(sess => {
+                    return sess.hash !== session.hash;
+                });
+            }
+        } catch (err) {
+            if (showRateLimitError(err)) return;
+            toast.error("Failed to log out session");
+        }
     }
 
     $effect(() => {
@@ -334,62 +366,136 @@
                     <Dialog.Trigger>
                         <Button onclick={_ => mfaSetup()}>Enable two-factor authentication</Button>
                     </Dialog.Trigger>
-                    <Dialog.Content>
-                        <Dialog.Header>
-                            {#if !mfaUrl}
-                                <Dialog.Title>Please wait...</Dialog.Title>
-                                <Dialog.Description>Starting two-factor authentication setup</Dialog.Description>
-                            {:else}
-                                <Dialog.Title>Setup 2Fa</Dialog.Title>
-                                {#if !mfaIsVerified}
-                                    <Dialog.Description>Scan this QR code in your authenticator app</Dialog.Description>
+                    <Dialog.Content class="sm:max-w-xl">
+                        {#if mfaIsVerified}
+                            <Dialog.Header>
+                                <Dialog.Title class="text-xl font-bold">Two-Factor Authentication Enabled</Dialog.Title>
+                                <Dialog.Description>
+                                    Please save these backup codes somewhere safe. If you get locked out, you cannot
+                                    recover your account without these.
+                                </Dialog.Description>
+                            </Dialog.Header>
 
-                                    <QR backgroundFill="white" data={mfaUrl} />
-                                    <Button href={mfaUrl} variant={"link"}>Or alternatively, use this link</Button>
+                            <div class="my-2 rounded-lg border bg-muted/40 p-4">
+                                <div class="grid grid-cols-2 gap-2 font-mono text-sm">
+                                    {#each backupCodes as code}
+                                        <div class="bg-background/80 rounded border border-border px-2 py-1 text-center font-semibold select-all">
+                                            {code}
+                                        </div>
+                                    {/each}
+                                </div>
+                            </div>
 
-                                    <h2 class="text-xl font-semibold">Now enter your 2FA code</h2>
-
-                                    <InputOTP.Root
-                                        bind:value={mfaCode}
-                                        class="m-auto w-fit"
-                                        maxlength={6}
-                                        pattern={REGEXP_ONLY_DIGITS}>
-                                        {#snippet children({ cells })}
-                                            <InputOTP.Group>
-                                                {#each cells as cell (cell)}
-                                                    <InputOTP.Slot
-                                                        class="h-16 text-2xl"
-                                                        aria-invalid={mfaInvalid}
-                                                        cell={cell} />
-                                                {/each}
-                                            </InputOTP.Group>
-                                        {/snippet}
-                                    </InputOTP.Root>
-                                {:else}
-                                    <h2 class="text-xl font-semibold">
-                                        Please save these backup codes somewhere safe. If you get locked out, you cannot
-                                        recover your account without these.
-                                    </h2>
-                                    <ul class="list-disc [&>li]:ml-8">
-                                        {#each backupCodes as code}
-                                            <li>{code}</li>
-                                        {/each}
-                                    </ul>
-                                {/if}
-                            {/if}
-                        </Dialog.Header>
-
-                        <Dialog.Footer>
-                            {#if !mfaIsVerified}
+                            <Dialog.Footer class="flex flex-col gap-2 sm:flex-row">
                                 <Button
-                                    loading={mfaButtonLoading}
-                                    onclick={_ => {
-                                        mfaButtonLoading = true;
-                                        verifyMfa(mfaCode);
-                                    }}
-                                    disabled={mfaCode.length != 6}>Enable two-factor authentication</Button>
-                            {/if}
-                        </Dialog.Footer>
+                                    variant={"outline"}
+                                    onclick={() => {
+                                        copy(backupCodes.join("\n"));
+                                        toast.success("Backup codes copied to clipboard!");
+                                    }}>
+                                    Copy codes
+                                </Button>
+                                <Button onclick={() => (dialogOpen = false)}>Done</Button>
+                            </Dialog.Footer>
+                        {:else if !mfaUrl}
+                            <Dialog.Header>
+                                <Dialog.Title class="text-xl font-bold">Enable two-factor authentication</Dialog.Title>
+                                <Dialog.Description>Make your account safer in just 3 easy steps:</Dialog.Description>
+                            </Dialog.Header>
+                            <div class="flex flex-col items-center justify-center gap-3 py-12">
+                                <div class="border-primary size-6 animate-spin rounded-full border-2 border-t-transparent"></div>
+                                <span class="text-muted-foreground text-sm">Starting two-factor authentication setup...</span>
+                            </div>
+                        {:else}
+                            <Dialog.Header>
+                                <Dialog.Title class="text-xl font-bold">Enable two-factor authentication</Dialog.Title>
+                                <Dialog.Description>Make your account safer in just 3 simple steps:</Dialog.Description>
+                            </Dialog.Header>
+
+                            <div class="flex flex-col gap-4 py-2">
+                                <div class="flex items-center gap-4">
+                                    <div class="size-24 shrink-0 sm:size-28 flex items-center justify-center">
+                                        <MaterialSymbolsSecurity class="w-3/4 h-auto" />
+                                    </div>
+                                    <div class="flex-1 space-y-1">
+                                        <h3 class="text-foreground text-sm font-semibold leading-tight sm:text-base">
+                                            Download an authenticator app
+                                        </h3>
+                                        <p class="text-muted-foreground text-xs leading-snug sm:text-sm">
+                                            Download and install an authenticator app of your choice, such as 
+                                            <a
+                                                href="https://support.google.com/accounts/answer/1066447"
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                class="text-primary font-medium hover:underline">Google Authenticator</a> (available for iOS and Android).
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <Separator class="bg-border/60" />
+
+                                <div class="flex items-center gap-4">
+                                    <div class="size-24 shrink-0 sm:size-28 flex items-center justify-center overflow-hidden p-1 bg-white rounded-sm">
+                                        <QR backgroundFill="white" data={mfaUrl} class="size-full" />
+                                    </div>
+                                    <div class="min-w-0 flex-1 space-y-1">
+                                        <h3 class="text-foreground text-sm font-semibold leading-tight sm:text-base">
+                                            Scan the QR code
+                                        </h3>
+                                        <p class="text-muted-foreground text-xs leading-snug sm:text-sm">
+                                            Open your authenticator app and scan the QR code to the left using your phone's camera.
+                                        </p>
+                                        <div class="pt-1">
+                                            <h4 class="text-foreground text-xs font-semibold">
+                                                Or, manually enter the TOTP key:
+                                            </h4>
+                                            <Codeblock variant="inline" scrollbar="none" class="text-muted-foreground font-mono text-xs tracking-wider break-all select-all" text={secretKey || mfaUrl}/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <Separator class="bg-border/60" />
+
+                                <div class="flex items-center gap-4">
+                                    <div class="size-24 shrink-0 sm:size-28 flex items-center justify-center">
+                                        <MaterialSymbolsLogin class="w-3/4 h-auto" />
+                                    </div>
+                                    <div class="min-w-0 flex-1 space-y-1">
+                                        <h3 class="text-foreground text-sm font-semibold leading-tight sm:text-base">
+                                            Log in with your code
+                                        </h3>
+                                        <p class="text-muted-foreground text-xs leading-snug sm:text-sm">
+                                            Enter the 6-digit verification code, generated by your authenticator app.
+                                        </p>
+                                        <div class="flex flex-wrap items-center gap-3 pt-2">
+                                            <InputOTP.Root bind:value={mfaCode} maxlength={6} pattern={REGEXP_ONLY_DIGITS}>
+                                                {#snippet children({ cells })}
+                                                    <InputOTP.Group>
+                                                        {#each cells as cell (cell)}
+                                                            <InputOTP.Slot
+                                                                class="h-8 w-6 text-base font-semibold sm:h-9 sm:w-7"
+                                                                aria-invalid={mfaInvalid}
+                                                                cell={cell}
+                                                            />
+                                                        {/each}
+                                                    </InputOTP.Group>
+                                                {/snippet}
+                                            </InputOTP.Root>
+
+                                            <Button
+                                                loading={mfaButtonLoading}
+                                                disabled={mfaCode.length !== 6}
+                                                onclick={() => {
+                                                    mfaButtonLoading = true;
+                                                    verifyMfa(mfaCode);
+                                                }}>
+                                                Activate
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {/if}
                     </Dialog.Content>
                 </Dialog.Root>
             {/if}
@@ -475,7 +581,12 @@
         description={alertDescription}
         trigger={alertTrigger} />
     <div class="referrals mt-4 space-y-2">
-        <h1 class="text-2xl font-semibold">Referrals</h1>
+        <div>
+            <h1 class="text-2xl font-semibold">Referrals</h1>
+            <p class="text-sm text-muted-foreground">
+                Earn an extra domain for every 2 people who sign up with your link (up to 5 bonus domains max).
+            </p>
+        </div>
         {#if data.referralCode}
             {@const link = `${window.origin}/login?ref=${data.referralCode}`}
             <div class="overflow-x-auto">
@@ -498,29 +609,24 @@
                     placeholder="referral-code" />
             </div>
             <Button
-                onclick={() => {
+                onclick={async () => {
                     referralCreating = true;
-
-                    serverContactor
-                        .createReferral(referralCode)
-                        .catch(err => {
-                            if (showRateLimitError(err)) return;
-                            if (err instanceof UserError || err instanceof TypeError) {
-                                alertTitle = "An unhandled error occurred.";
-                                alertDescription = "Please contact support if this error persists.";
-                            } else if (err instanceof CodeError) {
-                                alertTitle = "Failed to create a referral code";
-                                alertDescription = "Referral code already exists!";
-                            }
-                            alertTrigger++;
-                            referralCreating = false;
-
-                            return;
-                        })
-                        .then(_ => {
-                            window.location.reload();
-                            referralCreating = false;
-                        });
+                    try {
+                        await serverContactor.createReferral(referralCode);
+                        window.location.reload();
+                    } catch (err) {
+                        if (showRateLimitError(err)) return;
+                        if (err instanceof UserError || err instanceof TypeError) {
+                            alertTitle = "An unhandled error occurred.";
+                            alertDescription = "Please contact support if this error persists.";
+                        } else if (err instanceof CodeError) {
+                            alertTitle = "Failed to create a referral code";
+                            alertDescription = "Referral code already exists!";
+                        }
+                        alertTrigger++;
+                    } finally {
+                        referralCreating = false;
+                    }
                 }}
                 loading={referralCreating}>Create</Button>
         {/if}
