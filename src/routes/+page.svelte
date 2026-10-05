@@ -61,7 +61,7 @@
 <svelte:window bind:scrollY={scrollY} />
 
 <div class="content pb-44">
-    <div class="introduction mr-auto ml-auto flex w-full max-w-screen items-center p-10 lg:w-11/12">
+    <div class="introduction mr-auto ml-auto flex w-full max-w-screen items-center p-6 sm:p-10 lg:w-11/12">
         <div class="description w-3/5">
             <h1 class="w-fit text-9xl font-bold">
                 <img alt="" aria-hidden="true" src="/favicon.svg" />
@@ -69,78 +69,72 @@
             </h1>
         </div>
         <div class="right-side mr-8 h-fit w-2/5 items-center">
-            <p class="about-us text-3xl leading-10 font-semibold">
+            <p class="about-us text-2xl sm:text-3xl leading-snug font-semibold text-foreground/90">
                 A modern, free subdomain service for everyone—whether you're a developer, hobbyist, or somewhere in between.
             </p>
 
-            <div class="details mt-12 mb-12 flex w-full justify-between gap-3 text-3xl [&>div]:items-center">
-                <div class="item flex">
-                    <MaterialSymbolsCheckCircleRounded class="h-8 text-purple-600" />
-                    <Label class="text-lg">100% free</Label>
+            <div class="details mt-8 mb-8 flex w-full justify-between gap-3 text-2xl sm:text-3xl [&>div]:items-center">
+                <div class="item flex gap-1.5">
+                    <MaterialSymbolsCheckCircleRounded class="h-6 w-6 text-primary shrink-0" />
+                    <Label class="text-base font-medium">100% free</Label>
                 </div>
-                <div class="item flex">
-                    <MaterialSymbolsCheckCircleRounded class="h-8 text-purple-600" />
-                    <Label class="text-lg">Modern UI</Label>
+                <div class="item flex gap-1.5">
+                    <MaterialSymbolsCheckCircleRounded class="h-6 w-6 text-primary shrink-0" />
+                    <Label class="text-base font-medium">Modern UI</Label>
                 </div>
-                <div class="item flex">
-                    <MaterialSymbolsCheckCircleRounded class="h-8 text-purple-600" />
-                    <Label class="text-lg">User-friendly dashboard</Label>
+                <div class="item flex gap-1.5">
+                    <MaterialSymbolsCheckCircleRounded class="h-6 w-6 text-primary shrink-0" />
+                    <Label class="text-base font-medium">User-friendly</Label>
                 </div>
             </div>
-            <div class="actions mt-auto mb-0 flex justify-between gap-2">
-                <Button onclick={_ => goto("/login?register=true")} class="w-[49%]">Sign up now</Button>
-                <Button variant={"secondary"} onclick={_ => goto("/dashboard")} class="w-[49%]"
+            <div class="actions mt-auto mb-0 flex justify-between gap-3">
+                <Button size="lg" onclick={_ => goto("/login?register=true")} class="w-[49%] font-medium">Sign up now</Button>
+                <Button size="lg" variant={"secondary"} onclick={_ => goto("/dashboard")} class="w-[49%] font-medium"
                     >Go to the dashboard</Button>
             </div>
         </div>
     </div>
 
-    <div class="selling-points mt-8 px-32">
-        <div class="flex">
+    <div class="selling-points mt-8 px-6 sm:px-16 lg:px-32">
+        <div class="flex items-center gap-8">
             <div class="visual w-2/5">
-                <img class="w-3/5" alt="Icon depicting a user's mouse clicking on a globe, symbolizing a website" src={Globe} />
+                <img class="w-3/5 max-w-[280px]" alt="Icon depicting a user's mouse clicking on a globe, symbolizing a website" src={Globe} />
             </div>
-            <div class="text bg-primary/10 w-3/5 rounded-2xl border-2 p-4 dark:bg-black/30">
-                <h1 class="mb-2 text-5xl font-semibold">Claim a piece of the internet</h1>
-                <p class="text-lg">Let's start from the basics. <b>Try out a domain you'd like to own!</b></p>
+            <div class="text bg-card/80 backdrop-blur-md border border-border/70 shadow-sm w-3/5 rounded-2xl p-6 sm:p-8 transition-colors hover:border-primary/40">
+                <h2 class="mb-2 text-3xl sm:text-4xl font-semibold tracking-tight">Claim a piece of the internet</h2>
+                <p class="text-base sm:text-lg text-muted-foreground">Let's start from the basics. <b>Try out a domain you'd like to own!</b></p>
 
-                <div class="domain-tester flex items-center pt-2 pb-2">
-                    <div class="domain-input relative">
+                <div class="domain-tester flex items-center pt-4 pb-2">
+                    <div class="domain-input relative flex-1 max-w-md">
                         <Input
                             onkeyup={_ => getDomainAvailability()}
                             onfocus={_ => (placeholderInputFocused = true)}
                             onfocusout={_ => (placeholderInputFocused = false)}
                             bind:value={testDomain}
                             type="text"
-                            class="w-[12rem] max-w-full h-[1.75rem] rounded-sm" />
-                        {#if !testDomain && !placeholderInputFocused}
-                            {#key testPlaceholder}
-                                <span
-                                    transition:fade={{ duration: 500 }}
-                                    class="pointer-events-none absolute top-1/2 left-4 w-48 max-w-[calc(100%-1rem)] -translate-y-1/2 opacity-90">
-                                    {testPlaceholder}
-                                </span>
-                            {/key}
-                        {/if}
+                            placeholder={placeholderInputFocused ? "" : testPlaceholder}
+                            class="w-full h-10 rounded-r-none border-r-0 text-base" />
                     </div>
-                    <span class="domain-suffix text-lg ml-[0.1rem]">.eepy.page</span>
+                    <span class="domain-suffix inline-flex items-center h-10 px-3 rounded-r-md border border-input bg-muted/50 text-sm font-medium text-muted-foreground">.eepy.page</span>
                 </div>
 
                 {#if checkingDomainAvailability}
-                    <Loader className="w-8" asForeground={true} />
+                    <div class="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+                        <Loader className="w-5 h-5" asForeground={true} />
+                        <span>Checking availability...</span>
+                    </div>
                 {:else if testDomain && latestCheckedDomain === testDomain}
-                    <div class="domain-results">
+                    <div class="domain-results mt-4">
                         {#if isTestAvailable}
-                            <h1 class="mt-4 text-2xl font-semibold">
-                                The domain {testDomain}.eepy.page is <span class="text-purple-400">available!</span>
-                            </h1>
-                            <Button class="mt-2 w-full" onclick={_ => goto("/login?register=true")}>Sign up now</Button>
+                            <h3 class="text-xl font-semibold text-foreground">
+                                The domain <span class="text-primary font-bold">{testDomain}.eepy.page</span> is available!
+                            </h3>
+                            <Button size="lg" class="mt-3 w-full" onclick={_ => goto("/login?register=true")}>Claim domain now</Button>
                         {:else}
-                            <h1>
-                                Unfortunately, the domain {testDomain}.eepy.page <b>has already been registered</b>, or
-                                is invalid.
-                            </h1>
-                            <p class="text-lg">Try something else!</p>
+                            <h3 class="text-lg font-medium text-foreground">
+                                Unfortunately, <span class="font-bold">{testDomain}.eepy.page</span> is already taken or invalid.
+                            </h3>
+                            <p class="text-sm text-muted-foreground mt-1">Try another subdomain!</p>
                         {/if}
                     </div>
                 {/if}
@@ -148,11 +142,11 @@
         </div>
     </div>
 
-    <div class="selling-points mt-32 px-32">
-        <div class="flex">
-            <div class="text w-3/5">
-                <h2 class="w-fit text-5xl font-semibold">Always free</h2>
-                <p class="mt-4 text-xl">
+    <div class="selling-points mt-20 sm:mt-32 px-6 sm:px-16 lg:px-32">
+        <div class="flex items-center gap-8">
+            <div class="text w-3/5 bg-card/60 backdrop-blur-xs border border-border/50 rounded-2xl p-6 sm:p-8 shadow-xs">
+                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">Always free</h2>
+                <p class="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
                     eepy.page will always be completely free for anyone to use.<br><br>
                     Our goal is to provide a reliable, convenient service to anyone,
                     which means that regardless of whether you own a domain or not,
@@ -160,28 +154,28 @@
                 </p>
             </div>
             <div class="visual flex w-2/5 items-center justify-end">
-                <img class="w-3/5" alt="Icon representing two people exchanging something" src={Gift} />
+                <img class="w-3/5 max-w-[280px]" alt="Icon representing two people exchanging something" src={Gift} />
             </div>
         </div>
     </div>
 
-    <div class="selling-points mt-32 px-32">
-        <div class="flex">
+    <div class="selling-points mt-20 sm:mt-32 px-6 sm:px-16 lg:px-32">
+        <div class="flex items-center gap-8">
             <div class="visual flex w-2/5 items-center justify-start">
-                <img class="w-3/5" alt="Icon representing multiple services, in a tree-like format" src={Services} />
+                <img class="w-3/5 max-w-[280px]" alt="Icon representing multiple services, in a tree-like format" src={Services} />
             </div>
-            <div class="text w-3/5">
-                <h2 class="w-fit text-5xl font-semibold">Support for many services</h2>
-                <p class="mt-4 text-xl">
+            <div class="text w-3/5 bg-card/60 backdrop-blur-xs border border-border/50 rounded-2xl p-6 sm:p-8 shadow-xs">
+                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">Support for many services</h2>
+                <p class="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
                     Since you have full control over DNS records, most services that simply require a domain are supported!
                 </p>
-                <p class="mt-4 text-xl">eepy.page supports:</p>
-                <ul class="mt-4 list-disc space-y-3 pl-6 text-xl">
+                <p class="mt-4 text-base sm:text-lg font-medium">eepy.page supports:</p>
+                <ul class="mt-3 list-disc space-y-2 pl-6 text-base sm:text-lg text-muted-foreground">
                     <li><strong>Vercel</strong> projects &lpar;via some extra steps&rpar;</li>
                     <li><strong>Netlify</strong> projects</li>
                     <li><strong>GitHub Pages</strong> sites</li>
-                    <li><strong>Neocities</strong> sites &lpar;requires <em class="mr-0.5">Supporter</em> tier&rpar;</li>
-                    <li><strong>Nekoweb</strong> sites &lpar;requires <em class="mr-0.5">Cute kitty</em> tier&rpar;</li>
+                    <li><strong>Neocities</strong> sites &lpar;requires <em class="mr-0.5 font-medium">Supporter</em> tier&rpar;</li>
+                    <li><strong>Nekoweb</strong> sites &lpar;requires <em class="mr-0.5 font-medium">Cute kitty</em> tier&rpar;</li>
                     <li>
                         ...and more! Most services that only require a <strong>standard DNS record</strong> are supported, and even services that require TXT records work as long as they are scoped to your subdomain.
                     </li>
@@ -190,30 +184,30 @@
         </div>
     </div>
 
-    <div class="selling-points mt-32 px-32">
-        <div class="flex">
-            <div class="text w-3/5">
-                <h2 class="w-fit text-5xl font-semibold">Independent domain management</h2>
-                <p class="mt-4 text-xl">
+    <div class="selling-points mt-20 sm:mt-32 px-6 sm:px-16 lg:px-32">
+        <div class="flex items-center gap-8">
+            <div class="text w-3/5 bg-card/60 backdrop-blur-xs border border-border/50 rounded-2xl p-6 sm:p-8 shadow-xs">
+                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">Independent domain management</h2>
+                <p class="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
                     You can register, delete, and modify domains straight from our dashboard, designed to be convenient and user-friendly.<br><br>
                     There is no need to use a convoluted CLI or a request form, and you don't have to wait for any domain verification.<br><br>
                     Subdomain registrations are seamlessly added to our database and DNS servers the second you register them.
                 </p>
             </div>
             <div class="visual flex w-2/5 items-center justify-end">
-                <img class="w-3/5" alt="Icon representing a configurable dashboard" src={Dashboard} />
+                <img class="w-3/5 max-w-[280px]" alt="Icon representing a configurable dashboard" src={Dashboard} />
             </div>
         </div>
     </div>
 
-    <div class="selling-points mt-32 px-32">
-        <div class="flex">
+    <div class="selling-points mt-20 sm:mt-32 px-6 sm:px-16 lg:px-32">
+        <div class="flex items-center gap-8">
             <div class="visual flex w-2/5 items-center justify-start">
-                <img class="w-3/5" alt="Icon representing eepy.page tunneling" src={Split} />
+                <img class="w-3/5 max-w-[280px]" alt="Icon representing eepy.page tunneling" src={Split} />
             </div>
-            <div class="text w-3/5">
-                <h2 class="w-fit text-5xl font-semibold">Robust tunneling</h2>
-                <p class="mt-4 text-xl">
+            <div class="text w-3/5 bg-card/60 backdrop-blur-xs border border-border/50 rounded-2xl p-6 sm:p-8 shadow-xs">
+                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">Robust tunneling</h2>
+                <p class="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
                     No port forwarding? No public IP? Fear not, eepy.page provides a seamless tunneling experience, allowing you to forward your local services to the internet!
                     <br><br>
                     Our tunneling service is powered by Serveo.
@@ -223,29 +217,29 @@
         </div>
     </div>
 
-    <div class="selling-points mt-32 px-32">
-        <div class="flex">
-            <div class="text w-3/5">
-                <h2 class="w-fit text-5xl font-semibold">Completely open-source</h2>
-                <p class="mt-4 text-xl">
+    <div class="selling-points mt-20 sm:mt-32 px-6 sm:px-16 lg:px-32">
+        <div class="flex items-center gap-8">
+            <div class="text w-3/5 bg-card/60 backdrop-blur-xs border border-border/50 rounded-2xl p-6 sm:p-8 shadow-xs">
+                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">Completely open-source</h2>
+                <p class="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
                     Our frontend and backend are both completely open-source and open to contributions. Our backend is
                     written in Python (FastAPI), and our frontend uses SvelteKit.<br><br>
                     The authoritative nameservers running our infrastructure are powered by PowerDNS, which is also open-source.
                 </p>
 
-                <Separator class="mt-4 mb-4" />
-                <div class="flex flex-col gap-2">
-                    <p>Check out our repositories on GitHub:</p>
-                    <a href="https://github.com/PowerPCFan/eepy.page-frontend">
+                <Separator class="mt-6 mb-6 opacity-60" />
+                <div class="flex flex-col gap-2.5">
+                    <p class="text-sm font-medium text-foreground">Check out our repositories on GitHub:</p>
+                    <a class="text-primary hover:underline font-medium text-sm" href="https://github.com/PowerPCFan/eepy.page-frontend">
                         Our frontend (PowerPCFan/eepy.page-frontend)
                     </a>
-                    <a href="https://github.com/PowerPCFan/eepy.page-backend">
+                    <a class="text-primary hover:underline font-medium text-sm" href="https://github.com/PowerPCFan/eepy.page-backend">
                         Our backend (PowerPCFan/eepy.page-backend)
                     </a>
                 </div>
             </div>
             <div class="visual flex w-2/5 items-center justify-end">
-                <img class="w-3/5" alt="GitHub's logo" src={GitHub} />
+                <img class="w-3/5 max-w-[280px]" alt="GitHub's logo" src={GitHub} />
             </div>
         </div>
     </div>
@@ -254,8 +248,8 @@
 <Footer />
 
 {#if scrollY < 50}
-    <div transition:fade={{ duration: 175 }}>
-        <MaterialSymbolsKeyboardArrowDownRounded class="absolute top-11/12 left-1/2 text-3xl" />
+    <div transition:fade={{ duration: 150 }} class="pointer-events-none">
+        <MaterialSymbolsKeyboardArrowDownRounded class="absolute bottom-6 left-1/2 -translate-x-1/2 text-3xl opacity-60 animate-bounce" />
     </div>
 {/if}
 
@@ -270,7 +264,7 @@
         align-items: center;
         gap: clamp(2rem, 5vw, 5rem);
         justify-content: center;
-        height: calc(100dvh - var(--vpOffset, 0px) - 1.5rem);
+        min-height: calc(100svh - var(--vpOffset, 0px) - 1.5rem);
     }
 
     .description {

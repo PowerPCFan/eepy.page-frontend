@@ -15,7 +15,7 @@
   --popover: rgb(233, 233, 233);
   --popover-foreground: oklch(0% 0 0);
   --primary: #b952f9;
-  --primary-foreground: rgb(255,255,255);
+  --primary-foreground: rgb(255, 255, 255);
   --secondary: #f4cbff;
   --secondary-foreground: #000000;
   --muted: rgb(29, 41, 61);
@@ -35,19 +35,23 @@
   --gradient-end: color-mix(in oklab, var(--secondary), white 86%);
   --tw-inset-shadow: 15px;
   --footer: rgb(196, 183, 224);
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .dark {
-  --alert: rgba(240,12,12, 0.2);
+  --alert: rgba(240, 12, 12, 0.2);
   --note: rgba(0, 87, 199, 0.2);
-  --background: rgb(12,12,12);
+  --background: rgb(12, 12, 12);
   --foreground: oklch(0.984 0.003 247.858);
-  --card: rgb(20,20,20);
+  --card: rgb(20, 20, 20);
   --card-foreground: oklch(0.984 0.003 247.858);
   --popover: rgb(28, 31, 34);
   --popover-foreground: oklch(0.984 0.003 247.858);
   --primary: #862ede;
-  --primary-foreground: rgb(255,255,255);
+  --primary-foreground: rgb(255, 255, 255);
   --secondary: #4C1F79;
   --secondary-foreground: rgb(248, 250, 252);
   --muted: oklch(0.279 0.041 260.031);
@@ -128,10 +132,41 @@
 }
 
 @layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  button, a, [role="button"] {
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  @media (pointer: coarse) {
+    input, textarea, select {
+      font-size: 16px;
+    }
+  }
+
+  h1, h2, h3, .display-heading {
+    /* extremely subtle tracking adjustment */
+    letter-spacing: -0.0125em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

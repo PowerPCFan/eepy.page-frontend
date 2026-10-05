@@ -355,9 +355,9 @@
 
 <Loader bind:this={loader} />
 
-<div class="domain-holder bg-card max-w-8xl sentry-unmask mt-8 mr-auto ml-auto w-11/12 rounded-2xl p-6">
-    <h1 class="text-3xl font-semibold">Your domains</h1>
-    <p class="mb-3">These are all of your domains. Modify them by using the dropdowns, fields, and buttons provided for each domain.</p>
+<div class="domain-holder bg-card/90 backdrop-blur-md border border-border/70 shadow-sm max-w-8xl sentry-unmask mt-8 mr-auto ml-auto w-11/12 rounded-2xl p-6 sm:p-8">
+    <h1 class="text-3xl font-semibold tracking-tight">Your domains</h1>
+    <p class="mb-4 text-muted-foreground">These are all of your domains. Modify them by using the dropdowns, fields, and buttons provided for each domain.</p>
 
     <InlineAlert
         variant={"error"}
@@ -366,19 +366,19 @@
         className="mb-6 mt-6"
         trigger={alertUpdate} />
 
-    <div class="domains space-y-4">
+    <div class="domains space-y-3">
         {#if domainsLoaded && domains.length === 0}
-            <div class="rounded-xl border border-dashed p-6 text-center">
-                <h2 class="text-xl font-semibold">No domains</h2>
-                <p class="text-muted-foreground">You don't have any domains &colon;&lpar;<br>Register one below to get started!</p>
+            <div class="rounded-xl border border-dashed border-border/80 p-8 text-center bg-muted/20">
+                <h2 class="text-xl font-semibold">No domains registered</h2>
+                <p class="text-muted-foreground mt-1 text-sm">You don't have any domains yet.<br>Register one below to get started!</p>
             </div>
         {:else}
             {#each domainsLoaded ? domains : createPlaceholders(data.domainAmount) as domain}
-                <div transition:fade class="domain mt-1 mb-1 flex min-h-10 gap-1 space-y-0.5">
-                    <div class="basic-controls flex w-2/5 gap-1">
+                <div transition:fade class="domain p-2 rounded-xl bg-background/50 border border-border/40 hover:border-border/80 transition-colors flex min-h-11 items-start gap-2">
+                    <div class="basic-controls flex w-2/5 gap-1.5 items-center">
                         {#if domainsLoaded}
                             <Select.Root type="single" name="domain" bind:value={domain.type} disabled={domain.serveoTunnel}>
-                                <Select.Trigger class="w-1/8 min-w-24">{domain.type}</Select.Trigger>
+                                <Select.Trigger class="w-20 shrink-0 font-mono font-medium">{domain.type}</Select.Trigger>
                                 <Select.Content>
                                     {#each SupportedTypes as type}
                                         <Select.Item value={type} label={type}>
@@ -388,47 +388,49 @@
                                 </Select.Content>
                             </Select.Root>
                         {:else}
-                            <Skeleton class="w-1/8 min-w-24" />
+                            <Skeleton class="w-20 h-9 shrink-0" />
                         {/if}
                         <div class="domain-name flex w-full">
                             {#if domainsLoaded}
-                                <Input class="rounded-r-none" value={domain.name} disabled={true} />
+                                <Input class="rounded-r-none font-mono text-sm" value={domain.name} disabled={true} />
                                 <Input
-                                    class="w-min max-w-[15ch] shrink-0 rounded-l-none border-l-0"
+                                    class="w-min max-w-[15ch] shrink-0 rounded-l-none border-l-0 bg-muted/40 font-mono text-sm"
                                     value={domain.tld}
                                     disabled={true} />
                             {:else}
-                                <Skeleton class="w-full" />
+                                <Skeleton class="w-full h-9" />
                             {/if}
                         </div>
                     </div>
                     <div class="value min-w-0 w-2/5">
                         {#if domainsLoaded && domain.values}
                             {#each domain.values as _, i}
-                                <div class="flex min-w-0 gap-0">
-                                    <Input class="mb-1 min-w-0 flex-1 rounded-r-none" bind:value={domain.values[i]} disabled={domain.serveoTunnel} />
+                                <div class="flex min-w-0 gap-0 my-0.5">
+                                    <Input class="min-w-0 flex-1 rounded-r-none font-mono text-sm" bind:value={domain.values[i]} disabled={domain.serveoTunnel} />
                                     <div class="flex h-9 w-16 shrink-0">
                                         <Button
-                                            class="text-xl w-1/2 min-w-0 rounded-none px-0"
+                                            class="text-base font-semibold w-1/2 min-w-0 rounded-none px-0"
                                             onclick={_ => domain.values.push("0.0.0.0")}
                                             disabled={domain.serveoTunnel}
-                                            variant="secondary">+</Button>
+                                            variant="secondary"
+                                            title="Add record">+</Button>
 
                                         <Button
-                                            class="text-xl bg-destructive/30! w-1/2 min-w-0 rounded-l-none px-0"
+                                            class="text-base font-semibold bg-destructive/15 text-destructive hover:bg-destructive hover:text-white w-1/2 min-w-0 rounded-l-none px-0"
                                             onclick={_ => {
                                                 domain.values = domain.values.filter((val, idx) => idx != i);
                                             }}
                                             disabled={domain.serveoTunnel || domain.values.length <= 1}
-                                            variant="destructive">-</Button>
+                                            variant="ghost"
+                                            title="Remove record">-</Button>
                                     </div>
                                 </div>
                             {/each}
                         {:else}
-                            <Skeleton class="h-10 w-full" />
+                            <Skeleton class="h-9 w-full" />
                         {/if}
                     </div>
-                    <div class="actions flex h-full min-w-0 w-1/4 gap-0.5">
+                    <div class="actions flex items-center h-full min-w-0 w-1/4 gap-1.5 justify-end">
                         {#if domainsLoaded}
                             <Button
                                 loading={domain.isLoading}
@@ -437,20 +439,19 @@
                                     modifyDomain(domain);
                                 }}
                                 disabled={domain.serveoTunnel}
-                                class="h-full min-h-8 w-1/2 max-w-40">Save</Button>
-                            <Separator orientation={"vertical"} />
+                                class="h-9 w-1/2 max-w-32">Save</Button>
                             {#if domain.serveoTunnel}
                                 <span
-                                    class="domain-delete-tooltip relative flex h-full min-h-8 w-1/2 max-w-40 cursor-not-allowed"
+                                    class="domain-delete-tooltip relative flex h-9 w-1/2 max-w-32 cursor-not-allowed"
                                     data-tooltip={`Delete the ${domain.name.startsWith("_serveo") ? domain.name.replaceAll("_serveo-authkey.", "") : domain.name}.eepy.page tunnel first to remove this domain`}
                                     aria-label="Delete tunnel first to remove domain">
                                     <Button class="h-full w-full" disabled={true} variant="destructive">Delete</Button>
                                 </span>
                             {:else}
                                 <Dialog.Root bind:open={domain.dialogOpen}>
-                                    <Dialog.Trigger class="h-full min-h-8 w-1/2 max-w-40">
+                                    <Dialog.Trigger class="h-9 w-1/2 max-w-32">
                                         <Button
-                                            class="h-full min-h-8 w-full"
+                                            class="h-full w-full"
                                             variant="destructive">Delete</Button>
                                     </Dialog.Trigger>
                                     <Dialog.Content>
@@ -476,8 +477,8 @@
                                 </Dialog.Root>
                             {/if}
                         {:else}
-                            <Skeleton class="h-full min-h-10 w-1/2 max-w-40"></Skeleton>
-                            <Skeleton class="h-full min-h-10 w-1/2 max-w-40"></Skeleton>
+                            <Skeleton class="h-9 w-1/2 max-w-32"></Skeleton>
+                            <Skeleton class="h-9 w-1/2 max-w-32"></Skeleton>
                         {/if}
                     </div>
                 </div>
@@ -486,12 +487,12 @@
     </div>
 </div>
 
-<div class="registrar bg-card max-w-8xl sentry-unmask mt-8 mr-auto mb-8 ml-auto w-11/12 rounded-2xl p-6">
-    <h1 class="text-3xl font-semibold">Register a domain</h1>
-    <p class="mb-3">You can register a new domain here. <em>Tip: Pick something short, memorable, and easy to type.</em></p>
-    <div class="content flex gap-2 space-y-2">
+<div class="registrar bg-card/90 backdrop-blur-md border border-border/70 shadow-sm max-w-8xl sentry-unmask mt-8 mr-auto mb-8 ml-auto w-11/12 rounded-2xl p-6 sm:p-8">
+    <h1 class="text-3xl font-semibold tracking-tight">Register a domain</h1>
+    <p class="mb-4 text-muted-foreground">You can register a new domain here. <em>Tip: Pick something short, memorable, and easy to type.</em></p>
+    <div class="content flex gap-2 items-center">
         <Select.Root bind:value={newDomainType} type="single" name="domain">
-            <Select.Trigger class="w-1/8 min-w-24">{newDomainType}</Select.Trigger>
+            <Select.Trigger class="w-20 shrink-0 font-mono font-medium">{newDomainType}</Select.Trigger>
             <Select.Content>
                 {#each SupportedTypes as type}
                     <Select.Item value={type} label={type}>
@@ -503,7 +504,7 @@
         <div class="domain-bar flex min-w-0 flex-1">
             <Input
                 bind:value={newDomain}
-                class="max-w-2xl min-w-0 rounded-r-none"
+                class="max-w-2xl min-w-0 rounded-r-none font-mono"
                 placeholder="enter a domain..." />
             <Select.Root
                 onValueChange={val => {
@@ -518,16 +519,16 @@
                 type="single"
                 name="domain">
                 <Select.Trigger
-                    class="w-min max-w-[40ch] shrink-0 rounded-l-none">
+                    class="w-min max-w-[40ch] shrink-0 rounded-l-none font-mono bg-muted/40">
                     {newDomainTld}
                 </Select.Trigger>
                 <Select.Content>
                     {#each AVAILABLE_TLDS.filter(tld => !(tld.hidden && !ownedTlds.includes(tld.tld.slice(1)))) as tld}
                         <Select.Item value={tld.tld} label={tld.tld}>
-                            <div class="flex flex-row items-center">
+                            <div class="flex flex-row items-center font-mono">
                                 {tld.tld}
                                 {#if tld.purchaseLink && !ownedTlds.includes(tld.tld.slice(1))}
-                                    <MaterialSymbolsAttachMoneyRounded class="text-primary-secondary" />
+                                    <MaterialSymbolsAttachMoneyRounded class="text-primary" />
                                 {/if}
                             </div>
                         </Select.Item>
@@ -542,20 +543,20 @@
                 registerDomain(newDomain, newDomainType, newDomainTld);
             }}
             disabled={!newDomain}
-            class="w-24">Register</Button>
+            class="w-28 font-medium">Register</Button>
     </div>
 
     <InlineAlert
         variant={"error"}
         title={registerErrorTitle}
         description={registerErrorDescription}
-        className="mt-3"
+        className="mt-4"
         trigger={alertUpdate} />
     <InlineAlert
         variant={"note"}
         title={registerNoteTitle}
         description={registerNoteDescription}
-        className="mt-3"
+        className="mt-4"
         trigger={alertUpdate}
         renderDescriptionAsHTML />
 </div>

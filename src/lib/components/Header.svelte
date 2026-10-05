@@ -15,39 +15,56 @@
 
 <header
     id="header"
-    class="header bg-card sentry-unmask flex min-h-14 w-full max-w-full items-center gap-4 overflow-x-clip px-4 py-1">
-    <button id="popout-toggle" class="relative hidden h-12 w-12" onclick={_ => ($sidebarOpen = !$sidebarOpen)}>
-        {#key $sidebarOpen}
-            <div transition:fade={{ duration: 100 }} class="absolute top-0">
-                {#if !$sidebarOpen}
-                    <MaterialSymbolsMenuRounded class="h-12 w-12" />
-                {:else}
-                    <MaterialSymbolsCloseRounded class="h-12 w-12" />
-                {/if}
-            </div>
-        {/key}
+    class="header sticky top-0 z-40 flex min-h-14 w-full max-w-full items-center gap-4 border-b border-border/60 bg-card/80 backdrop-blur-xl px-4 py-1.5 transition-colors">
+    <button
+        id="popout-toggle"
+        class="relative hidden h-10 w-10 items-center justify-center rounded-lg text-foreground transition-transform duration-150 active:scale-95 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+        onclick={_ => ($sidebarOpen = !$sidebarOpen)}
+        aria-label="Toggle navigation menu">
+        <span class="relative flex h-8 w-8 items-center justify-center">
+            <span
+                class="absolute transition-all duration-200 ease-out"
+                class:opacity-100={!$sidebarOpen}
+                class:scale-100={!$sidebarOpen}
+                class:rotate-0={!$sidebarOpen}
+                class:opacity-0={$sidebarOpen}
+                class:scale-75={$sidebarOpen}
+                class:rotate-90={$sidebarOpen}>
+                <MaterialSymbolsMenuRounded class="h-8 w-8" />
+            </span>
+            <span
+                class="absolute transition-all duration-200 ease-out"
+                class:opacity-100={$sidebarOpen}
+                class:scale-100={$sidebarOpen}
+                class:rotate-0={$sidebarOpen}
+                class:opacity-0={!$sidebarOpen}
+                class:scale-75={!$sidebarOpen}
+                class:-rotate-90={!$sidebarOpen}>
+                <MaterialSymbolsCloseRounded class="h-8 w-8" />
+            </span>
+        </span>
     </button>
 
-    <div class="desktop-links flex min-w-0 gap-4.5">
+    <div class="desktop-links flex min-w-0 gap-5 items-center">
         {@render children()}
     </div>
 
     <div class="ml-auto flex min-w-0 space-x-2">
         <div id="lang-picker-navbar">
             <Select.Root onValueChange={changeTheme} type="single" name="Theme mode">
-                <Select.Trigger class="flex w-28 items-center gap-1">
+                <Select.Trigger class="flex w-28 items-center gap-1.5 h-9 rounded-lg border-border/80 bg-background/50 hover:bg-background transition-colors">
                     {#if $activeTheme === "light"}
-                        <MaterialSymbolsLightModeRounded class="h-5 w-5" />
+                        <MaterialSymbolsLightModeRounded class="h-4 w-4" />
                         Light (beta)
                     {:else if $activeTheme === "dark"}
-                        <MaterialSymbolsDarkModeRounded class="h-5 w-5" />
+                        <MaterialSymbolsDarkModeRounded class="h-4 w-4" />
                         Dark
                     {:else if $activeTheme === "auto"}
-                        <MaterialSymbolsAutorenewRounded class="h-5 w-5" />
+                        <MaterialSymbolsAutorenewRounded class="h-4 w-4" />
                         Auto
                     {/if}
                 </Select.Trigger>
-                <Select.Content>
+                <Select.Content class="backdrop-blur-xl bg-popover/90 border-border/60">
                     <Select.Item aria-selected={$activeTheme === "light"} value="light" label="light">
                         <MaterialSymbolsLightModeRounded />
                         Light (beta)
@@ -65,17 +82,28 @@
         </div>
     </div>
 </header>
+
 {#if $sidebarOpen}
+    <!-- Scrim backdrop for mobile drawer dismissal -->
     <div
-        transition:fade={{ duration: 100 }}
+        tabindex="-1"
+        role="presentation"
+        transition:fade={{ duration: 150 }}
+        class="fixed inset-0 z-40 bg-black/40 md:hidden"
+        onclick={() => ($sidebarOpen = false)}
+        onkeydown={(e) => e.key === 'Escape' && ($sidebarOpen = false)}>
+    </div>
+
+    <div
+        transition:fade={{ duration: 150 }}
         id="popout"
-        class="popout bg-card fixed top-14 left-0 z-50 hidden h-[calc(100dvh-3.5rem)] w-[min(16rem,85vw)] flex-col space-y-4 overflow-y-auto rounded-br-2xl p-4 opacity-95 shadow-xl">
+        class="popout bg-card fixed top-14 left-0 z-50 hidden h-[calc(100dvh-3.5rem)] w-[min(17rem,85vw)] flex-col space-y-4 overflow-y-auto rounded-br-2xl p-5 border-r border-b border-border/70 shadow-2xl">
         {@render children()}
 
-        <div class="mt-auto mb-4">
-            <Label class="text-md mb-0">Theme</Label>
+        <div class="mt-auto mb-4 pt-4 border-t border-border/50">
+            <Label class="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2 block">Theme</Label>
             <Select.Root onValueChange={changeTheme} type="single" name="Theme mode">
-                <Select.Trigger class="w-24">
+                <Select.Trigger class="w-full justify-between">
                     {#if $activeTheme === "light"}
                         Light (beta)
                     {:else if $activeTheme === "dark"}
@@ -84,7 +112,7 @@
                         Auto
                     {/if}
                 </Select.Trigger>
-                <Select.Content>
+                <Select.Content class="backdrop-blur-xl bg-popover/95 border-border/60">
                     <Select.Item aria-selected={$activeTheme === "light"} value="light" label="light">
                         <MaterialSymbolsLightModeRounded />
                         Light (beta)
@@ -121,7 +149,7 @@
             display: none;
         }
         #popout-toggle {
-            display: block;
+            display: flex;
             flex: none;
         }
         #popout {
@@ -131,6 +159,13 @@
         :global(#popout a) {
             display: flex;
             font-size: 1.125rem;
+            padding: 0.35rem 0.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 150ms ease-out;
+        }
+
+        :global(#popout a:active) {
+            background-color: var(--color-accent) / 10%;
         }
     }
 </style>
