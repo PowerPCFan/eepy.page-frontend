@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { IconBadge } from "$lib/components/ui/icon-badge";
     import MaterialSymbolsMailRounded from "~icons/material-symbols/mail-rounded";
 </script>
 
@@ -8,7 +9,9 @@
 
 <main class="flex min-h-[70vh] items-center justify-center px-6 py-20">
     <section class="w-full max-w-xl text-center">
-        <MaterialSymbolsMailRounded class="text-primary mx-auto mb-6 size-16" />
+        <IconBadge variant="primary" size="2xl" shape="circle" class="mx-auto mb-6">
+            <MaterialSymbolsMailRounded class="size-8" />
+        </IconBadge>
         <h1 class="text-4xl font-semibold">Thanks for your order</h1>
         <p class="text-muted-foreground mt-4 text-lg">
             Check the email address you used at checkout. Your redeem link should arrive there shortly!

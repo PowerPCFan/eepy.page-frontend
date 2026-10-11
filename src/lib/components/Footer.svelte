@@ -2,7 +2,8 @@
     import Separator from "./ui/separator/separator.svelte";
 </script>
 
-<footer class="footer bg-footer sentry-unmask border-t border-border/40 pt-10 pb-[max(2.5rem,env(safe-area-inset-bottom))] text-sm">
+<!-- todo: use an app.css color instead of indigo-950 -->
+<footer class="footer bg-indigo-950/50 sentry-unmask border-t border-border/40 pt-10 pb-[max(2.5rem,env(safe-area-inset-bottom))] text-sm">
     <div class="footer-col">
         <h3 class="text-base font-semibold text-foreground mb-2">Contact</h3>
         <Separator class="mb-3 opacity-60" />

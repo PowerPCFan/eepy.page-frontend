@@ -6,6 +6,7 @@
     import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
     import { Codeblock } from "$lib/components/ui/codeblock";
     import * as Dialog from "$lib/components/ui/dialog/index.js";
+    import { IconBadge } from "$lib/components/ui/icon-badge";
     import InlineAlert from "$lib/components/ui/inline-alert/inline-alert.svelte";
     import { Input } from "$lib/components/ui/input";
     import * as InputOTP from "$lib/components/ui/input-otp/index.js";
@@ -107,18 +108,20 @@
         window.location.hash = tab;
     }
 
-    function getSecretKey(url: string): string {
+    function getSecretKey(url?: string): string {
         if (!url) return "";
         try {
             if (url.startsWith("otpauth://")) {
                 const parsed = new URL(url);
                 return parsed.searchParams.get("secret") || "";
             }
-        } catch {
-            // ignore
-        }
+        } catch {}
+
         const match = url.match(/[?&]secret=([^&]+)/i);
-        if (match) return match[1];
+        if (match) {
+            return match[1] ?? "";
+        }
+
         return url;
     }
 
@@ -128,7 +131,7 @@
         return clean.match(/.{1,4}/g)?.join(" ") || clean;
     }
 
-    let secretKey = $derived(formatSecretKey(getSecretKey(mfaUrl)));
+    let secretKey = $derived(formatSecretKey(getSecretKey(mfaUrl) ?? ""));
     let bonusDomainsEarned = $derived(Math.min(5, Math.floor((data.referredPeople || 0) / 2)));
 
     async function mfaSetup() {
@@ -337,8 +340,8 @@
         trigger={alertTrigger} />
 
     <div class="mt-6 grid grid-cols-1 gap-8 md:grid-cols-12">
-        <aside class="md:col-span-4 lg:col-span-3">
-            <nav class="flex flex-row gap-1 overflow-x-auto pb-2 md:flex-col md:overflow-visible md:pb-0">
+        <aside class="hidden md:block md:col-span-4 lg:col-span-3">
+            <nav class="flex flex-col gap-1">
                 <button
                     onclick={() => setTab("profile")}
                     class="flex items-center justify-between gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-all {activeTab === 'profile' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-foreground/80 hover:bg-muted hover:text-foreground'}">
@@ -378,28 +381,35 @@
                     {/if}
                 </button>
 
-                <div class="my-3 hidden md:block">
+                <div class="my-3">
                     <Separator class="bg-border" />
                 </div>
 
-                <div class="hidden flex-col gap-1 md:flex">
+                <div class="flex flex-col gap-1">
                     <a
                         href="/api/dashboard"
-                        target="_blank"
                         class="flex items-center justify-between gap-2.5 rounded-lg px-3.5 py-2 text-sm text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
                         <div class="flex items-center gap-2">
                             <MaterialSymbolsKey class="size-4 shrink-0" />
                             <span>API Keys</span>
                         </div>
-                        <MaterialSymbolsOpenInNew class="size-3.5 opacity-60" />
+                    </a>
+
+                    <a
+                        href="/wrapped"
+                        class="flex items-center justify-between gap-2.5 rounded-lg px-3.5 py-2 text-sm text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
+                        <div class="flex items-center gap-2">
+                            <MaterialSymbolsGift class="size-4 shrink-0" />
+                            <span>Wrapped</span>
+                        </div>
                     </a>
 
                     {#if data.admin?.enabled === true}
                         <a
                             href="https://panel.eepy.page/"
                             target="_blank"
-                            class="flex items-center justify-between gap-2.5 rounded-lg px-3.5 py-2 text-sm text-muted-foreground transition-all hover:bg-muted hover:text-foreground"
-                        >
+                            rel="noreferrer"
+                            class="flex items-center justify-between gap-2.5 rounded-lg px-3.5 py-2 text-sm text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
                             <div class="flex items-center gap-2">
                                 <MaterialSymbolsAdminPanelSettings class="size-4 shrink-0" />
                                 <span>Admin Panel</span>
@@ -411,8 +421,7 @@
                     <div class="flex items-center justify-between gap-2.5 rounded-lg px-3.5 py-2 text-left text-sm text-destructive transition-all hover:bg-destructive/15">
                         <button
                             onclick={() => logOut()}
-                            class="flex w-full items-center gap-2.5"
-                        >
+                            class="flex w-full items-center gap-2.5">
                             <MaterialSymbolsLogout class="size-4 shrink-0" />
                             <span>Log out</span>
                         </button>
@@ -421,7 +430,78 @@
             </nav>
         </aside>
 
-        <main class="space-y-6 md:col-span-8 lg:col-span-9">
+        <div class="block md:hidden rounded-2xl border border-border bg-card/75 p-3 backdrop-blur-sm shadow-xs">
+            <nav class="flex flex-wrap items-center gap-1.5 pb-2.5" aria-label="Mobile settings tabs">
+                <button
+                    onclick={() => setTab("profile")}
+                    class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-all active:scale-[0.97] {activeTab === 'profile' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-foreground/80 hover:bg-muted hover:text-foreground'}">
+                    <MaterialSymbolsPersonOutline class="size-4 shrink-0" />
+                    <span>Account</span>
+                </button>
+
+                <button
+                    onclick={() => setTab("security")}
+                    class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-all active:scale-[0.97] {activeTab === 'security' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-foreground/80 hover:bg-muted hover:text-foreground'}">
+                    <MaterialSymbolsSecurity class="size-4 shrink-0" />
+                    <span>Privacy & Security</span>
+                </button>
+
+                <button
+                    onclick={() => setTab("sessions")}
+                    class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-all active:scale-[0.97] {activeTab === 'sessions' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-foreground/80 hover:bg-muted hover:text-foreground'}">
+                    <MaterialSymbolsMonitor class="size-4 shrink-0" />
+                    <span>Sessions</span>
+                </button>
+
+                <button
+                    onclick={() => setTab("referrals")}
+                    class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-all active:scale-[0.97] {activeTab === 'referrals' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-foreground/80 hover:bg-muted hover:text-foreground'}">
+                    <MaterialSymbolsLink class="size-4 shrink-0" />
+                    <span>Referrals</span>
+                    {#if (data.referredPeople ?? 0) > 0}
+                        <span class="rounded-full bg-primary/20 px-1.5 py-0.5 text-[10px] font-semibold text-primary">{data.referredPeople}</span>
+                    {/if}
+                </button>
+            </nav>
+
+            <div class="flex flex-wrap items-center gap-1.5 border-t border-border pt-2">
+                <a
+                    href="/api/dashboard"
+                    class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground active:scale-[0.97]">
+                    <MaterialSymbolsKey class="size-3.5 shrink-0" />
+                    <span>API Keys</span>
+                    <MaterialSymbolsOpenInNew class="size-3 opacity-60" />
+                </a>
+
+                <a
+                    href="/wrapped"
+                    class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground active:scale-[0.97]">
+                    <MaterialSymbolsGift class="size-3.5 shrink-0" />
+                    <span>Wrapped</span>
+                </a>
+
+                {#if data.admin?.enabled === true}
+                    <a
+                        href="https://panel.eepy.page/"
+                        target="_blank"
+                        rel="noreferrer"
+                        class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground active:scale-[0.97]">
+                        <MaterialSymbolsAdminPanelSettings class="size-3.5 shrink-0" />
+                        <span>Admin Panel</span>
+                        <MaterialSymbolsOpenInNew class="size-3 opacity-60" />
+                    </a>
+                {/if}
+
+                <button
+                    onclick={() => logOut()}
+                    class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-destructive transition-all hover:bg-destructive/15 active:scale-[0.97]">
+                    <MaterialSymbolsLogout class="size-3.5 shrink-0" />
+                    <span>Log out</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="space-y-6 md:col-span-8 lg:col-span-9">
             {#if activeTab === "profile"}
                 <div transition:fade={{ duration: 150 }} class="space-y-6">
                     <Card.Root>
@@ -905,9 +985,9 @@
                         <Card.Content class="space-y-6">
                             <div class="rounded-xl border border-primary/20 bg-primary/5 p-4 sm:p-5">
                                 <div class="flex items-start gap-3.5">
-                                    <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                                    <IconBadge variant="primary" size="md">
                                         <MaterialSymbolsGift class="size-6" />
-                                    </div>
+                                    </IconBadge>
                                     <div class="space-y-1">
                                         <h4 class="text-base font-semibold text-foreground">Earn 1 Domain per 2 Verified Referrals</h4>
                                         <p class="text-xs sm:text-sm text-muted-foreground leading-relaxed">
@@ -991,6 +1071,6 @@
                     </Card.Root>
                 </div>
             {/if}
-        </main>
+        </div>
     </div>
 </div>

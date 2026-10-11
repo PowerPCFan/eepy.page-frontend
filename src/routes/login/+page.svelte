@@ -29,6 +29,8 @@
     import { fade } from "svelte/transition";
     import { turnstile, type TurnstileEventAttributes } from '@svelte-put/cloudflare-turnstile';
     import { activeTheme } from "$lib/store";
+    import MaterialSymbolsVisibility from "~icons/material-symbols/visibility";
+    import MaterialSymbolsVisibilityOff from "~icons/material-symbols/visibility-off";
 
     let { data } = $props();
 
@@ -38,6 +40,8 @@
     let email: string = $state("");
     let password: string = $state("");
     let repeatPassword: string = $state("");
+    let showPassword: boolean = $state(false);
+    let showRepeatPassword: boolean = $state(false);
     let agreementsChecked: boolean = $state(false);
 
     let emailInvalid: boolean = $derived(validateEmail(email));
@@ -101,6 +105,8 @@
         mfaInvalid = false;
         mfaCode = "";
         buttonLoadingState = false;
+        showPassword = false;
+        showRepeatPassword = false;
         isLoggingIn = !isLoggingIn;
     }
 
@@ -241,6 +247,11 @@
     });
 
     $effect(() => {
+        if (!password) showPassword = false;
+        if (!repeatPassword) showRepeatPassword = false;
+    });
+
+    $effect(() => {
         const registerMode = data.registerMode;
 
         if (registerMode !== lastRegisterMode) {
@@ -250,24 +261,26 @@
             mfaInvalid = false;
             mfaCode = "";
             buttonLoadingState = false;
+            showPassword = false;
+            showRepeatPassword = false;
             isLoggingIn = !registerMode;
         }
     });
 </script>
 
-<div class="login-holder bg-card m-auto mt-8 w-[calc(100%-1rem)] max-w-[500px] rounded-lg p-4 sm:p-8">
+<div class="login-holder bg-card m-auto mt-8 w-[calc(100%-1rem)] max-w-[500px] rounded-2xl border border-border/60 p-6 sm:p-8 shadow-xs">
     <div class="flex flex-col">
         <img class="w-8" src={favicon} alt="logo" />
-        <h1 class="text-3xl font-bold">
+        <h1 class="text-3xl font-bold mt-2 tracking-tight">
             {#if isLoggingIn}
-                Log into your eepy.page account
+                Log in to your eepy.page account
             {:else}
-                Sign up for a eepy.page account
+                Sign up for an eepy.page account
             {/if}
         </h1>
     </div>
-    <InlineAlert title={errorTitle} description={errorDescription} variant={"error"} />
-    <InlineAlert title={alertTitle} description={alertDescription} variant={"note"} />
+    <InlineAlert title={errorTitle} description={errorDescription} variant={"error"} className="mt-4" />
+    <InlineAlert title={alertTitle} description={alertDescription} variant={"note"} className="mt-4" />
     {#if accountNeedsEmailVerification}
         <Button
             variant={"ghost"}
@@ -292,102 +305,158 @@
             }}>Resend email verification</Button>
     {/if}
     {#if requiresMfa}
-        <div class="mfa-screen mt-12">
+        <div class="mfa-screen mt-8 space-y-2">
             <h2 class="text-2xl font-semibold">Two-factor authentication</h2>
-            <p>Enter the verification code from your authenticator app.</p>
-            <form>
+            <p class="text-sm text-muted-foreground">Enter the verification code from your authenticator app.</p>
+            <form onsubmit={(e) => { e.preventDefault(); if (captchaDone && mfaCode.length === 6) { buttonLoadingState = true; logIn(); } }}>
                 <InputOTP.Root
                     bind:value={mfaCode}
-                    class="m-auto mt-8 w-fit"
+                    class="m-auto mt-6 w-fit"
                     maxlength={6}
                     pattern={REGEXP_ONLY_DIGITS}>
                     {#snippet children({ cells })}
                         <InputOTP.Group>
                             {#each cells as cell (cell)}
-                                <InputOTP.Slot class="h-14 text-2xl" aria-invalid={mfaInvalid} cell={cell} />
+                                <InputOTP.Slot class="h-14 text-2xl font-mono" aria-invalid={mfaInvalid} cell={cell} />
                             {/each}
                         </InputOTP.Group>
                     {/snippet}
                 </InputOTP.Root>
 
                 <Button
-                    onclick={() => {
-                        buttonLoadingState = true;
-                        logIn();
-                    }}
                     loading={buttonLoadingState}
                     disabled={!captchaDone || mfaCode.length != 6}
                     type="submit"
-                    class="mt-4 w-full">Sign in</Button>
+                    class="mt-6 w-full">Sign in</Button>
             </form>
 
-            <a class="text-sm" href="/account/recover/2fa">Disable two-factor authentication with a backup code</a>
+            <div class="pt-2 text-center">
+                <a class="text-sm text-muted-foreground hover:text-foreground transition-colors" href="/account/recover/2fa">Disable two-factor authentication with a backup code</a>
+            </div>
         </div>
     {:else}
-        <form class="mt-6">
+        <form onsubmit={(e) => { e.preventDefault(); if (browser && !actionButtonDisabled) { buttonLoadingState = true; isLoggingIn ? logIn() : signUp(); } }} class="mt-6">
             <div class="flex flex-col gap-6">
-                <div class="grid gap-2">
-                    <Label for="username">Username</Label>
-                    <Input bind:value={username} id="username" type="text" placeholder="username" required />
-
-                    {#if !isLoggingIn}
-                        <Label for="email">Email</Label>
+                <div class="grid gap-3">
+                    <div class="space-y-1.5">
+                        <Label for="username">Username</Label>
                         <Input
-                            aria-invalid={emailInvalid}
-                            bind:value={email}
-                            id="email"
-                            type="email"
-                            placeholder="user@gmail.com"
+                            bind:value={username}
+                            id="username"
+                            type="text"
+                            placeholder="username"
+                            autocomplete="username"
+                            autocapitalize="none"
+                            autocorrect="off"
                             required />
-                    {/if}
-                    <div class="flex h-4 items-center">
-                        <Label for="password">Password</Label>
-                        {#if isLoggingIn}
-                            <a
-                                tabindex="-1"
-                                transition:fade={{ duration: 100 }}
-                                href="/account/recover/"
-                                class="ml-auto inline-block text-sm underline-offset-4 hover:underline">
-                                Forgot your password?
-                            </a>
-                        {/if}
                     </div>
-                    <Input bind:value={password} id="password" type="password" placeholder="*********" required />
-                    {#if !isLoggingIn}
-                        <Label for="repeat-password">Confirm password</Label>
-                        <Input
-                            aria-invalid={!!repeatPassword && repeatPassword !== password}
-                            bind:value={repeatPassword}
-                            id="repeat-password"
-                            type="password"
-                            placeholder="*********"
-                            required />
 
-                        <div class="agreement flex">
+                    {#if !isLoggingIn}
+                        <div class="space-y-1.5">
+                            <Label for="email">Email</Label>
+                            <Input
+                                aria-invalid={emailInvalid}
+                                bind:value={email}
+                                id="email"
+                                type="email"
+                                inputmode="email"
+                                autocomplete="email"
+                                autocapitalize="none"
+                                autocorrect="off"
+                                placeholder="user@gmail.com"
+                                required />
+                        </div>
+                    {/if}
+                    <div class="space-y-1.5">
+                        <div class="flex h-4 items-center justify-between">
+                            <Label for="password">Password</Label>
+                            {#if isLoggingIn}
+                                <a
+                                    tabindex="-1"
+                                    transition:fade={{ duration: 100 }}
+                                    href="/account/recover/"
+                                    class="text-xs text-muted-foreground hover:text-foreground transition-colors">
+                                    Forgot your password?
+                                </a>
+                            {/if}
+                        </div>
+                        <div class="relative">
+                            <Input
+                                bind:value={password}
+                                id="password"
+                                type={showPassword ? "text" : "password"}
+                                autocomplete={isLoggingIn ? "current-password" : "new-password"}
+                                placeholder="••••••••••••"
+                                class="pr-10"
+                                required />
+                            <button
+                                type="button"
+                                disabled={!password}
+                                onclick={() => (showPassword = !showPassword)}
+                                tabindex="-1"
+                                class="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center focus:outline-none cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-muted-foreground"
+                                aria-label={showPassword ? "Hide password" : "Show password"}
+                                title={showPassword ? "Hide password" : "Show password"}>
+                                {#if showPassword}
+                                    <MaterialSymbolsVisibilityOff class="size-4" />
+                                {:else}
+                                    <MaterialSymbolsVisibility class="size-4" />
+                                {/if}
+                            </button>
+                        </div>
+                    </div>
+                    {#if !isLoggingIn}
+                        <div class="space-y-1.5">
+                            <Label for="repeat-password">Confirm password</Label>
+                            <div class="relative">
+                                <Input
+                                    aria-invalid={!!repeatPassword && repeatPassword !== password}
+                                    bind:value={repeatPassword}
+                                    id="repeat-password"
+                                    type={showRepeatPassword ? "text" : "password"}
+                                    autocomplete="new-password"
+                                    placeholder="••••••••••••"
+                                    class="pr-10"
+                                    required />
+                                <button
+                                    type="button"
+                                    disabled={!repeatPassword}
+                                    onclick={() => (showRepeatPassword = !showRepeatPassword)}
+                                    tabindex="-1"
+                                    class="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center focus:outline-none cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-muted-foreground"
+                                    aria-label={showRepeatPassword ? "Hide password" : "Show password"}
+                                    title={showRepeatPassword ? "Hide password" : "Show password"}>
+                                    {#if showRepeatPassword}
+                                        <MaterialSymbolsVisibilityOff class="size-4" />
+                                    {:else}
+                                        <MaterialSymbolsVisibility class="size-4" />
+                                    {/if}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="agreement flex items-center pt-1">
                             <Checkbox bind:checked={agreementsChecked} class="mr-2" id="agreements" />
-                            <Label class="gap-1" for="agreements">I agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a></Label>
+                            <Label class="gap-1 text-xs cursor-pointer font-normal text-muted-foreground" for="agreements">
+                                I agree to the <a href="/terms" class="text-foreground hover:underline font-medium">Terms of Service</a> and <a href="/privacy" class="text-foreground hover:underline font-medium">Privacy Policy</a>
+                            </Label>
                         </div>
                     {/if}
                 </div>
             </div>
 
             <Button
-                onclick={() => {
-                    buttonLoadingState = true;
-                    isLoggingIn ? logIn() : signUp();
-                }}
                 loading={buttonLoadingState}
                 disabled={!browser || actionButtonDisabled}
                 type="submit"
-                class="mt-4 w-full">{isLoggingIn ? "Sign in" : "Sign up"}</Button>
+                class="mt-6 w-full">{isLoggingIn ? "Sign in" : "Sign up"}</Button>
         </form>
 
-        <a
-            onclick={switchAuthMode}
-            href="##"
-            class="ml-auto inline-block text-sm underline-offset-4 hover:underline">
-            {isLoggingIn ? "Sign up instead" : "Log in instead"}
-        </a>
+        <div class="mt-4 text-center">
+            <Button variant="ghost" onclick={switchAuthMode} class="w-full">
+                {isLoggingIn ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+            </Button>
+        </div>
     {/if}
 
     <div

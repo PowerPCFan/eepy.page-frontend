@@ -34,7 +34,6 @@
   --gradient-start: color-mix(in oklab, var(--primary), white 82%);
   --gradient-end: color-mix(in oklab, var(--secondary), white 86%);
   --tw-inset-shadow: 15px;
-  --footer: rgb(196, 183, 224);
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
@@ -69,7 +68,6 @@
   --chart-5: oklch(0.645 0.246 16.439);
   --gradient-start: color-mix(in oklab, var(--primary), black 20%);
   --gradient-end: color-mix(in oklab, var(--secondary), black 62%);
-  --footer: var(--secondary);
 }
 
 @theme inline {
@@ -102,7 +100,6 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --color-footer: var(--footer);
 
   --font-sans: "Google Sans Flex",
     "Inter",

@@ -10,6 +10,7 @@ const Priorities: { [key: string]: 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8
     "/adblock-info": 0.3,
     "/terms": 0.7,
     "/privacy": 0.7,
+    "/support": 0.8,
     "/support/info": 0.4,
     "/login": 0.8
 };

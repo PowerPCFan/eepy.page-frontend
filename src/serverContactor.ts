@@ -680,11 +680,9 @@ export class ServerContactor {
         if (error) {
             switch (response.status) {
                 case 409:
-                    throw new LimitError("Only one API key is allowed per account");
+                    throw new ConflictError("Invite limit reached");
                 case 460:
                     throw new AuthError("Invalid session");
-                case 409:
-                    throw new ConflictError("Invite limit reached");
                 default:
                     throw new Error(`Failed to create invite. Status code: ${response.status}`);
             }
@@ -874,10 +872,20 @@ export class ServerContactor {
 
         if (error) {
             switch (response.status) {
+                case 403:
+                    throw new PermissionError(
+                        //@ts-ignore
+                        error?.detail ?? "You must own the specified domains"
+                    );
+                case 409:
+                    throw new ConflictError(
+                        //@ts-ignore
+                        error?.detail ?? "Only one API key is allowed per account"
+                    );
                 case 460:
                     throw new AuthError("Invalid session");
                 default:
-                    throw new Error("Failed to get api keys");
+                    throw new Error("Failed to create API key");
             }
         }
 

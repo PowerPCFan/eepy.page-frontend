@@ -24,8 +24,14 @@ export const load = async () => {
 
     const username = accountSettings.username;
     const email = accountSettings.email;
-    const maxDomains = accountSettings.permissions.limits["max-domains"] ?? 3;
-    const maxSubdomains = accountSettings.permissions.limits["max-subdomains"] ?? 50;
+    const permissions = accountSettings.permissions as {
+        admin?: { enabled?: boolean; [key: string]: unknown };
+        limits?: Record<string, number>;
+    };
+    const admin = permissions?.admin;
+    const limits = (permissions?.limits ?? {}) as Record<string, number>;
+    const maxDomains = limits["max-domains"] ?? 3;
+    const maxSubdomains = limits["max-subdomains"] ?? 50;
     const mfaEnabled = accountSettings.mfa_enabled;
     const sessionObject = accountSettings.sessions;
 
@@ -51,8 +57,8 @@ export const load = async () => {
         mfaEnabled,
         sessions,
         maxSubdomains,
-        admin: accountSettings.permissions.admin,
-        limits: new Map(Object.entries(accountSettings.permissions.limits)) || new Map(),
+        admin: admin as { enabled?: boolean } | undefined,
+        limits: new Map(Object.entries(limits)),
         referralCode: accountSettings["referral-code"],
         referredPeople: accountSettings["referred-people"] ?? 0,
     };

@@ -112,7 +112,7 @@
     {@render navbarLink(MSArrowSplit, "/dashboard/tunneling", "Tunneling", false)}
     {@render navbarLink(MSAccountCircle, "/account/manage", "Account", false)}
     {@render navbarLink(MSFlagRounded, "/report", "Report")}
-    {@render navbarLink(MSHelp, "/faq", "FAQ")}
+    {@render navbarLink(MSHelp, "/support", "Support")}
 </Header>
 
 <Banner />

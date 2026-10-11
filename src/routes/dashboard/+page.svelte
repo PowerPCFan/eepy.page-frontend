@@ -241,7 +241,7 @@
         if (shouldRedirectToLogin(authToken, window.location.pathname)) {
             redirectToLogin(460);
         } else {
-            serverContactor = new ServerContactor(authToken, localStorage.getItem("server_url") ?? null);
+            serverContactor = new ServerContactor(authToken);
             serverContactor
                 .getDomains()
             .catch(error => {

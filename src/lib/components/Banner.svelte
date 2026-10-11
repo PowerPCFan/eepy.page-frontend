@@ -5,6 +5,7 @@
     import MaterialSymbolsClose from "~icons/material-symbols/close";
     import { getStatus } from "../../serverContactor";
     import { cyrb53 } from "../../helperFuncs";
+    import { slide } from "svelte/transition";
 
     let loaded: boolean = $state(false);
     let danger: boolean = $state(false);
@@ -48,15 +49,20 @@
 </script>
 
 {#if loaded && danger && !hidden}
-    <div class="banner flex items-center bg-primary gap-2 min-w-0 w-full py-2 px-3 top-0 left-0 h-min [&_*]:text-foreground">
-        <MaterialSymbolsInfo class="h-6 w-6 flex-none" />
-        <p class="text-sm sm:text-base min-w-0 wrap-anywhere">{message}</p>
+    <div
+        transition:slide={{ duration: 180 }}
+        class="banner flex items-center justify-between gap-3 bg-primary text-primary-foreground px-4 py-1.5 w-full">
+        <div class="flex items-center gap-2.5 min-w-0 flex-1">
+            <MaterialSymbolsInfo class="size-5 shrink-0" />
+            <p class="text-xs sm:text-sm font-medium leading-normal break-words">{message}</p>
+        </div>
 
         <button
+            type="button"
+            aria-label="Dismiss banner"
             onclick={setHidden}
-            class="flex-none cursor-pointer ml-auto mr-0 text-4xl h-min w-min my-0 py-0"
-        >
-            <MaterialSymbolsClose class="h-6 w-6" />
+            class="flex size-8 shrink-0 items-center justify-center rounded-md hover:bg-black/10 active:scale-95 transition-transform cursor-pointer">
+            <MaterialSymbolsClose class="size-4" />
         </button>
     </div>
 {/if}
