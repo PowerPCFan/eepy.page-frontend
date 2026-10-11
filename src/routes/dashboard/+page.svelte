@@ -320,7 +320,6 @@
 
     $effect(() => {
         const isEepy = newDomain.includes(".eepy.page");
-        const isVercel = newDomain.includes("_vercel");
 
         let newTitle = null;
         let newDesc = null;
@@ -328,9 +327,6 @@
         if (isEepy) {
             newTitle = 'Please remove the ".eepy.page" suffix.';
             newDesc = 'eepy.page automatically adds the ".eepy.page" portion of your domain';
-        } else if (isVercel) {
-            newTitle = "Trying to verify a Vercel domain?";
-            newDesc = `This requires an extra step. Please go to <a href="${window.location.origin}/account/verify/vercel">${window.location.origin}/account/verify/vercel</a> to verify.`;
         }
 
         const changed = registerNoteTitle !== newTitle || registerNoteDescription !== newDesc;

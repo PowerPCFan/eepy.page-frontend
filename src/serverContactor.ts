@@ -892,55 +892,6 @@ export class ServerContactor {
         return data;
     }
 
-    async joinVercelQueue(value: string, tld: string) {
-        const { data, error, response } = await client.POST("/domain/vercel/join", {
-            params: {
-                query: { value: value, tld: tld },
-                //@ts-ignore
-                header: {
-                    Authorization: `Bearer ${getAuthToken()}`
-                }
-            }
-        });
-
-        if (error) {
-            switch (response.status) {
-                case 460:
-                    throw new AuthError("Invalid session");
-                default:
-                    throw new Error("Failed to join queue");
-            }
-        }
-
-        return data;
-    }
-
-    async getVercelQueue() {
-        const { data, error, response } = await client.GET("/domain/vercel/get", {
-            params: {
-                //@ts-ignore
-                header: {
-                    Authorization: `Bearer ${getAuthToken()}`
-                }
-            }
-        });
-
-        if (error) {
-            switch (response.status) {
-                case 460:
-                    throw new AuthError("Invalid session");
-                case 404:
-                    throw new UserError("User not joined into queue");
-                case 408:
-                    throw new CodeError("Verification is now ready");
-                default:
-                    throw new Error("Failed to get queue position");
-            }
-        }
-
-        return data;
-    }
-
     async createMfaCode() {
         const { data, error, response } = await client.POST("/mfa/create", {
             params: {

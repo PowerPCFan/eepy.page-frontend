@@ -89,40 +89,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/domain/vercel/join": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Vercel Queue Join */
-        post: operations["vercel_queue_join_domain_vercel_join_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/domain/vercel/get": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Vercel Queue Get */
-        get: operations["vercel_queue_get_domain_vercel_get_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/domain": {
         parameters: {
             query?: never;
@@ -1727,92 +1693,6 @@ export interface operations {
             };
         };
     };
-    vercel_queue_join_domain_vercel_join_post: {
-        parameters: {
-            query: {
-                value: string;
-                tld: string;
-            };
-            header?: {
-                Authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Joined queue */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Invalid session */
-            460: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    vercel_queue_get_domain_vercel_get_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                Authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Position in queue */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": number;
-                };
-            };
-            /** @description User not in queue */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Invalid session */
-            460: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     register_api_domain_post: {
         parameters: {
             query?: never;
@@ -2885,6 +2765,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Account already has an API key */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description Validation Error */
             422: {
                 headers: {
@@ -3256,7 +3143,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Login successfull */
+            /** @description Login successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -3348,7 +3235,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Sign up successfull */
+            /** @description Sign up successful */
             200: {
                 headers: {
                     [name: string]: unknown;

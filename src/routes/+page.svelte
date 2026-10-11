@@ -171,7 +171,6 @@
                 </p>
                 <p class="mt-4 text-base sm:text-lg font-medium">eepy.page supports:</p>
                 <ul class="mt-3 list-disc space-y-2 pl-6 text-base sm:text-lg text-muted-foreground">
-                    <li><strong>Vercel</strong> projects &lpar;via some extra steps&rpar;</li>
                     <li><strong>Netlify</strong> projects</li>
                     <li><strong>GitHub Pages</strong> sites</li>
                     <li><strong>Neocities</strong> sites &lpar;requires <em class="mr-0.5 font-medium">Supporter</em> tier&rpar;</li>
@@ -448,7 +447,6 @@
             width: calc(100% - 2rem);
         }
 
-        .text h1,
         .text h2 {
             font-size: 2rem;
             line-height: 1.12;
