@@ -1,6 +1,8 @@
 <script lang="ts">
     import { dev } from "$app/environment";
     import { AUTH_COOKIE_NAME, createFile, formatLocalDateTime, getAuthToken, redirectToLogin } from "$lib";
+    import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
+    import { Badge } from "$lib/components/ui/badge/index.js";
     import { Button } from "$lib/components/ui/button";
     import * as Card from "$lib/components/ui/card";
     import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
@@ -12,6 +14,7 @@
     import * as InputOTP from "$lib/components/ui/input-otp/index.js";
     import { Label } from "$lib/components/ui/label";
     import { Separator } from "$lib/components/ui/separator";
+    import * as Tabs from "$lib/components/ui/tabs/index.js";
     import QR from "@svelte-put/qr/img/QR.svelte";
     import { REGEXP_ONLY_DIGITS } from "bits-ui";
     import copy from "clipboard-copy";
@@ -367,6 +370,9 @@
                         <MaterialSymbolsMonitor class="size-5 shrink-0" />
                         <span>Sessions</span>
                     </div>
+                    <!-- {#if ((sessions ?? []).length ?? 0) > 0} -->
+                        <Badge variant="outline">{(sessions ?? []).length ?? 0}</Badge>
+                    <!-- {/if} -->
                 </button>
 
                 <button
@@ -376,9 +382,9 @@
                         <MaterialSymbolsLink class="size-5 shrink-0" />
                         <span>Referrals</span>
                     </div>
-                    {#if (data.referredPeople ?? 0) > 0}
-                        <span class="rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-semibold text-primary">{data.referredPeople}</span>
-                    {/if}
+                    <!-- {#if (data.referredPeople ?? 0) > 0} -->
+                        <Badge variant="outline">{data.referredPeople}</Badge>
+                    <!-- {/if} -->
                 </button>
 
                 <div class="my-3">
@@ -431,38 +437,37 @@
         </aside>
 
         <div class="block md:hidden rounded-2xl border border-border bg-card/75 p-3 backdrop-blur-sm shadow-xs">
-            <nav class="flex flex-wrap items-center gap-1.5 pb-2.5" aria-label="Mobile settings tabs">
-                <button
-                    onclick={() => setTab("profile")}
-                    class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-all active:scale-[0.97] {activeTab === 'profile' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-foreground/80 hover:bg-muted hover:text-foreground'}">
-                    <MaterialSymbolsPersonOutline class="size-4 shrink-0" />
-                    <span>Account</span>
-                </button>
+            <Tabs.Root
+                value={activeTab}
+                onValueChange={(val) => setTab(val as Tab)}
+                class="w-full pb-2">
+                <Tabs.List variant="segmented" class="grid grid-cols-2 sm:grid-cols-4 w-full h-auto p-1 gap-1">
+                    <Tabs.Trigger value="profile" class="text-xs py-2 gap-1.5 font-medium">
+                        <MaterialSymbolsPersonOutline class="size-4 shrink-0" />
+                        <span>Account</span>
+                    </Tabs.Trigger>
 
-                <button
-                    onclick={() => setTab("security")}
-                    class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-all active:scale-[0.97] {activeTab === 'security' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-foreground/80 hover:bg-muted hover:text-foreground'}">
-                    <MaterialSymbolsSecurity class="size-4 shrink-0" />
-                    <span>Privacy & Security</span>
-                </button>
+                    <Tabs.Trigger value="security" class="text-xs py-2 gap-1.5 font-medium">
+                        <MaterialSymbolsSecurity class="size-4 shrink-0" />
+                        <span>Security</span>
+                    </Tabs.Trigger>
 
-                <button
-                    onclick={() => setTab("sessions")}
-                    class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-all active:scale-[0.97] {activeTab === 'sessions' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-foreground/80 hover:bg-muted hover:text-foreground'}">
-                    <MaterialSymbolsMonitor class="size-4 shrink-0" />
-                    <span>Sessions</span>
-                </button>
+                    <Tabs.Trigger value="sessions" class="text-xs py-2 gap-1.5 font-medium">
+                        <MaterialSymbolsMonitor class="size-4 shrink-0" />
+                        <span>Sessions</span>
+                    </Tabs.Trigger>
 
-                <button
-                    onclick={() => setTab("referrals")}
-                    class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-all active:scale-[0.97] {activeTab === 'referrals' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-foreground/80 hover:bg-muted hover:text-foreground'}">
-                    <MaterialSymbolsLink class="size-4 shrink-0" />
-                    <span>Referrals</span>
-                    {#if (data.referredPeople ?? 0) > 0}
-                        <span class="rounded-full bg-primary/20 px-1.5 py-0.5 text-[10px] font-semibold text-primary">{data.referredPeople}</span>
-                    {/if}
-                </button>
-            </nav>
+                    <Tabs.Trigger value="referrals" class="text-xs py-2 gap-1.5 font-medium">
+                        <MaterialSymbolsLink class="size-4 shrink-0" />
+                        <span>Referrals</span>
+                        {#if (data.referredPeople ?? 0) > 0}
+                            <Badge variant="secondary" class="ml-1 px-1.5 py-0.2 text-[10px] font-semibold">
+                                {data.referredPeople}
+                            </Badge>
+                        {/if}
+                    </Tabs.Trigger>
+                </Tabs.List>
+            </Tabs.Root>
 
             <div class="flex flex-wrap items-center gap-1.5 border-t border-border pt-2">
                 <a
@@ -559,17 +564,17 @@
                             </Card.Description>
                         </Card.Header>
                         <Card.Footer>
-                            <Dialog.Root onOpenChange={open => (deleteOpen = open)} open={deleteOpen}>
-                                <Dialog.Trigger>
+                            <AlertDialog.Root onOpenChange={open => (deleteOpen = open)} open={deleteOpen}>
+                                <AlertDialog.Trigger>
                                     <Button variant="destructive">Review consequences</Button>
-                                </Dialog.Trigger>
-                                <Dialog.Content class="sm:max-w-md">
-                                    <Dialog.Header>
-                                        <Dialog.Title class="text-destructive">Permanently Delete Account</Dialog.Title>
-                                        <Dialog.Description class="leading-normal">
+                                </AlertDialog.Trigger>
+                                <AlertDialog.Content class="sm:max-w-md">
+                                    <AlertDialog.Header>
+                                        <AlertDialog.Title class="text-destructive">Permanently Delete Account</AlertDialog.Title>
+                                        <AlertDialog.Description class="leading-normal">
                                             Please review the consequences below before confirming your deletion request.
-                                        </Dialog.Description>
-                                    </Dialog.Header>
+                                        </AlertDialog.Description>
+                                    </AlertDialog.Header>
 
                                     <div class="space-y-3 text-sm text-muted-foreground">
                                         <div class="space-y-2">
@@ -633,7 +638,7 @@
                                         </div>
                                     {/if}
 
-                                    <Dialog.Footer class="sm:flex-col gap-3 pt-2">
+                                    <AlertDialog.Footer class="sm:flex-col gap-3 pt-2">
                                         <div class="flex items-center space-x-2">
                                             <Checkbox bind:checked={deleteAccountChecked} id="understand" />
                                             <Label for="understand" class="text-xs cursor-pointer font-medium text-destructive leading-snug">
@@ -651,9 +656,10 @@
                                             class="w-full">
                                             Send Account Deletion Email
                                         </Button>
-                                    </Dialog.Footer>
-                                </Dialog.Content>
-                            </Dialog.Root>
+                                        <AlertDialog.Cancel class="w-full mt-1">Cancel</AlertDialog.Cancel>
+                                    </AlertDialog.Footer>
+                                </AlertDialog.Content>
+                            </AlertDialog.Root>
                         </Card.Footer>
                     </Card.Root>
                 </div>
@@ -668,14 +674,14 @@
                                     <Card.Title>Two-Factor Authentication (2FA)</Card.Title>
                                 </div>
                                 {#if data.mfaEnabled}
-                                    <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-400">
+                                    <Badge variant="outline" class="gap-1.5 border-emerald-500/30 bg-emerald-500/10 text-emerald-400 font-semibold text-xs">
                                         <MaterialSymbolsCheckCircle class="size-3.5" />
                                         Enabled
-                                    </span>
+                                    </Badge>
                                 {:else}
-                                    <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 px-3 py-1 text-xs font-semibold text-amber-400">
+                                    <Badge variant="outline" class="border-amber-500/30 bg-amber-500/10 text-amber-400 font-semibold text-xs">
                                         Not Enabled
-                                    </span>
+                                    </Badge>
                                 {/if}
                             </div>
                         </Card.Header>

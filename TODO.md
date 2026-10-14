@@ -1,3 +1,4 @@
+- make sure tos says something about alt accounts and possibly add some sort of detection system like if there are multiple accounts on the same IP with the same user agent etc - also make sure people cant just use plus codes on their email or something
 - i had been changing input placeholders to instructions rather than example values but apparently that's ui bad practices?
   - overall even though i just did a big ui redo, make sure i'm enforcing best practices and stuff
 - maybe clean up /report/abuse-vuln it seems like a bit of an anti-pattern with the messy email templates and shit

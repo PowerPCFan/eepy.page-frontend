@@ -32,7 +32,7 @@
 </script>
 
 {#if variant === "inline"}
-    <code class={cn("bg-card/70 text-foreground rounded px-1 py-0.5 font-mono text-[0.9em] break-words", className)}
+    <code class={cn("bg-card/70 text-foreground rounded px-1 py-0.5 font-mono text-xs break-words", className)}
         >{text}</code>
 {:else}
     <div class={cn(
@@ -48,7 +48,6 @@
             scrollbar === "both" && "max-h-96 overflow-auto whitespace-pre"
         )}>{text}</code>
 
-        <!-- unsure if the p-0 / m-0 does anything but keeping it to be safe -->
         <Button
             type="button"
             variant="ghost"

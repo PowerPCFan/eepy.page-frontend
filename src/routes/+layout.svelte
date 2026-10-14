@@ -46,10 +46,8 @@
     // ugh i hate this
     let bannerHeight = $state(0);
     let donationHeight = $state(0);
-    // let headerHeight = $state(0);
     onMount(() => {
         const updateOffset = () => {
-            // const totalOffset = bannerHeight + donationHeight + headerHeight;
             const totalOffset = bannerHeight + donationHeight;
             document.documentElement.style.setProperty('--vpOffset', `${totalOffset}px`);
         };
@@ -60,7 +58,6 @@
                 const height = target.offsetHeight;
                 if (target.matches('.banner')) bannerHeight = height;
                 if (target.matches('.donation-banner')) donationHeight = height;
-                // if (target.matches('.header')) headerHeight = height;
             }
             updateOffset();
         });
@@ -68,10 +65,8 @@
         const mutationObserver = new MutationObserver(() => {
             const banner = document.querySelector('.banner') as HTMLElement | null;
             const donation = document.querySelector('.donation-banner') as HTMLElement | null;
-            // const header = document.querySelector('.header') as HTMLElement | null;
             if (banner) resizeObserver.observe(banner); else bannerHeight = 0;
             if (donation) resizeObserver.observe(donation); else donationHeight = 0;
-            // if (header) resizeObserver.observe(header); else headerHeight = 0;
             updateOffset();
         });
 
@@ -79,10 +74,8 @@
         mutationObserver.disconnect();
         const initialBanner = document.querySelector('.banner') as HTMLElement | null;
         const initialDonation = document.querySelector('.donation-banner') as HTMLElement | null;
-        // const initialHeader = document.querySelector('.header') as HTMLElement | null;
         if (initialBanner) { resizeObserver.observe(initialBanner); bannerHeight = initialBanner.offsetHeight; }
         if (initialDonation) { resizeObserver.observe(initialDonation); donationHeight = initialDonation.offsetHeight; }
-        // if (initialHeader) { resizeObserver.observe(initialHeader); headerHeight = initialHeader.offsetHeight; }
         updateOffset();
         mutationObserver.observe(document.body, { childList: true, subtree: true });
 
@@ -124,9 +117,7 @@
 <svelte:head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
-    <!-- Geist Mono, Geist, Google Sans Flex -->
-    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:ital,wght@0,100..900;1,100..900&family=Geist:wght@100..900&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet">
     <link rel="preload" as="font" href="/fonts/InterVariable.woff2" type="font/woff2" crossorigin="anonymous" />
 </svelte:head>
 

@@ -54,7 +54,7 @@
   --secondary: #4C1F79;
   --secondary-foreground: rgb(248, 250, 252);
   --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: hsl(0, 0%, 83%);
+  --muted-foreground: hsl(0, 0%, 80%);
   --accent: #d561ff;
   --accent-foreground: oklch(0.984 0.003 247.858);
   --destructive: #b80003;
@@ -101,9 +101,9 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  --font-sans: "Google Sans Flex",
+  --font-sans:
+    "Google Sans Flex",
     "Inter",
-    "Geist",
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
@@ -117,7 +117,7 @@
     sans-serif;
 
   --font-mono:
-    "Geist Mono",
+    "Cascadia Mono",
     ui-monospace,
     SFMono-Regular,
     Menlo,

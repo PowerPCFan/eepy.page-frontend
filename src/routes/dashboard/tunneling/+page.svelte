@@ -1,6 +1,7 @@
 <script lang="ts">
     import { getAuthToken, redirectToLogin } from "$lib";
     import { Button } from "$lib/components/ui/button";
+    import * as Card from "$lib/components/ui/card";
     import Settings from "~icons/material-symbols/settings"
     import * as Accordion from "$lib/components/ui/accordion/index.js";
     import { Codeblock } from "$lib/components/ui/codeblock";
@@ -217,11 +218,11 @@
     {:else}
         <div class="mt-8 grid gap-4 md:grid-cols-2">
             {#each tunnels as tunnel}
-                <article class="border-border bg-card rounded-lg border p-6">
-                    <div class="flex items-start justify-between gap-4">
+                <Card.Root class="gap-0">
+                    <Card.Header class="flex flex-row items-start justify-between gap-4 pb-2">
                         <div>
-                            <h2 class="text-xl font-semibold">{tunnel.hostname}</h2>
-                            <p class="text-muted-foreground mt-1 text-sm">{tunnel.service}</p>
+                            <Card.Title class="text-xl font-semibold">{tunnel.hostname}</Card.Title>
+                            <Card.Description class="mt-1 text-sm">{tunnel.service}</Card.Description>
                         </div>
                         <Button
                             variant="ghost"
@@ -229,8 +230,8 @@
                             aria-label="Tunnel settings"
                             title="Tunnel settings"
                             onclick={() => openSettings(tunnel)}><Settings /></Button>
-                    </div>
-                    <div class="text-muted-foreground mt-5 space-y-3 text-sm">
+                    </Card.Header>
+                    <Card.Content class="text-muted-foreground mt-3 space-y-3 text-sm">
                         <p>Complete these steps in the Serveo dashboard before connecting:</p>
                         <ol class="list-inside list-decimal space-y-2">
                             <li><a class="underline" href="https://console.serveo.net/signup" target="_blank" rel="noreferrer">Create a Serveo account</a> using your name, email, and password. Alternatively, you can sign in with GitHub or Google.</li>
@@ -247,9 +248,11 @@
                             SSH command below to reconnect to the tunnel.
                         </p>
                         <Codeblock class="w-full" text={tunnel.command} />
-                    </div>
-                    <Button class="mt-5" variant="destructive" onclick={() => remove(tunnel)}>Delete Tunnel</Button>
-                </article>
+                    </Card.Content>
+                    <Card.Footer class="pt-4">
+                        <Button variant="destructive" onclick={() => remove(tunnel)}>Delete Tunnel</Button>
+                    </Card.Footer>
+                </Card.Root>
             {/each}
         </div>
     {/if}

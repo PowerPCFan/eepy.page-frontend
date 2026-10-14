@@ -168,16 +168,24 @@
                 <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">Support for many services</h2>
                 <p class="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
                     Since you have full control over DNS records, most services that simply require a domain are supported!
+                    eepy.page supports:
                 </p>
-                <p class="mt-4 text-base sm:text-lg font-medium">eepy.page supports:</p>
-                <ul class="mt-3 list-disc space-y-2 pl-6 text-base sm:text-lg text-muted-foreground">
-                    <li><strong>Netlify</strong> projects</li>
+                <ul class="mt-1 list-disc space-y-1 pl-6 text-base sm:text-lg text-muted-foreground">
                     <li><strong>GitHub Pages</strong> sites</li>
+                    <li><strong>Codeberg Pages</strong> sites</li>
                     <li><strong>Neocities</strong> sites &lpar;requires <em class="mr-0.5 font-medium">Supporter</em> tier&rpar;</li>
                     <li><strong>Nekoweb</strong> sites &lpar;requires <em class="mr-0.5 font-medium">Cute kitty</em> tier&rpar;</li>
                     <li>
-                        ...and more! Most services that only require a <strong>standard DNS record</strong> are supported, and even services that require TXT records work as long as they are scoped to your subdomain.
+                        ...and more! Services that only require a <strong>standard DNS record</strong> and a <strong>subdomain-scoped TXT record</strong> will work.
                     </li>
+                </ul>
+                <p class="mt-4 text-base sm:text-lg text-muted-foreground">
+                    Additionally, you can add your eepy.page domain to your socials:
+                </p>
+                <ul class="mt-1 list-disc space-y-1 pl-6 text-base sm:text-lg text-muted-foreground">
+                    <li><strong>Discord</strong> (displayed as a "Connection" on your profile)</li>
+                    <li><strong>Bluesky</strong> (can be used as a custom handle, e.g. @example.eepy.page instead of @example.bsky.social)</li>
+                    <li><strong>Twitter/X</strong> (added as your "Website" on your profile)</li>
                 </ul>
             </div>
         </div>
