@@ -21,6 +21,7 @@
         PermissionError,
         RateLimitError,
         ServerContactor,
+        UserError,
     } from "../../serverContactor";
 
     import { browser } from "$app/environment";
@@ -123,10 +124,14 @@
                 if (error instanceof AuthError) redirectToLogin(460);
 
                 domainErrorTitle = "Could not delete domain";
-                domainErrorDescription = error instanceof RateLimitError
+                domainErrorDescription = error instanceof RateLimitError || error instanceof UserError
                     ? error.message
-                    : "An unhandled error occurred.";
+                    : (error instanceof Error && error.message ? error.message : "An unhandled error occurred.");
                 alertUpdate++;
+
+                toast.error("Could not delete domain", {
+                    description: domainErrorDescription
+                });
 
                 throw new Error("Failed to delete domain");
             })

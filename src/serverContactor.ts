@@ -592,13 +592,18 @@ export class ServerContactor {
         });
 
         if (error) {
+            const rawDetail = (error as unknown as { detail?: unknown })?.detail;
+            const errorDetail = typeof rawDetail === "string" ? rawDetail : undefined;
+
             switch (response.status) {
+                case 400:
+                    throw new UserError(errorDetail ?? "Cannot delete domain while subdomains exist.");
                 case 403:
                     throw new PermissionError("User does not own domain");
                 case 460:
                     throw new AuthError("Invalid session");
                 default:
-                    throw new Error(`Failed to delete domain. Status code: ${response.status}`);
+                    throw new Error(errorDetail ?? `Failed to delete domain. Status code: ${response.status}`);
             }
         }
 
