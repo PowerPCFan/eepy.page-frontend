@@ -4,3 +4,5 @@
 - maybe clean up /report/abuse-vuln it seems like a bit of an anti-pattern with the messy email templates and shit
 - i had done some /wrapped changes? not sure where they went but perhaps investigate. i also lost a lot of other changes and i'm really not sure where they could have went since i checked my other laptop and everything was committed and pushed
 - fix light mode it's very broken
+- fix the fact that kofi kinda doxxes me and also kofi isnt the best solution and it has some other problems too
+- PSL?
