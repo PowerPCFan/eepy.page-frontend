@@ -1278,12 +1278,10 @@ export interface components {
         };
         /** LoginRequest */
         LoginRequest: {
-            /** Username Hash */
-            username_hash: string;
+            /** Username */
+            username: string;
             /** Password */
             password: string;
-            /** Plain Username */
-            plain_username?: string | null;
         };
         /** MFACreation */
         MFACreation: {
@@ -1301,8 +1299,8 @@ export interface components {
         };
         /** MfaRecovery */
         MfaRecovery: {
-            /** Username Hash */
-            username_hash: string;
+            /** Username */
+            username: string;
             /** Password */
             password: string;
         };

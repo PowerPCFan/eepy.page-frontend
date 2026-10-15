@@ -251,13 +251,10 @@ export async function login(
     captcha: string,
     mfaCode?: string
 ): Promise<paths["/login"]["post"]["responses"]["200"]["content"]["application/json"]> {
-    const hashed_username: string = await digestMessage(username);
-
     const { data, error, response } = await client.POST("/login", {
         body: {
-            username_hash: hashed_username,
-            password,
-            plain_username: username
+            username,
+            password
         },
         params: {
             header: {
@@ -448,11 +445,9 @@ export async function verifyDeletion(
 }
 
 export async function recoverMfaCode(username: string, password: string, backupCode: string) {
-    const hashed_username: string = await digestMessage(username);
-
     const { data, error, response } = await client.DELETE("/mfa/recovery", {
         body: {
-            username_hash: hashed_username,
+            username,
             password
         },
         params: {
