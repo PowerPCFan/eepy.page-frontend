@@ -47,6 +47,7 @@
     let agreementsChecked: boolean = $state(false);
 
     let emailInvalid: boolean = $derived(email.length > 0 && validateEmail(email));
+    let usernameInvalid: boolean = $derived(!isLoggingIn && username.length > 0 && validateUsername(username));
     let passwordScore = $state(-1);
     let passwordTooWeak = $state(false);
 
@@ -87,6 +88,10 @@
 
     let accountNeedsEmailVerification: boolean = $state(false);
     let resendEmailClicked: boolean = $state(false);
+
+    function validateUsername(username: string) {
+        return !/^[a-zA-Z0-9_-]{3,32}$/.test(username);
+    }
 
     function validateEmail(email: string) {
         return !String(email)
@@ -244,7 +249,16 @@
 
             consola.debug(`Checking login...: ${actionButtonDisabled}`);
         } else {
-            if (repeatPassword !== password || !username || !email || emailInvalid || !agreementsChecked || passwordTooWeak || !password)
+            if (
+                repeatPassword !== password ||
+                !username ||
+                usernameInvalid ||
+                !email ||
+                emailInvalid ||
+                !agreementsChecked ||
+                passwordTooWeak ||
+                !password
+            )
                 actionButtonDisabled = true;
             else actionButtonDisabled = false;
         }
@@ -407,6 +421,7 @@
                         <div class="space-y-1.5">
                             <Label for="username">Username</Label>
                             <Input
+                                aria-invalid={usernameInvalid}
                                 bind:value={username}
                                 id="username"
                                 type="text"
@@ -415,6 +430,9 @@
                                 autocapitalize="none"
                                 autocorrect="off"
                                 required />
+                            {#if usernameInvalid}
+                                <p class="text-xs text-destructive">Usernames must be 3-32 characters and only contain letters, numbers, underscores, and hyphens.</p>
+                            {/if}
                         </div>
 
                         {#if !isLoggingIn}
