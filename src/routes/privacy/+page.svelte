@@ -57,7 +57,12 @@
 
     <p>We also collect information automatically when you use the service, including:</p>
     <ul>
-        <li>IP address, user-agent, login timestamps, session creation and expiration timestamps.</li>
+        <li>
+            IP address, client device identifiers (stored locally to recognize the device and detect unauthorized multi-accounting), login timestamps, session creation and expiration timestamps.
+        </li>
+        <li>
+            Recent IP address activity logs associated with account actions, retained for up to 60 days on a rolling basis to detect automated account farming and enforce account limits.
+        </li>
         <li>
             IP-derived location and network information from ipinfo, such as country, region, city, approximate
             coordinates, ISP or organization, timezone, postal code, and EU status.
@@ -108,8 +113,7 @@
 
     <ul>
         <li>
-            <strong>Necessary:</strong> login/session cookies, authentication state, security checks, the consent choice
-            itself, browser-only settings such as theme and donation prompt state, and similar required site behavior.
+            <strong>Necessary:</strong> login/session cookies, authentication state, security checks, persistent client device tokens used to prevent multi-account abuse and service disruption, the consent choice itself, browser-only settings such as theme and donation prompt state, and similar required site behavior.
             These are required for the service and cannot be disabled.
         </li>
         <li>
@@ -184,6 +188,7 @@
     <h2>How Long We Keep Information</h2>
     <p>
         Account data is kept while your account exists. Session records and login tokens expire automatically.
+        Recent IP activity logs used to detect multi-account farming and enforce fair service use are retained for up to 60 days on a rolling basis.
         Verification, recovery, and deletion codes are short-lived. If an account is banned or marked for deletion after
         abuse action, related records may be retained for up to one year before automatic deletion.
     </p>

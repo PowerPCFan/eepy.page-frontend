@@ -78,6 +78,34 @@ function rateLimitError(response: Response): RateLimitError {
     return new RateLimitError(alert.description, alert.title);
 }
 
+export function getDeviceId(): string {
+    if (!browser) return "";
+    const DEVICE_ID_KEY = "__eepy_device_id";
+    try {
+        let deviceId = localStorage.getItem(DEVICE_ID_KEY);
+        if (!deviceId) {
+            deviceId =
+                typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+                    ? crypto.randomUUID()
+                    : "dev_" + Math.random().toString(36).substring(2) + Date.now().toString(36);
+            localStorage.setItem(DEVICE_ID_KEY, deviceId);
+        }
+        return deviceId;
+    } catch {
+        return "";
+    }
+}
+
+const DeviceIdMiddleware: Middleware = {
+    async onRequest({ request }) {
+        const deviceId = getDeviceId();
+        if (deviceId) {
+            request.headers.set("X-Device-Id", deviceId);
+        }
+        return request;
+    }
+};
+
 const JWTAuthMiddleware: Middleware = {
     async onResponse({ request, response, options }) {
         if (response.status === 429) {
@@ -109,13 +137,20 @@ const JWTAuthMiddleware: Middleware = {
     }
 };
 
-// Automatically refresh auth tokens
+// Automatically attach device identifier and refresh auth tokens
+client.use(DeviceIdMiddleware);
 client.use(JWTAuthMiddleware);
 
 export async function tryRefreshToken(): Promise<string | false> {
     try {
+        const headers: Record<string, string> = {};
+        const deviceId = getDeviceId();
+        if (deviceId) {
+            headers["X-Device-Id"] = deviceId;
+        }
         const res = await fetch(`${serverURL}/refresh`, {
             method: "POST",
+            headers,
             credentials: "include"
         });
 
@@ -259,8 +294,9 @@ export async function login(
         params: {
             header: {
                 "x-mfa-code": mfaCode,
-                "x-captcha-code": captcha
-            }
+                "x-captcha-code": captcha,
+                "x-device-id": getDeviceId()
+            } as any
         },
         credentials: "include"
     });
@@ -270,7 +306,9 @@ export async function login(
             case 401:
                 throw new AuthError("Unauthorized. Please check your credentials.");
             case 403:
-                throw new PermissionError("Verification required");
+                throw new PermissionError(
+                    typeof error?.detail === "string" ? error.detail : "Verification required"
+                );
             case 404:
                 throw new UserError("User not found.");
             case 412:
@@ -296,7 +334,11 @@ export async function register(
     const { data, error, response } = await client.POST("/sign-up", {
         body: { username, password, email, language: navigator.language },
         params: {
-            header: { "x-captcha-code": captcha, "x-refer-code": Cookies.get("referrer") }
+            header: {
+                "x-captcha-code": captcha,
+                "x-refer-code": Cookies.get("referrer"),
+                "x-device-id": getDeviceId()
+            } as any
         }
     });
 
@@ -724,7 +766,8 @@ export class ServerContactor {
                 header: {
                     Authorization: `Bearer ${getAuthToken()}`,
                     specific: id !== undefined,
-                    id: id
+                    id: id,
+                    "x-device-id": getDeviceId()
                 }
             }
         });

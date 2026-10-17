@@ -129,9 +129,13 @@
                 if (error instanceof AuthError || error instanceof UserError)
                     errorDescription = "Username and password do not match.";
                 else if (error instanceof PermissionError) {
-                    errorDescription =
-                        "Please verify your account. You should have received an email with a verification link.";
-                    accountNeedsEmailVerification = true;
+                    if (error.message && error.message.toLowerCase().includes("disabled")) {
+                        errorDescription = error.message;
+                    } else {
+                        errorDescription =
+                            "Please verify your account. You should have received an email with a verification link.";
+                        accountNeedsEmailVerification = true;
+                    }
                 } else if (error instanceof MFAError) {
                     if (!requiresMfa) {
                         errorTitle = "";
