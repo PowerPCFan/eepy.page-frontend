@@ -4,6 +4,21 @@
 
 <svelte:head>
     <title>Terms of Service | eepy.page</title>
+    <meta
+        name="description"
+        content="Read the eepy.page Terms of Service. Understand use policies, registration rules, prohibited activities, and other service guidelines." />
+        <link rel="canonical" href="https://www.eepy.page/terms" />
+    <meta property="og:title" content="Terms of Service | eepy.page" />
+    <meta
+        property="og:description"
+        content="Read the eepy.page Terms of Service. Understand use policies, registration rules, prohibited activities, and other service guidelines." />
+    <meta property="og:url" content="https://www.eepy.page/terms" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:title" content="Terms of Service | eepy.page" />
+    <meta
+        name="twitter:description"
+        content="Read the eepy.page Terms of Service. Understand use policies, registration rules, prohibited activities, and other service guidelines." />
+    <meta name="twitter:url" content="https://www.eepy.page/terms" />
 </svelte:head>
 
 <Holder>

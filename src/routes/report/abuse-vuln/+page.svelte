@@ -46,7 +46,22 @@ Any additional context necessary (this may vary depending on the situation)
 </script>
 
 <svelte:head>
-    <title>Report Abuse & Vulnerabilities | eepy.page</title>
+    <title>Report Abuse & Security Vulnerabilities | eepy.page</title>
+    <meta
+        name="description"
+        content="Report subdomain abuse, malware, phishing, or security vulnerabilities to the eepy.page security team." />
+    <link rel="canonical" href="https://www.eepy.page/report/abuse-vuln" />
+    <meta property="og:title" content="Report Abuse & Security Vulnerabilities | eepy.page" />
+    <meta
+        property="og:description"
+        content="Report subdomain abuse, malware, phishing, or security vulnerabilities to the eepy.page security team." />
+    <meta property="og:url" content="https://www.eepy.page/report/abuse-vuln" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:title" content="Report Abuse & Security Vulnerabilities | eepy.page" />
+    <meta
+        name="twitter:description"
+        content="Report subdomain abuse, malware, phishing, or security vulnerabilities to the eepy.page security team." />
+    <meta name="twitter:url" content="https://www.eepy.page/report/abuse-vuln" />
 </svelte:head>
 
 <main class="mx-auto w-11/12 max-w-4xl py-8 sm:py-12">

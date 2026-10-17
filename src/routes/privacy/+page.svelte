@@ -4,6 +4,21 @@
 
 <svelte:head>
     <title>Privacy Policy | eepy.page</title>
+    <meta
+        name="description"
+        content="Learn how eepy.page protects your privacy and follows privacy-first policies." />
+    <link rel="canonical" href="https://www.eepy.page/privacy" />
+    <meta property="og:title" content="Privacy Policy | eepy.page" />
+    <meta
+        property="og:description"
+        content="Learn how eepy.page protects your privacy and follows privacy-first policies." />
+    <meta property="og:url" content="https://www.eepy.page/privacy" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:title" content="Privacy Policy | eepy.page" />
+    <meta
+        name="twitter:description"
+        content="Learn how eepy.page protects your privacy and follows privacy-first policies." />
+    <meta name="twitter:url" content="https://www.eepy.page/privacy" />
 </svelte:head>
 
 <Holder>

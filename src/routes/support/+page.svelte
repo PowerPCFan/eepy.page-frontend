@@ -14,6 +14,21 @@
 
 <svelte:head>
     <title>Support Center | eepy.page</title>
+    <meta
+        name="description"
+        content="Need help with your eepy.page subdomains or account? Contact our support team, explore resources, and find troubleshooting guides here." />
+    <link rel="canonical" href="https://www.eepy.page/support" />
+    <meta property="og:title" content="Support Center | eepy.page" />
+    <meta
+        property="og:description"
+        content="Need help with your eepy.page subdomains or account? Contact our support team, explore resources, and find troubleshooting guides here." />
+    <meta property="og:url" content="https://www.eepy.page/support" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:title" content="Support Center | eepy.page" />
+    <meta
+        name="twitter:description"
+        content="Need help with your eepy.page subdomains or account? Contact our support team, explore resources, and find troubleshooting guides here." />
+    <meta name="twitter:url" content="https://www.eepy.page/support" />
 </svelte:head>
 
 <div class="mx-auto w-11/12 max-w-6xl py-8 sm:py-12">

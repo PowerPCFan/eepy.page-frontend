@@ -1,3 +1,10 @@
 User-agent: *
-Disallow:
+Disallow: /account/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /sentry/
+Disallow: /support/info
+Disallow: /kofi-item-purchased
+Disallow: /redeem/
+
 Sitemap: https://www.eepy.page/sitemap.xml

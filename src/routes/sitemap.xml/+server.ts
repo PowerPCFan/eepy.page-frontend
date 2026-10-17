@@ -1,36 +1,58 @@
-// /src/routes/sitemap.xml/+server.ts
-import { type RequestHandler } from "@sveltejs/kit";
-import * as sitemap from "super-sitemap";
+import type { RequestHandler } from '@sveltejs/kit';
+import * as sitemap from 'super-sitemap';
 
-export const prerender = true; // optional
+export const prerender = false;
 
-const Priorities: { [key: string]: 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1.0 } = {
-    "/": 0.9,
-    "/dashboard": 0.8,
-    "/adblock-info": 0.3,
-    "/terms": 0.7,
-    "/privacy": 0.7,
-    "/support": 0.8,
-    "/support/info": 0.4,
-    "/login": 0.8
+type Priority = 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1.0;
+type ChangeFreq = 'always' | 'daily' | 'hourly' | 'monthly' | 'never' | 'weekly' | 'yearly';
+
+const Priorities: Record<string, Priority> = {
+    '/': 1.0,
+    '/faq': 0.8,
+    '/support': 0.7,
+    '/report': 0.7,
+    '/report/abuse-vuln': 0.7,
+    '/login': 0.6,
+    '/terms': 0.5,
+    '/privacy': 0.5,
 };
 
-export const GET: RequestHandler = async () => {
+const ChangeFreqs: Record<string, ChangeFreq> = {
+    '/': 'daily',
+    '/faq': 'weekly',
+    '/support': 'weekly',
+    '/report': 'weekly',
+    '/report/abuse-vuln': 'weekly',
+    '/login': 'monthly',
+    '/terms': 'monthly',
+    '/privacy': 'monthly',
+};
+
+const ExcludedRoutes: Array<string> = [
+    '^/dashboard.*',
+    '^/account.*',
+    '^/api.*',
+    '^/sentry.*',
+    '^/redeem.*',
+    '^/kofi-item-purchased.*',
+    '^/support/info.*',
+    '^/wrapped.*',
+    '^/adblock-info.*',
+]
+
+export const GET: RequestHandler = (async () => {
     return await sitemap.response({
-        origin: "https://www.eepy.page",
-        excludeRoutePatterns: ["^/account.*", "^/blog.*", "componenttest", "^/redeem.*"],
-        defaultChangefreq: "daily",
+        origin: 'https://www.eepy.page',
+        excludeRoutePatterns: ExcludedRoutes,
+        defaultChangefreq: 'weekly',
         defaultPriority: 0.7,
-        sort: "alpha",
-        processPaths: paths => {
-            return paths.map(({ path, ...rest }) => {
-                return {
-                    ...rest,
-                    path: path,
-                    priority: Priorities[path] ?? 0.7
-                };
-            });
-        },
-        headers: { "Content-Type": "text/xml" }
+        sort: 'alpha',
+        processPaths: ((paths) => {
+            return paths.map((pathObj) => ({
+                ...pathObj,
+                priority: Priorities[pathObj.path] ?? 0.7,
+                changefreq: ChangeFreqs[pathObj.path] ?? 'weekly',
+            }));
+        }),
     });
-};
+});

@@ -1,8 +1,5 @@
 - make sure tos says something about alt accounts and possibly add some sort of detection system like if there are multiple accounts on the same IP with the same user agent etc - also make sure people cant just use plus codes on their email or something
-- i had been changing input placeholders to instructions rather than example values but apparently that's ui bad practices?
-  - overall even though i just did a big ui redo, make sure i'm enforcing best practices and stuff
-- maybe clean up /report/abuse-vuln it seems like a bit of an anti-pattern with the messy email templates and shit
-- i had done some /wrapped changes? not sure where they went but perhaps investigate. i also lost a lot of other changes and i'm really not sure where they could have went since i checked my other laptop and everything was committed and pushed
 - fix light mode it's very broken
 - fix the fact that kofi kinda doxxes me and also kofi isnt the best solution and it has some other problems too
 - PSL?
+- tree system in the new table dashboard where subdomains are visually nested underneath their parents

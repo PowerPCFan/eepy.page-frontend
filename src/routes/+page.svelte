@@ -55,7 +55,22 @@
 </script>
 
 <svelte:head>
-    <title>Home | eepy.page</title>
+    <title>Free Subdomains, Made Simple | eepy.page</title>
+    <meta
+        name="description"
+        content="A modern, completely free subdomain service for your projects. Register custom subdomains for your projects in seconds with independent DNS management and fast, reliable DNS." />
+    <link rel="canonical" href="https://www.eepy.page/" />
+    <meta property="og:title" content="eepy.page: Free Subdomains, Made Simple" />
+    <meta
+        property="og:description"
+        content="A modern, completely free subdomain service for your projects. Register custom subdomains for your projects in seconds with independent DNS management and fast, reliable DNS." />
+    <meta property="og:url" content="https://www.eepy.page/" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:title" content="eepy.page: Free Subdomains, Made Simple" />
+    <meta
+        name="twitter:description"
+        content="A modern, completely free subdomain service for your projects. Register custom subdomains for your projects in seconds with independent DNS management and fast, reliable DNS." />
+    <meta name="twitter:url" content="https://www.eepy.page/" />
 </svelte:head>
 
 <svelte:window bind:scrollY={scrollY} />

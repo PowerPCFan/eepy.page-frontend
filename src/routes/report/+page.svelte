@@ -6,7 +6,22 @@
 </script>
 
 <svelte:head>
-    <title>Report | eepy.page</title>
+    <title>Report an Issue | eepy.page</title>
+    <meta
+        name="description"
+        content="Help us keep the platform safe by submitting reports for abuse, malicious content, vulnerabilities, bugs, and more." />
+    <link rel="canonical" href="https://www.eepy.page/report" />
+    <meta property="og:title" content="Report an Issue | eepy.page" />
+    <meta
+        property="og:description"
+        content="Help us keep the platform safe by submitting reports for abuse, malicious content, vulnerabilities, bugs, and more." />
+    <meta property="og:url" content="https://www.eepy.page/report" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:title" content="Report an Issue | eepy.page" />
+    <meta
+        name="twitter:description"
+        content="Help us keep the platform safe by submitting reports for abuse, malicious content, vulnerabilities, bugs, and more." />
+    <meta name="twitter:url" content="https://www.eepy.page/report" />
 </svelte:head>
 
 <div class="bg-card max-w-3xl sentry-unmask mt-8 mr-auto ml-auto w-11/12 rounded-2xl border border-border/60 p-6 sm:p-8 shadow-xs">

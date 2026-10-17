@@ -4,7 +4,22 @@
 </script>
 
 <svelte:head>
-    <title>FAQ | eepy.page</title>
+    <title>Frequently Asked Questions | eepy.page</title>
+    <meta
+        name="description"
+        content="Find answers to common questions about eepy.page subdomains, DNS records, account info, and more." />
+    <link rel="canonical" href="https://www.eepy.page/faq" />
+    <meta property="og:title" content="Frequently Asked Questions | eepy.page" />
+    <meta
+        property="og:description"
+        content="Find answers to common questions about eepy.page subdomains, DNS records, account info, and more." />
+    <meta property="og:url" content="https://www.eepy.page/faq" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:title" content="Frequently Asked Questions | eepy.page" />
+    <meta
+        name="twitter:description"
+        content="Find answers to common questions about eepy.page subdomains, DNS records, account info, and more." />
+    <meta name="twitter:url" content="https://www.eepy.page/faq" />
 </svelte:head>
 
 <div class="bg-card max-w-8xl sentry-unmask mt-8 mr-auto ml-auto w-11/12 rounded-2xl p-6 sm:p-8 border border-border/60">

@@ -302,6 +302,25 @@
     }
 </script>
 
+<svelte:head>
+    <title>Sign In or Register | eepy.page</title>
+    <meta
+        name="description"
+        content="Sign in to your eepy.page account or create a free account to register and manage your domains." />
+    <link rel="canonical" href="https://www.eepy.page/login" />
+    <meta property="og:title" content="Sign In or Register | eepy.page" />
+    <meta
+        property="og:description"
+        content="Sign in to your eepy.page account or create a free account to register and manage your domains." />
+    <meta property="og:url" content="https://www.eepy.page/login" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:title" content="Sign In or Register | eepy.page" />
+    <meta
+        name="twitter:description"
+        content="Sign in to your eepy.page account or create a free account to register and manage your domains." />
+    <meta name="twitter:url" content="https://www.eepy.page/login" />
+</svelte:head>
+
 <div
     class="login-holder bg-card border-border/60 m-auto mt-8 w-[calc(100%-1rem)] max-w-[500px] overflow-hidden rounded-2xl border shadow-xs">
     <Tabs.Root
