@@ -16,6 +16,7 @@
         <p><a class="text-muted-foreground hover:text-foreground transition-colors" href="/privacy">Privacy Policy</a></p>
         <p><a class="text-muted-foreground hover:text-foreground transition-colors" href="/terms">Terms of Service</a></p>
         <p><a class="text-muted-foreground hover:text-foreground transition-colors" href="/faq">FAQ</a></p>
+        <p><a class="text-muted-foreground hover:text-foreground transition-colors" href="/infra">Official Domains</a></p>
     </div>
 </footer>
 
