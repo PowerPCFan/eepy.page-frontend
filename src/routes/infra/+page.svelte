@@ -59,7 +59,11 @@
     const mailDomains: InfraDomain[] = [
         {
             hostname: "mail.eepy.page",
-            purpose: "Official domain used for outbound mail",
+            purpose: "Official domain used for outbound mail (noreply@mail.eepy.page)",
+        },
+        {
+            hostname: "eepy.page",
+            purpose: "Inbound email addresses are on the root domain (e.g. support@eepy.page, report@eepy.page)"
         }
     ];
 

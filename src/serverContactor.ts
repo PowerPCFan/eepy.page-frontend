@@ -350,6 +350,8 @@ export async function register(
                 throw new ConflictError("Username taken");
             case 422:
                 throw new UserError(error.detail);
+            case 464:
+                throw new UserError("Disposable email addresses are not allowed");
             case 429:
                 throw rateLimitError(response);
             default:
@@ -761,6 +763,9 @@ export class ServerContactor {
     async logOut(id?: string | undefined): Promise<void> {
         consola.info("Logging out session");
         const { data, error, response } = await client.PATCH(`/logout`, {
+            headers: {
+                "x-device-id": getDeviceId()
+            },
             params: {
                 //@ts-ignore
                 header: {
