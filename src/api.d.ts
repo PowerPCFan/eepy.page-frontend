@@ -3131,6 +3131,7 @@ export interface operations {
             header: {
                 "x-captcha-code": string;
                 "x-mfa-code"?: string | null;
+                "x-device-id"?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3223,6 +3224,8 @@ export interface operations {
             query?: never;
             header: {
                 "x-captcha-code": string;
+                "x-refer-code"?: string | null;
+                "x-device-id"?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3267,6 +3270,9 @@ export interface operations {
             query?: never;
             header?: {
                 Authorization?: string | null;
+                specific?: boolean | string | null;
+                id?: string | null;
+                "x-device-id"?: string | null;
             };
             path?: never;
             cookie?: never;

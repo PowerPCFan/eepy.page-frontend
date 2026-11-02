@@ -217,6 +217,39 @@ export class PermissionError extends Error {
     }
 }
 
+export class AccountDisabledError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "AccountDisabledError";
+    }
+}
+
+function formatErrorDetail(detail: unknown, fallback: string): string {
+    if (typeof detail === "string" && detail.trim()) {
+        return detail;
+    }
+    if (Array.isArray(detail) && detail.length > 0) {
+        const messages = detail
+            .map((item) => {
+                if (typeof item === "string") return item;
+                if (
+                    item &&
+                    typeof item === "object" &&
+                    "msg" in item &&
+                    typeof (item as { msg?: unknown }).msg === "string"
+                ) {
+                    return (item as { msg: string }).msg.replace(/^Value error,\s*/i, "");
+                }
+                return "";
+            })
+            .filter(Boolean);
+        if (messages.length > 0) {
+            return messages.join("; ");
+        }
+    }
+    return fallback;
+}
+
 export class DNSError extends Error {
     constructor(message: string) {
         super(message);
@@ -294,27 +327,39 @@ export async function login(
         params: {
             header: {
                 "x-mfa-code": mfaCode,
-                "x-captcha-code": captcha,
-                "x-device-id": getDeviceId()
-            } as any
+                "x-captcha-code": captcha
+            }
         },
         credentials: "include"
     });
 
     if (error) {
+        const rawDetail = (error as { detail?: unknown })?.detail;
         switch (response.status) {
             case 401:
                 throw new AuthError("Unauthorized. Please check your credentials.");
-            case 403:
-                throw new PermissionError(
-                    typeof error?.detail === "string" ? error.detail : "Verification required"
-                );
+            case 403: {
+                const detailText = formatErrorDetail(rawDetail, "Verification required");
+                const authErrorHeader = response.headers.get("x-auth-error");
+                if (
+                    authErrorHeader === "account_disabled" ||
+                    detailText.toLowerCase().includes("disabled")
+                ) {
+                    throw new AccountDisabledError(
+                        formatErrorDetail(
+                            rawDetail,
+                            "Account is disabled. Please contact support@eepy.page."
+                        )
+                    );
+                }
+                throw new PermissionError(detailText);
+            }
             case 404:
                 throw new UserError("User not found.");
             case 412:
                 throw new MFAError("MFA code required failed.");
             case 422:
-                throw new CaptchaError(error.detail);
+                throw new CaptchaError(formatErrorDetail(rawDetail, "Invalid captcha."));
             case 429:
                 throw rateLimitError(response);
             default:
@@ -336,22 +381,29 @@ export async function register(
         params: {
             header: {
                 "x-captcha-code": captcha,
-                "x-refer-code": Cookies.get("referrer"),
-                "x-device-id": getDeviceId()
-            } as any
+                "x-refer-code": Cookies.get("referrer")
+            }
         }
     });
 
     if (error) {
+        const rawDetail = (error as { detail?: unknown })?.detail;
         switch (response.status) {
             case 400:
-                throw new InviteError("Invalid invite");
+                throw new UserError(
+                    formatErrorDetail(
+                        rawDetail,
+                        "Username must be between 3 and 32 characters and only contain letters, numbers, underscores, and hyphens."
+                    )
+                );
             case 409:
                 throw new ConflictError("Username taken");
             case 422:
-                throw new UserError(error.detail);
+                throw new UserError(formatErrorDetail(rawDetail, "Invalid registration details."));
             case 464:
-                throw new UserError("Disposable email addresses are not allowed");
+                throw new UserError(
+                    formatErrorDetail(rawDetail, "Disposable email addresses are not allowed")
+                );
             case 429:
                 throw rateLimitError(response);
             default:
@@ -390,7 +442,9 @@ export async function sendForgotCode(
             case 429:
                 throw rateLimitError(response);
             default:
-                throw new Error(`Failed to send forgot code. Status code: ${error.detail}`);
+                throw new Error(
+                    `Failed to send forgot code: ${formatErrorDetail((error as { detail?: unknown })?.detail, String(response.status))}`
+                );
         }
     }
 
@@ -705,7 +759,9 @@ export class ServerContactor {
         });
 
         if (error) {
-            throw new Error(`Failed to get GDPR data. Status code: ${error.detail}`);
+            throw new Error(
+                `Failed to get GDPR data: ${formatErrorDetail((error as { detail?: unknown })?.detail, "unknown error")}`
+            );
         }
 
         return data;
@@ -762,17 +818,12 @@ export class ServerContactor {
 
     async logOut(id?: string | undefined): Promise<void> {
         consola.info("Logging out session");
-        const { data, error, response } = await client.PATCH(`/logout`, {
-            headers: {
-                "x-device-id": getDeviceId()
-            },
+        const { error, response } = await client.PATCH(`/logout`, {
             params: {
-                //@ts-ignore
                 header: {
                     Authorization: `Bearer ${getAuthToken()}`,
                     specific: id !== undefined,
-                    id: id,
-                    "x-device-id": getDeviceId()
+                    id: id
                 }
             }
         });
@@ -919,16 +970,15 @@ export class ServerContactor {
         });
 
         if (error) {
+            const rawDetail = (error as { detail?: unknown })?.detail;
             switch (response.status) {
                 case 403:
                     throw new PermissionError(
-                        //@ts-ignore
-                        error?.detail ?? "You must own the specified domains"
+                        formatErrorDetail(rawDetail, "You must own the specified domains")
                     );
                 case 409:
                     throw new ConflictError(
-                        //@ts-ignore
-                        error?.detail ?? "Only one API key is allowed per account"
+                        formatErrorDetail(rawDetail, "Only one API key is allowed per account")
                     );
                 case 460:
                     throw new AuthError("Invalid session");
@@ -1498,11 +1548,12 @@ export class ServerContactor {
             body: { subdomain, local_port: localPort, ssh_fingerprint: sshFingerprint }
         });
         if (error) {
+            const rawDetail = (error as { detail?: unknown })?.detail;
             if (response.status === 460) throw new AuthError("Invalid session");
             if (response.status === 405) {
-                throw new LimitError(typeof error.detail === "string" ? error.detail : "Domain limit reached");
+                throw new LimitError(formatErrorDetail(rawDetail, "Domain limit reached"));
             }
-            throw new Error(typeof error.detail === "string" ? error.detail : JSON.stringify(error.detail) ?? "Failed to create tunnel");
+            throw new Error(formatErrorDetail(rawDetail, "Failed to create tunnel"));
         }
         return data as ServeoCreateResponse;
     }
@@ -1529,8 +1580,9 @@ export class ServerContactor {
             body: { local_port: localPort }
         });
         if (error) {
+            const rawDetail = (error as { detail?: unknown })?.detail;
             if (response.status === 460) throw new AuthError("Invalid session");
-            throw new Error(typeof error.detail === "string" ? error.detail : JSON.stringify(error.detail) ?? "Failed to update tunnel");
+            throw new Error(formatErrorDetail(rawDetail, "Failed to update tunnel"));
         }
         return data as ServeoCreateResponse;
     }

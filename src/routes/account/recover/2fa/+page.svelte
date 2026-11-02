@@ -51,6 +51,11 @@
     }
 </script>
 
+<svelte:head>
+    <title>Disable 2FA | eepy.page</title>
+    <meta name="robots" content="noindex, nofollow" />
+</svelte:head>
+
 <Holder>
     <div class="space-y-4">
         <div>

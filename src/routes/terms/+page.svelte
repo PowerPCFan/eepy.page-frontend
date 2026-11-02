@@ -7,7 +7,7 @@
     <meta
         name="description"
         content="Read the eepy.page Terms of Service. Understand use policies, registration rules, prohibited activities, and other service guidelines." />
-        <link rel="canonical" href="https://www.eepy.page/terms" />
+    <link rel="canonical" href="https://www.eepy.page/terms" />
     <meta property="og:title" content="Terms of Service | eepy.page" />
     <meta
         property="og:description"
@@ -46,12 +46,20 @@
 
     <h2>Accounts</h2>
     <ul>
-        <li>You may only create and use one account.</li>
+        <li>
+            You may only create and use one account. We use automated security signals (such as device tokens and
+            recent connection activity) to detect multi-account abuse and may automatically disable accounts suspected
+            of violating this rule.
+        </li>
         <li>You may not sell, transfer, share, or give away your account.</li>
         <li>You are responsible for activity on your account and API keys.</li>
         <li>You may delete your account at any time.</li>
         <li>
             Inactive accounts may be removed after prior notice is sent to the account email address.
+        </li>
+        <li>
+            If your account is disabled in error (for example, due to a shared household or school network), you may
+            request a review by contacting <a href="mailto:support@eepy.page">support@eepy.page</a>.
         </li>
     </ul>
 

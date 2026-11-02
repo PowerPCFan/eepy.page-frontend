@@ -106,6 +106,11 @@
     });
 </script>
 
+<svelte:head>
+    <title>Wrapped | eepy.page</title>
+    <meta name="robots" content="noindex, nofollow" />
+</svelte:head>
+
 <Holder>
     <div class="py-2 px-2 space-y-6">
         <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">eepy.page wrapped</h1>

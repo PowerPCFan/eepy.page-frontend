@@ -2,10 +2,12 @@
     import { browser } from "$app/environment";
     import { page } from "$app/state";
     import {
+        AccountDisabledError,
         AuthError,
         CaptchaError,
         ConflictError,
         getAuthToken,
+        InviteError,
         login,
         MFAError,
         PermissionError,
@@ -128,14 +130,12 @@
                 errorTitle = "Login failed";
                 if (error instanceof AuthError || error instanceof UserError)
                     errorDescription = "Username and password do not match.";
-                else if (error instanceof PermissionError) {
-                    if (error.message && error.message.toLowerCase().includes("disabled")) {
-                        errorDescription = error.message;
-                    } else {
-                        errorDescription =
-                            "Please verify your account. You should have received an email with a verification link.";
-                        accountNeedsEmailVerification = true;
-                    }
+                else if (error instanceof AccountDisabledError) {
+                    errorDescription = error.message;
+                } else if (error instanceof PermissionError) {
+                    errorDescription =
+                        "Please verify your account. You should have received an email with a verification link.";
+                    accountNeedsEmailVerification = true;
                 } else if (error instanceof MFAError) {
                     if (!requiresMfa) {
                         errorTitle = "";
@@ -186,9 +186,16 @@
                 buttonLoadingState = false;
                 errorTitle = "Sign up failed";
                 if (error instanceof ConflictError) errorDescription = "Username is taken";
-                if (error instanceof UserError) errorDescription = error.message;
-                if (error instanceof CaptchaError) errorDescription = error.message;
-                if (error instanceof RateLimitError) errorDescription = error.message;
+                else if (
+                    error instanceof UserError ||
+                    error instanceof InviteError ||
+                    error instanceof CaptchaError ||
+                    error instanceof RateLimitError
+                )
+                    errorDescription = error.message;
+                else
+                    errorDescription =
+                        "There was an error while creating your account. Please check your details and try again.";
 
                 resetTurnstile();
                 consola.warn(errorDescription);
@@ -442,13 +449,13 @@
                 <div class="flex flex-col gap-6">
                     <div class="grid gap-3">
                         <div class="space-y-1.5">
-                            <Label for="username">Username</Label>
+                            <Label for="username">{isLoggingIn ? "Username or email" : "Username"}</Label>
                             <Input
                                 aria-invalid={usernameInvalid}
                                 bind:value={username}
                                 id="username"
                                 type="text"
-                                placeholder="username"
+                                placeholder={isLoggingIn ? "username or email" : "username"}
                                 autocomplete="username"
                                 autocapitalize="none"
                                 autocorrect="off"

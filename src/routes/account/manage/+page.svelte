@@ -326,6 +326,7 @@
 
 <svelte:head>
     <title>Account Settings | eepy.page</title>
+    <meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
 <div class="mx-auto w-11/12 max-w-6xl py-8 sm:py-12">

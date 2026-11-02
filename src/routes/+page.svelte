@@ -76,46 +76,58 @@
 <svelte:window bind:scrollY={scrollY} />
 
 <div class="content pb-44">
-    <div class="introduction mr-auto ml-auto flex w-full max-w-screen items-center p-6 sm:p-10 lg:w-11/12">
-        <div class="description w-3/5">
-            <h1 class="w-fit text-9xl font-bold">
-                <img alt="" aria-hidden="true" src="/favicon.svg" />
-                <span>eepy.page</span>
-            </h1>
+    <section class="introduction mx-auto flex w-full max-w-5xl flex-col items-center justify-center px-6 py-16 pt-6 text-center sm:px-10">
+        <div class="mb-2 inline-flex items-center gap-3 px-5 py-2.5">
+            <img class="h-8 w-8 sm:h-9 sm:w-9" alt="" aria-hidden="true" src="/favicon.svg" />
+            <span class="text-3xl font-bold tracking-tight sm:text-5xl">eepy.page</span>
         </div>
-        <div class="right-side mr-8 h-fit w-2/5 items-center">
-            <p class="about-us text-2xl sm:text-3xl leading-snug font-semibold text-foreground/90">
-                A modern, free subdomain service for everyone—whether you're a developer, hobbyist, or somewhere in between.
-            </p>
 
-            <div class="details mt-8 mb-8 flex w-full justify-between gap-3 text-2xl sm:text-3xl [&>div]:items-center">
-                <div class="item flex gap-1.5">
-                    <MaterialSymbolsCheckCircleRounded class="h-6 w-6 text-primary shrink-0" />
-                    <Label class="text-base font-medium">100% free</Label>
+        <h1 class="hero-title text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
+            <div class="text-foreground">Free subdomains,</div>
+            <div class="text-primary">made simple</div>
+        </h1>
+
+        <p class="about-us mt-6 max-w-2xl text-lg leading-relaxed font-medium text-foreground/85 sm:text-xl md:text-2xl">
+            A modern, free subdomain service for everyone—whether you're a developer, hobbyist, or somewhere in between.
+        </p>
+
+        <div class="actions mt-9 flex w-full max-w-md flex-col items-center justify-center gap-3.5 sm:max-w-none sm:flex-row sm:gap-4">
+            <Button size="lg" onclick={_ => goto("/login?register=true")} class="h-12 w-full px-8 text-base font-semibold sm:w-auto">
+                Sign up now
+            </Button>
+            <Button size="lg" variant={"secondary"} onclick={_ => goto("/dashboard")} class="h-12 w-full px-8 text-base font-semibold sm:w-auto">
+                Go to the dashboard
+            </Button>
+        </div>
+
+        <div class="details mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+            <div class="item flex items-center gap-2">
+                <div class="rounded-full bg-[radial-gradient(circle,#ffffff_50%,transparent_50%)]">
+                    <MaterialSymbolsCheckCircleRounded class="h-5 w-5 shrink-0 text-primary" />
                 </div>
-                <div class="item flex gap-1.5">
-                    <MaterialSymbolsCheckCircleRounded class="h-6 w-6 text-primary shrink-0" />
-                    <Label class="text-base font-medium">Modern UI</Label>
-                </div>
-                <div class="item flex gap-1.5">
-                    <MaterialSymbolsCheckCircleRounded class="h-6 w-6 text-primary shrink-0" />
-                    <Label class="text-base font-medium">User-friendly</Label>
-                </div>
+                <Label class="text-base font-medium">100% free</Label>
             </div>
-            <div class="actions mt-auto mb-0 flex justify-between gap-3">
-                <Button size="lg" onclick={_ => goto("/login?register=true")} class="w-[49%] font-medium">Sign up now</Button>
-                <Button size="lg" variant={"secondary"} onclick={_ => goto("/dashboard")} class="w-[49%] font-medium"
-                    >Go to the dashboard</Button>
+            <div class="item flex items-center gap-2">
+                <div class="rounded-full bg-[radial-gradient(circle,#ffffff_50%,transparent_50%)]">
+                    <MaterialSymbolsCheckCircleRounded class="h-5 w-5 shrink-0 text-primary" />
+                </div>
+                <Label class="text-base font-medium">Modern UI</Label>
+            </div>
+            <div class="item flex items-center gap-2">
+                <div class="rounded-full bg-[radial-gradient(circle,#ffffff_50%,transparent_50%)]">
+                    <MaterialSymbolsCheckCircleRounded class="h-5 w-5 shrink-0 text-primary" />
+                </div>
+                <Label class="text-base font-medium">User-friendly</Label>
             </div>
         </div>
-    </div>
+    </section>
 
     <div class="selling-points mt-8 px-6 sm:px-16 lg:px-32">
         <div class="flex items-center gap-8">
             <div class="visual w-2/5">
                 <img class="w-3/5 max-w-[280px]" alt="Icon depicting a user's mouse clicking on a globe, symbolizing a website" src={Globe} />
             </div>
-            <div class="text bg-card/80 backdrop-blur-md border border-border/70 shadow-sm w-3/5 rounded-2xl p-6 sm:p-8 transition-colors hover:border-primary/40">
+            <div class="text bg-card/80 backdrop-blur-md border border-border/70 shadow-sm w-3/5 rounded-2xl p-6 sm:p-8">
                 <h2 class="mb-2 text-3xl sm:text-4xl font-semibold tracking-tight">Claim a piece of the internet</h2>
                 <p class="text-base sm:text-lg text-muted-foreground">Let's start from the basics. <b>Try out a domain you'd like to own!</b></p>
 
@@ -271,124 +283,23 @@
 
 {#if scrollY < 50}
     <div transition:fade={{ duration: 150 }} class="pointer-events-none">
-        <MaterialSymbolsKeyboardArrowDownRounded class="absolute bottom-6 left-1/2 -translate-x-1/2 text-3xl opacity-60 animate-bounce" />
+        <MaterialSymbolsKeyboardArrowDownRounded class="absolute bottom-6 left-1/2 -translate-x-1/2 text-2xl opacity-50 animate-bounce-gentle" />
     </div>
 {/if}
 
 <style>
     .content {
         background-color: var(--color-background);
-        background:
-            radial-gradient(circle at -25% -25%, var(--gradient-start) 0%, var(--gradient-end) 85%);
+        background: radial-gradient(circle at -25% -25%, var(--gradient-start) 0%, var(--gradient-end) 85%);
     }
 
     .introduction {
-        align-items: center;
-        gap: clamp(2rem, 5vw, 5rem);
-        justify-content: center;
-        min-height: calc(100svh - var(--vpOffset, 0px) - 1.5rem);
+        min-height: calc(100svh - var(--vpOffset, 0px) - 3.5rem);
     }
 
-    .description {
-        display: flex;
-        flex: 1 1 0;
-        justify-content: center;
-        min-width: 0;
-    }
-
-    .description h1 {
-        align-items: center;
-        display: flex;
-        font-size: clamp(4.5rem, 7.4vw, 7.25rem);
-        gap: 0.14em;
-        line-height: 0.95;
-        white-space: nowrap;
-    }
-
-    .description h1 img {
-        flex: none;
-        height: 0.84em;
-        transform: translateY(0.05em);
-        width: auto;
-    }
-
-    .right-side {
-        flex: 1 1 0;
-        max-width: 34rem;
-        min-width: 0;
-    }
-
-    @media (max-width: 1420px) and (min-width: 1025px) {
-        .description h1 {
-            font-size: clamp(4rem, 6.4vw, 5.75rem);
-        }
-    }
-
-    @media (max-width: 1024px) {
-        .introduction {
-            align-items: center;
-            flex-direction: column;
-            gap: clamp(1.5rem, 3vw, 2.25rem);
-            justify-content: flex-start;
-            min-height: auto;
-            padding-bottom: 0;
-            padding-left: 0;
-            padding-right: 0;
-            padding-top: clamp(3.5rem, 7vh, 5rem);
-            width: min(88%, 44rem);
-        }
-
-        .description {
-            display: flex;
-            justify-content: center;
-            margin-left: 0px;
-            width: 100%;
-        }
-
-        .description h1 {
-            margin-left: auto;
-            margin-right: auto;
-            font-size: clamp(4.4rem, 10vw, 6.5rem);
-        }
-
-        .right-side {
-            margin-left: auto;
-            margin-right: auto;
-            max-width: 44rem;
-            width: 100%;
-        }
-
-        .about-us {
-            font-size: clamp(1.6rem, 3.2vw, 2.35rem);
-            line-height: 1.12;
-            margin-right: auto;
-            margin-left: auto;
-            max-width: 38rem;
-            text-align: center;
-            width: 100%;
-        }
-
-        .details {
-            align-items: stretch;
-            flex-direction: column;
-            gap: 0.75rem;
-            margin-left: 0;
-            margin-top: clamp(1.25rem, 3vw, 2rem);
-            margin-bottom: clamp(1.25rem, 3vw, 2rem);
-            width: 100%;
-        }
-
-        .details .item {
-            justify-content: center;
-        }
-
-        .actions {
-            flex-direction: column;
-        }
-
-        .actions :global(button) {
-            width: 100%;
-        }
+    .hero-title {
+        line-height: 1.04;
+        letter-spacing: -0.025em;
     }
 
     @media (max-width: 900px), (orientation: portrait) {
@@ -415,32 +326,9 @@
 
     @media (max-width: 600px) {
         .introduction {
-            min-height: auto;
-            padding-top: 5rem;
-        }
-        .description h1 {
-            font-size: clamp(2.5rem, 15vw, 5.4rem);
-        }
-        .about-us {
-            font-size: 1.5em;
-            line-height: normal;
-        }
-
-        .details {
-            align-items: stretch;
-            flex-direction: column;
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-            margin-left: 0;
-            width: 100%;
-        }
-
-        .actions {
-            flex-direction: column;
-        }
-
-        .actions :global(button) {
-            width: 100%;
+            min-height: calc(100svh - var(--vpOffset, 0px) - 3.5rem);
+            padding-top: 3.5rem;
+            padding-bottom: 4.5rem;
         }
 
         .domain-tester {

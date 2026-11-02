@@ -44,6 +44,7 @@
 
 <svelte:head>
     <title>Email Verification | eepy.page</title>
+    <meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
 <Holder>

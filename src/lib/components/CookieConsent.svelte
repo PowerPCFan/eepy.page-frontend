@@ -165,9 +165,9 @@
                                         },
                                         body: [
                                             {
-                                                name: "eepy.page required cookies",
+                                                name: "eepy.page required cookies/storage",
                                                 domain: "eepy.page",
-                                                description: "Authentication, state (login), setting storage (cookie consent, theme, dismissed notices/prompts, other site behavior)",
+                                                description: "Authentication, state (login), abuse-prevention tokens, setting storage (cookie consent, theme, dismissed notices/prompts, other site behavior)",
                                             },
                                             {
                                                 name: "Sentry",

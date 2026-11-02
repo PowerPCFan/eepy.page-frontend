@@ -51,6 +51,7 @@
 
 <svelte:head>
     <title>Confirm Account Deletion | eepy.page</title>
+    <meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
 {#if !noDeletionCode}

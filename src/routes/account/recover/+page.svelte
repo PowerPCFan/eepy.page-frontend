@@ -102,6 +102,11 @@
     let username: string = $state("");
 </script>
 
+<svelte:head>
+    <title>Account Recovery | eepy.page</title>
+    <meta name="robots" content="noindex, nofollow" />
+</svelte:head>
+
 <Holder>
     <div class="space-y-4">
         <div>

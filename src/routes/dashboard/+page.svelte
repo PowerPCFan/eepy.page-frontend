@@ -109,6 +109,15 @@
         }).map(({ domain }) => domain);
     }
 
+    function formatDeleteErrorMessage(message: string): string {
+        return message.replace(/\(([^()]+)\)/, (full, inner: string) => {
+            if (inner.includes(" more")) return full;
+            const parts = inner.split(",").map((s) => s.trim()).filter(Boolean);
+            if (parts.length <= 3) return full;
+            return `(${parts.slice(0, 3).join(", ")}, and ${parts.length - 3} more)`;
+        });
+    }
+
     function deleteDomain(domain: string, type: string, button: DashboardDomain) {
         consola.info(`Deleting domain ${domain}`);
         domainErrorTitle = "";
@@ -121,17 +130,19 @@
                 consola.info(`Failed to delete domain ${domain}`);
 
                 button.deletionLoading = false;
+                button.dialogOpen = false;
                 if (error instanceof AuthError) redirectToLogin(460);
 
-                domainErrorTitle = "Could not delete domain";
-                domainErrorDescription = error instanceof RateLimitError || error instanceof UserError
-                    ? error.message
-                    : (error instanceof Error && error.message ? error.message : "An unhandled error occurred.");
-                alertUpdate++;
+                const rawMessage =
+                    error instanceof RateLimitError || error instanceof UserError
+                        ? error.message
+                        : error instanceof Error && error.message
+                          ? error.message
+                          : "An unhandled error occurred.";
 
-                toast.error("Could not delete domain", {
-                    description: domainErrorDescription
-                });
+                domainErrorTitle = "Could not delete domain";
+                domainErrorDescription = formatDeleteErrorMessage(rawMessage);
+                alertUpdate++;
 
                 throw new Error("Failed to delete domain");
             })
@@ -469,9 +480,11 @@
 
 <svelte:head>
     <title>Dashboard | eepy.page</title>
+    <meta name="robots" content="noindex, nofollow" />
     <meta content="eepy.page dashboard" property="og:title" />
     <meta content="Manage all of your domains here!" name="description" />
-    <meta content="https://eepy.page/dashboard" property="og:url" />
+    <meta content="Manage all of your domains here!" property="og:description" />
+    <meta content="https://www.eepy.page/dashboard" property="og:url" />
 </svelte:head>
 
 <div class="domain-holder bg-card/90 backdrop-blur-md border border-border/70 shadow-sm max-w-8xl sentry-unmask mt-8 mr-auto ml-auto w-11/12 rounded-2xl p-6 sm:p-8">

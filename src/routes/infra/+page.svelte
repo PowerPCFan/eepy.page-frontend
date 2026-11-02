@@ -6,7 +6,7 @@
         purpose: string;
     }
 
-    interface Sections {
+    interface Section {
         title: string;
         list: InfraDomain[];
     }
@@ -67,7 +67,7 @@
         }
     ];
 
-    const sections: Sections[] = [
+    const sections: Section[] = [
         {
             title: "Web Applications",
             list: publicDomains,
@@ -99,6 +99,11 @@
         content="List of official eepy.page domains to distinguish genuine services from user-registered subdomains." />
     <meta property="og:url" content="https://www.eepy.page/infra" />
     <meta property="og:type" content="website" />
+    <meta name="twitter:title" content="Infrastructure & Domains | eepy.page" />
+    <meta
+        name="twitter:description"
+        content="List of official eepy.page domains to distinguish genuine services from user-registered subdomains." />
+    <meta name="twitter:url" content="https://www.eepy.page/infra" />
 </svelte:head>
 
 <Holder>
@@ -106,10 +111,10 @@
         <div class="space-y-3">
             <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Official Domains</h1>
             <p class="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                Because eepy.page allows users to register arbitrary subdomain, it is possible for abuse to occur.
+                Because eepy.page allows users to register arbitrary subdomains, it is possible for abuse to occur.
                 In the case that this happens, it's important to know which domains are part of our official infrastructure.
                 This page lists all of our official domains to help you verify genuine eepy.page services and avoid phishing or impersonation.
-                Unless a domain is explicitly existed below, you can assume that it is user-generated content that has zero connection to official eepy.page services.
+                Unless a domain is explicitly listed below, you can assume that it is user-generated content that has zero connection to official eepy.page services.
             </p>
         </div>
 
@@ -127,6 +132,6 @@
                     {/each}
                 </div>
             </div>
-        {/each} 
+        {/each}
     </div>
 </Holder>
