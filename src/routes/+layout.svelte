@@ -14,6 +14,7 @@
     import MSTeamDashboard from "~icons/material-symbols/team-dashboard";
     import MSHelp from "~icons/material-symbols/help";
     import MSArrowSplit from "~icons/material-symbols/arrow-split";
+    import MSMenuBook from "~icons/material-symbols/menu-book";
     import { onMount, type Component } from "svelte";
 
     import "../app.css";
@@ -92,7 +93,10 @@
     <a
         class="hover:text-accent flex flex-row items-center justify-start gap-1.5 text-xl font-medium"
         href={href}
-        data-sveltekit-preload-data={preloadValue}>
+        data-sveltekit-preload-data={preloadValue}
+        target={href.startsWith("http") ? "_blank" : undefined}
+        rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+    >
         <Icon />{text}
     </a>
 {/snippet}
@@ -106,6 +110,7 @@
     {@render navbarLink(MSAccountCircle, "/account/manage", "Account", false)}
     {@render navbarLink(MSFlagRounded, "/report", "Report")}
     {@render navbarLink(MSHelp, "/support", "Support")}
+    {@render navbarLink(MSMenuBook, "https://docs.eepy.page/", "Docs", false)}
 </Header>
 
 <Banner />

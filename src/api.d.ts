@@ -1031,6 +1031,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/user/risk/update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Update User Risk */
+        post: operations["update_user_risk_admin_user_risk_update_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/user/disabled": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Toggle User Disabled */
+        post: operations["toggle_user_disabled_admin_user_disabled_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/users/flagged": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Flagged Users */
+        get: operations["get_flagged_users_admin_users_flagged_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/status": {
         parameters: {
             query?: never;
@@ -1102,6 +1153,16 @@ export interface components {
             api_key_amount: number;
             /** Accessed From */
             accessed_from: string[];
+            /** Risk */
+            risk: components["schemas"]["UserRisk"] | {
+                [key: string]: unknown;
+            };
+            /** Risk Thresholds */
+            risk_thresholds: {
+                [key: string]: number;
+            };
+            /** Disabled */
+            disabled: boolean;
         };
         /** AdminDomainEdit */
         AdminDomainEdit: {
@@ -1329,6 +1390,35 @@ export interface components {
             /** Password */
             password: string;
         };
+        /** RiskFlag */
+        RiskFlag: {
+            /** Score */
+            score: number;
+            /** Reason */
+            reason: string;
+            /** Detected At */
+            detected_at: number;
+            /** Permanent */
+            permanent: boolean;
+            /** Expires At */
+            expires_at?: number;
+            /** User Id */
+            user_id?: string;
+        };
+        /** RiskUpdateBody */
+        RiskUpdateBody: {
+            /** User Id */
+            user_id: string;
+            /** Score */
+            score?: number | null;
+            /** Locked */
+            locked?: boolean | null;
+            /**
+             * Clear Flags
+             * @default false
+             */
+            clear_flags: boolean;
+        };
         /** SignUp */
         SignUp: {
             /** Username */
@@ -1358,6 +1448,15 @@ export interface components {
         UserAction: {
             /** User Id */
             user_id: string;
+        };
+        /** UserDisabledBody */
+        UserDisabledBody: {
+            /** User Id */
+            user_id: string;
+            /** Disabled */
+            disabled: boolean;
+            /** Reason */
+            reason?: string | null;
         };
         /** UserPageType */
         UserPageType: {
@@ -1396,6 +1495,23 @@ export interface components {
             /** Owned-Tlds */
             "owned-tlds": string[];
         };
+        /** UserRisk */
+        UserRisk: {
+            /** Score */
+            score: number;
+            /** Locked */
+            locked: boolean;
+            /** Disabled */
+            disabled: boolean;
+            /** Disable Reasons */
+            disable_reasons: string[];
+            /** Flags */
+            flags: {
+                [key: string]: components["schemas"]["RiskFlag"];
+            };
+            /** Device Id */
+            device_id?: string | null;
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -1404,6 +1520,10 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
         };
         /** YearWrapped */
         YearWrapped: {
@@ -1628,6 +1748,13 @@ export interface operations {
                     "application/json": unknown;
                 };
             };
+            /** @description Cannot delete domain while subdomains exist */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description Domain does not exist, or user does not own it. */
             403: {
                 headers: {
@@ -1793,6 +1920,13 @@ export interface operations {
                 content: {
                     "application/json": unknown;
                 };
+            };
+            /** @description Cannot delete domain while subdomains exist */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Domain does not exist, or user does not own it. */
             403: {
@@ -3145,10 +3279,15 @@ export interface operations {
             /** @description Login successful */
             200: {
                 headers: {
+                    /** @description Sets the __Host-refresh-token cookie. The cookie is HttpOnly, Secure, SameSite=Lax, and scoped to /. */
+                    "Set-Cookie"?: string;
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        /** @description Access token used for authentication. */
+                        "auth-token": string;
+                    };
                 };
             };
             /** @description Account does not support password login */
@@ -3204,10 +3343,15 @@ export interface operations {
             /** @description Refreshed tokens successfully */
             200: {
                 headers: {
+                    /** @description Sets the __Host-refresh-token cookie. The cookie is HttpOnly, Secure, SameSite=Lax, and scoped to /. */
+                    "Set-Cookie"?: string;
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        /** @description Access token used for authentication. */
+                        "auth-token": string;
+                    };
                 };
             };
             /** @description Invalid key */
@@ -3224,7 +3368,6 @@ export interface operations {
             query?: never;
             header: {
                 "x-captcha-code": string;
-                "x-refer-code"?: string | null;
                 "x-device-id"?: string | null;
             };
             path?: never;
@@ -3269,10 +3412,8 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                Authorization?: string | null;
-                specific?: boolean | string | null;
-                id?: string | null;
                 "x-device-id"?: string | null;
+                Authorization?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -3973,6 +4114,7 @@ export interface operations {
         parameters: {
             query: {
                 username: string;
+                regex?: boolean;
             };
             header?: {
                 Authorization?: string | null;
@@ -3988,8 +4130,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AccountData"];
+                    "application/json": components["schemas"]["AccountData"] | components["schemas"]["AccountData"][];
                 };
+            };
+            /** @description Invalid regex pattern */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description User not found */
             404: {
@@ -4042,7 +4191,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AccountData"];
+                    "application/json": components["schemas"]["AccountData"] | components["schemas"]["AccountData"][];
                 };
             };
             /** @description User not found */
@@ -4479,6 +4628,163 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Invalid session */
+            460: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid permissions */
+            461: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    update_user_risk_admin_user_risk_update_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                Authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskUpdateBody"];
+            };
+        };
+        responses: {
+            /** @description User risk updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountData"];
+                };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Invalid session */
+            460: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid permissions */
+            461: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    toggle_user_disabled_admin_user_disabled_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                Authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserDisabledBody"];
+            };
+        };
+        responses: {
+            /** @description User disabled state toggled */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountData"];
+                };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Invalid session */
+            460: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid permissions */
+            461: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    get_flagged_users_admin_users_flagged_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                Authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of flagged and disabled users */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountData"][];
                 };
             };
             /** @description Validation Error */

@@ -3,3 +3,4 @@
 - fix the fact that kofi kinda doxxes me and also kofi isnt the best solution and it has some other problems too
 - PSL?
 - tree system in the new table dashboard where subdomains are visually nested underneath their parents
+- reference docs/guides in other places (e.g. support page)
