@@ -599,7 +599,7 @@
                             bind:value={comment}
                             class="w-full max-w-xl" />
                         <p class="text-muted-foreground text-xs">
-                            Select the actions you would like this API key to allow
+                            Give your API key a name so you can identify it later. Has no impact on functionality.
                         </p>
                     </div>
 

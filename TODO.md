@@ -1,6 +1,5 @@
-- make sure tos says something about alt accounts and possibly add some sort of detection system like if there are multiple accounts on the same IP with the same user agent etc - also make sure people cant just use plus codes on their email or something
-- fix light mode it's very broken
-- fix the fact that kofi kinda doxxes me and also kofi isnt the best solution and it has some other problems too
-- PSL?
-- tree system in the new table dashboard where subdomains are visually nested underneath their parents
-- reference docs/guides in other places (e.g. support page)
+- Fix light mode, it's very broken
+- Fix the fact that Ko-fi somewhat doxxes me
+  - Figure out a better solution than ko-fi, it has a lot of other issues too
+- Get on the PSL?
+- Reference the new docs/guides in other places (e.g. support page)
