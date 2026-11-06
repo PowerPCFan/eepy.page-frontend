@@ -68,6 +68,17 @@
         }
     ];
 
+    const otherDomains: InfraDomain[] = [
+        {
+            hostname: "docs.eepy.page",
+            purpose: "Documentation and guides for the frontend and the API",
+        },
+        {
+            hostname: "weblate.eepy.page",
+            purpose: "Weblate instance for managing and contributing to translations",
+        }
+    ];
+
     let sections: Section[] = $derived([
         {
             title: t("support.infra.sections.web"),
@@ -84,7 +95,11 @@
         {
             title: t("support.infra.sections.mail"),
             list: mailDomains,
-        }
+        },
+        {
+            title: t("support.infra.sections.other"),
+            list: otherDomains,
+        },
     ]);
 </script>
 
