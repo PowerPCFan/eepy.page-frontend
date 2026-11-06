@@ -9,8 +9,9 @@ function getConsentMode(headers: Headers): ConsentMode {
     return countryCode && OPT_OUT_COUNTRIES.has(countryCode) ? "opt-out" : "opt-in";
 }
 
-export const load: LayoutServerLoad = ({ request }) => {
+export const load: LayoutServerLoad = ({ request, locals }) => {
     return {
+        locale: locals.locale,
         consent: {
             mode: getConsentMode(request.headers),
         },

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { IconBadge } from "$lib/components/ui/icon-badge";
+    import { t } from "$lib/i18n";
     import MaterialSymbolsMailRounded from "~icons/material-symbols/mail-rounded";
 </script>
 
@@ -12,13 +13,12 @@
         <IconBadge variant="primary" size="2xl" shape="circle" class="mx-auto mb-6">
             <MaterialSymbolsMailRounded class="size-8" />
         </IconBadge>
-        <h1 class="text-4xl font-semibold">Thanks for your order</h1>
+        <h1 class="text-4xl font-semibold">{t("common.kofiThanks.title")}</h1>
         <p class="text-muted-foreground mt-4 text-lg">
-            Check the email address you used at checkout. Your redeem link should arrive there shortly!
+            {t("common.kofiThanks.lead")}
         </p>
         <p class="text-muted-foreground mt-3">
-            Before opening the link, please make sure you are signed into eepy.page and that you are using the correct account.
-            If you encounter any issues, don't hesitate to reach us at <a href="mailto:support@eepy.page">support@eepy.page</a>.
+            {@html t("common.kofiThanks.instructions", { emailLink: '<a href="mailto:support@eepy.page">support@eepy.page</a>' })}
         </p>
     </section>
 </main>

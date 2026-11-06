@@ -2,6 +2,7 @@
 
 <script lang="ts">
     import { page } from "$app/state";
+    import { t } from "$lib/i18n";
     import { Button } from "$lib/components/ui/button";
     import { IconBadge } from "$lib/components/ui/icon-badge";
     import MaterialSymbolsWarning from "~icons/material-symbols/warning-outline-rounded";
@@ -85,8 +86,8 @@
         <h1 class="text-foreground mt-1 text-2xl font-bold tracking-tight">{getHeading()}</h1>
 
         <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
-            <Button variant="default" onclick={() => window.history.back()}>Go Back</Button>
-            <Button variant="secondary" href="/">Go Home</Button>
+            <Button variant="default" onclick={() => window.history.back()}>{t("common.actions.back")}</Button>
+            <Button variant="secondary" href="/">{t("common.actions.goHome")}</Button>
         </div>
     </div>
 </main>

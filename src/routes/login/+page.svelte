@@ -17,6 +17,7 @@
         setAuthToken,
         UserError,
     } from "$lib";
+    import { t } from "$lib/i18n";
     import favicon from "$lib/assets/favicon.svg";
     import { Button } from "$lib/components/ui/button/index";
     import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
@@ -127,14 +128,13 @@
         login(username, password, captchaToken, mfaCode ? mfaCode : undefined)
             .catch((error) => {
                 buttonLoadingState = false;
-                errorTitle = "Login failed";
+                errorTitle = t("auth.alerts.loginFailed");
                 if (error instanceof AuthError || error instanceof UserError)
-                    errorDescription = "Username and password do not match.";
+                    errorDescription = t("auth.alerts.credentialsMismatch");
                 else if (error instanceof AccountDisabledError) {
                     errorDescription = error.message;
                 } else if (error instanceof PermissionError) {
-                    errorDescription =
-                        "Please verify your account. You should have received an email with a verification link.";
+                    errorDescription = t("auth.alerts.verifyAccountNotice");
                     accountNeedsEmailVerification = true;
                 } else if (error instanceof MFAError) {
                     if (!requiresMfa) {
@@ -144,13 +144,12 @@
                         resetTurnstile();
                         return;
                     } else {
-                        errorDescription = "Invalid two-factor authentication code.";
+                        errorDescription = t("auth.alerts.invalidMfa");
                     }
                 } else if (error instanceof CaptchaError) errorDescription = error.message;
                 else if (error instanceof RateLimitError) errorDescription = error.message;
                 else
-                    errorDescription =
-                        "There was an error while logging in. If this continues, please contact support.";
+                    errorDescription = t("auth.alerts.genericLoginError");
                 consola.warn(errorDescription);
 
                 resetTurnstile();
@@ -184,8 +183,8 @@
         register(username, password, email, captchaToken)
             .catch((error) => {
                 buttonLoadingState = false;
-                errorTitle = "Sign up failed";
-                if (error instanceof ConflictError) errorDescription = "Username is taken";
+                errorTitle = t("auth.alerts.signUpFailed");
+                if (error instanceof ConflictError) errorDescription = t("auth.alerts.usernameTaken");
                 else if (
                     error instanceof UserError ||
                     error instanceof InviteError ||
@@ -194,8 +193,7 @@
                 )
                     errorDescription = error.message;
                 else
-                    errorDescription =
-                        "There was an error while creating your account. Please check your details and try again.";
+                    errorDescription = t("auth.alerts.genericSignUpError");
 
                 resetTurnstile();
                 consola.warn(errorDescription);
@@ -204,8 +202,8 @@
             .then((_) => {
                 buttonLoadingState = false;
                 window.gtag?.("event", "sign_up");
-                alertTitle = "Successfully registered!";
-                alertDescription = "Check your email and verify your account before signing in.";
+                alertTitle = t("auth.alerts.registeredTitle");
+                alertDescription = t("auth.alerts.registeredDesc");
 
                 isLoggingIn = true;
                 resetTurnstile();
@@ -222,21 +220,19 @@
             switch (Number(data.statusCode)) {
                 case 460:
                 case 465: {
-                    alertTitle = "Login failed";
-                    alertDescription = "Looks like you were signed out";
+                    alertTitle = t("auth.alerts.loginFailed");
+                    alertDescription = t("auth.alerts.signedOut");
                     break;
                 }
 
                 case 469: {
-                    errorTitle = "Login failed";
-                    errorDescription =
-                        "This email has already been linked to an existing account! Please connect your account in settings.";
+                    errorTitle = t("auth.alerts.loginFailed");
+                    errorDescription = t("auth.alerts.emailLinked");
                     break;
                 }
                 default: {
-                    errorTitle = "An unhandled error occurred.";
-                    errorDescription =
-                        "There was an error while logging in. If this continues, please contact support.";
+                    errorTitle = t("auth.alerts.unhandledError");
+                    errorDescription = t("auth.alerts.genericLoginError");
                     break;
                 }
             }
@@ -297,17 +293,14 @@
     });
 
     function randomLogin() {
-        const logins = [
-            "Log in to your account",
-        ];
-        return logins[Math.floor(Math.random() * logins.length)];
+        return t("auth.titles.login");
     }
 
     function randomSignup() {
         const signups = [
-            "Get started with your free domain",
-            "Create your account",
-            "Sign up for your free account"
+            t("auth.titles.signup1"),
+            t("auth.titles.signup2"),
+            t("auth.titles.signup3")
         ];
         return signups[Math.floor(Math.random() * signups.length)];
     }
@@ -347,12 +340,12 @@
             <Tabs.Trigger
                 value="signin"
                 class="text-muted-foreground hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-card data-[state=active]:text-foreground h-full rounded-none border-b-2 border-transparent text-sm font-medium transition-all after:hidden data-[state=active]:font-semibold data-[state=active]:shadow-none">
-                Sign In
+                {t("auth.tabs.signIn")}
             </Tabs.Trigger>
             <Tabs.Trigger
                 value="signup"
                 class="text-muted-foreground hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-card data-[state=active]:text-foreground h-full rounded-none border-b-2 border-transparent text-sm font-medium transition-all after:hidden data-[state=active]:font-semibold data-[state=active]:shadow-none">
-                Sign Up
+                {t("auth.tabs.signUp")}
             </Tabs.Trigger>
         </Tabs.List>
     </Tabs.Root>
@@ -385,22 +378,22 @@
                     resendEmail(username)
                         .catch((error) => {
                             resendEmailClicked = false;
-                            errorTitle = "Failed to send verification";
+                            errorTitle = t("auth.resend.failedTitle");
                             errorDescription =
-                                error instanceof RateLimitError ? error.message : "Please try again later.";
+                                error instanceof RateLimitError ? error.message : t("auth.resend.failedGeneric");
                             throw new Error("Failed to send resend email");
                         })
                         .then((_) => {
                             resendEmailClicked = false;
-                            alertTitle = "Please verify your account";
-                            alertDescription = "An email has been sent to your inbox. Please check your spam folder.";
+                            alertTitle = t("auth.resend.successTitle");
+                            alertDescription = t("auth.resend.successDesc");
                         });
-                }}>Resend email verification</Button>
+                }}>{t("auth.resend.button")}</Button>
         {/if}
         {#if requiresMfa}
             <div class="mfa-screen mt-8 space-y-2">
-                <h2 class="text-2xl font-semibold">Two-factor authentication</h2>
-                <p class="text-muted-foreground text-sm">Enter the verification code from your authenticator app.</p>
+                <h2 class="text-2xl font-semibold">{t("auth.mfa.title")}</h2>
+                <p class="text-muted-foreground text-sm">{t("auth.mfa.description")}</p>
                 <form
                     onsubmit={(e) => {
                         e.preventDefault();
@@ -427,13 +420,13 @@
                         loading={buttonLoadingState}
                         disabled={!captchaDone || mfaCode.length != 6}
                         type="submit"
-                        class="mt-6 w-full">Sign in</Button>
+                        class="mt-6 w-full">{t("auth.mfa.submit")}</Button>
                 </form>
 
                 <div class="pt-2 text-center">
                     <a
                         class="text-muted-foreground hover:text-foreground text-sm transition-colors"
-                        href="/account/recover/2fa">Disable two-factor authentication with a backup code</a>
+                        href="/account/recover/2fa">{t("auth.mfa.backupCodeLink")}</a>
                 </div>
             </div>
         {:else}
@@ -449,25 +442,25 @@
                 <div class="flex flex-col gap-6">
                     <div class="grid gap-3">
                         <div class="space-y-1.5">
-                            <Label for="username">{isLoggingIn ? "Username or email" : "Username"}</Label>
+                            <Label for="username">{isLoggingIn ? t("auth.fields.usernameOrEmail") : t("auth.fields.username")}</Label>
                             <Input
                                 aria-invalid={usernameInvalid}
                                 bind:value={username}
                                 id="username"
                                 type="text"
-                                placeholder={isLoggingIn ? "username or email" : "username"}
+                                placeholder={isLoggingIn ? t("auth.fields.usernameOrEmailPlaceholder") : t("auth.fields.usernamePlaceholder")}
                                 autocomplete="username"
                                 autocapitalize="none"
                                 autocorrect="off"
                                 required />
                             {#if usernameInvalid}
-                                <p class="text-xs text-destructive">Usernames must be 3-32 characters and only contain letters, numbers, underscores, and hyphens.</p>
+                                <p class="text-xs text-destructive">{t("auth.fields.usernameInvalid")}</p>
                             {/if}
                         </div>
 
                         {#if !isLoggingIn}
                             <div class="space-y-1.5">
-                                <Label for="email">Email</Label>
+                                <Label for="email">{t("auth.fields.email")}</Label>
                                 <Input
                                     aria-invalid={emailInvalid}
                                     bind:value={email}
@@ -477,20 +470,20 @@
                                     autocomplete="email"
                                     autocapitalize="none"
                                     autocorrect="off"
-                                    placeholder="user@gmail.com"
+                                    placeholder={t("auth.fields.emailPlaceholder")}
                                     required />
                             </div>
                         {/if}
                         <div class="space-y-1.5">
                             <div class="flex h-4 items-center justify-between">
-                                <Label for="password">Password</Label>
+                                <Label for="password">{t("auth.fields.password")}</Label>
                                 {#if isLoggingIn}
                                     <a
                                         tabindex="-1"
                                         transition:fade={{ duration: 100 }}
                                         href="/account/recover/"
                                         class="text-muted-foreground hover:text-foreground text-xs transition-colors">
-                                        Forgot your password?
+                                        {t("auth.fields.forgotPassword")}
                                     </a>
                                 {/if}
                             </div>
@@ -509,8 +502,8 @@
                                     onclick={() => (showPassword = !showPassword)}
                                     tabindex="-1"
                                     class="text-muted-foreground hover:text-foreground disabled:hover:text-muted-foreground absolute top-0 right-0 flex h-full cursor-pointer items-center justify-center px-3 transition-colors focus:outline-none disabled:cursor-not-allowed disabled:opacity-30"
-                                    aria-label={showPassword ? "Hide password" : "Show password"}
-                                    title={showPassword ? "Hide password" : "Show password"}>
+                                    aria-label={showPassword ? t("auth.fields.hidePassword") : t("auth.fields.showPassword")}
+                                    title={showPassword ? t("auth.fields.hidePassword") : t("auth.fields.showPassword")}>
                                     {#if showPassword}
                                         <MaterialSymbolsVisibilityOff class="size-4" />
                                     {:else}
@@ -524,7 +517,7 @@
                         </div>
                         {#if !isLoggingIn}
                             <div class="space-y-1.5">
-                                <Label for="repeat-password">Confirm password</Label>
+                                <Label for="repeat-password">{t("auth.fields.confirmPassword")}</Label>
                                 <div class="relative">
                                     <Input
                                         aria-invalid={!!repeatPassword && repeatPassword !== password}
@@ -541,8 +534,8 @@
                                         onclick={() => (showRepeatPassword = !showRepeatPassword)}
                                         tabindex="-1"
                                         class="text-muted-foreground hover:text-foreground disabled:hover:text-muted-foreground absolute top-0 right-0 flex h-full cursor-pointer items-center justify-center px-3 transition-colors focus:outline-none disabled:cursor-not-allowed disabled:opacity-30"
-                                        aria-label={showRepeatPassword ? "Hide password" : "Show password"}
-                                        title={showRepeatPassword ? "Hide password" : "Show password"}>
+                                        aria-label={showRepeatPassword ? t("auth.fields.hidePassword") : t("auth.fields.showPassword")}
+                                        title={showRepeatPassword ? t("auth.fields.hidePassword") : t("auth.fields.showPassword")}>
                                         {#if showRepeatPassword}
                                             <MaterialSymbolsVisibilityOff class="size-4" />
                                         {:else}
@@ -557,11 +550,11 @@
                                 <Label
                                     class="text-muted-foreground cursor-pointer gap-1 text-xs font-normal"
                                     for="agreements">
-                                    I agree to the <a href="/terms" class="text-foreground font-bold hover:underline"
-                                        >Terms of Service</a>
-                                    and
+                                    {t("auth.fields.agreement.agreeTo")} <a href="/terms" class="text-foreground font-bold hover:underline"
+                                        >{t("auth.fields.agreement.terms")}</a>
+                                    {t("auth.fields.agreement.and")}
                                     <a href="/privacy" class="text-foreground font-bold hover:underline"
-                                        >Privacy Policy</a>
+                                        >{t("auth.fields.agreement.privacy")}</a>
                                 </Label>
                             </div>
                         {/if}
@@ -572,7 +565,7 @@
                     loading={buttonLoadingState}
                     disabled={!browser || actionButtonDisabled}
                     type="submit"
-                    class="mt-6 w-full">{isLoggingIn ? "Sign in" : "Sign up"}</Button>
+                    class="mt-6 w-full">{isLoggingIn ? t("auth.buttons.signIn") : t("auth.buttons.signUp")}</Button>
             </form>
         {/if}
 

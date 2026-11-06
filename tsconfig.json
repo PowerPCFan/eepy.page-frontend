@@ -14,5 +14,5 @@
         "noUncheckedIndexedAccess": true
     },
     "exclude": ["node_modules", ".svelte-kit"],
-    "include": ["src"],
+    "include": ["src", "locales"],
 }

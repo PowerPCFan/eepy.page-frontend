@@ -1,5 +1,6 @@
 <script lang="ts">
     import { redirectToLogin, CodeError, UserError, verifyEmail } from "$lib";
+    import { t } from "$lib/i18n";
     import Holder from "$lib/components/Holder.svelte";
     import { Button } from "$lib/components/ui/button";
     import { IconBadge } from "$lib/components/ui/icon-badge";
@@ -52,29 +53,29 @@
         {#if !doneVerifying}
             <div class="flex flex-col items-center justify-center space-y-3 py-8 text-center">
                 <Loader asForeground />
-                <h1 class="text-xl font-bold tracking-tight">Verifying your email...</h1>
-                <p class="text-muted-foreground text-sm">Please wait while we confirm your email verification token.</p>
+                <h1 class="text-xl font-bold tracking-tight">{t("auth.emailVerification.pendingTitle")}</h1>
+                <p class="text-muted-foreground text-sm">{t("auth.emailVerification.pendingDesc")}</p>
             </div>
         {:else if valid}
             <div class="flex flex-col items-center justify-center space-y-3 py-8 text-center">
                 <IconBadge variant="primary" size="lg" shape="circle">
                     <MaterialSymbolsCheckCircle class="size-7" />
                 </IconBadge>
-                <h1 class="text-2xl font-bold tracking-tight">Email Verified!</h1>
-                <p class="text-muted-foreground text-sm">Your email has been verified. Redirecting you to login...</p>
+                <h1 class="text-2xl font-bold tracking-tight">{t("auth.emailVerification.successTitle")}</h1>
+                <p class="text-muted-foreground text-sm">{t("auth.emailVerification.successDesc")}</p>
                 <div class="pt-2">
-                    <Button href="/login">Go to Login</Button>
+                    <Button href="/login">{t("auth.emailVerification.goToLogin")}</Button>
                 </div>
             </div>
         {:else}
             <div class="space-y-4">
-                <h1 class="text-2xl font-bold tracking-tight">Email Verification</h1>
+                <h1 class="text-2xl font-bold tracking-tight">{t("auth.emailVerification.title")}</h1>
                 <InlineAlert
                     variant="error"
-                    title="Invalid or expired verification link"
-                    description="This email verification link is invalid or has expired. Please log in to your account to request a new verification email." />
+                    title={t("auth.emailVerification.invalidTitle")}
+                    description={t("auth.emailVerification.invalidDesc")} />
                 <div class="pt-2">
-                    <Button href="/login">Go to Login</Button>
+                    <Button href="/login">{t("auth.emailVerification.goToLogin")}</Button>
                 </div>
             </div>
         {/if}

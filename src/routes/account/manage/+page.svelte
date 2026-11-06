@@ -1,6 +1,7 @@
 <script lang="ts">
     import { dev } from "$app/environment";
     import { AUTH_COOKIE_NAME, createFile, formatLocalDateTime, getAuthToken, redirectToLogin } from "$lib";
+    import { t } from "$lib/i18n";
     import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
     import { Badge } from "$lib/components/ui/badge/index.js";
     import { Button } from "$lib/components/ui/button";
@@ -157,10 +158,10 @@
                 return;
             }
             if (error instanceof ConflictError) {
-                toast.error("Two-factor authentication is already enabled");
+                toast.error(t("dashboard.account.security.alreadyEnabled"));
                 return;
             }
-            toast.error("Failed to begin 2FA setup");
+            toast.error(t("dashboard.account.security.failedSetup"));
         }
     }
 
@@ -170,7 +171,7 @@
         try {
             await serverContactor.verifyMfaCode(code);
             mfaButtonLoading = false;
-            toast.success("Successfully enabled two-factor authentication!", { duration: 9000 });
+            toast.success(t("dashboard.account.security.enabledSuccess"), { duration: 9000 });
             mfaIsVerified = true;
             data.mfaEnabled = true;
         } catch (error) {
@@ -183,17 +184,17 @@
             }
             if (error instanceof CodeError) {
                 consola.warn("Invalid MFA code");
-                toast.error("Invalid code", {
-                    description: "This code has either expired, or is invalid.",
+                toast.error(t("dashboard.account.security.invalidCode"), {
+                    description: t("dashboard.account.security.invalidCodeDesc"),
                 });
                 return;
             }
             if (error instanceof ConflictError) {
                 consola.error("MFA code already exists. This shouldn't be able to happen");
-                toast.error("Two-factor authentication is already enabled");
+                toast.error(t("dashboard.account.security.alreadyEnabled"));
                 return;
             }
-            toast.error("Failed to verify code");
+            toast.error(t("dashboard.account.security.failedVerify"));
         }
     }
 
@@ -209,7 +210,7 @@
             mfaButtonLoading = false;
             dialogOpen = false;
             data.mfaEnabled = false;
-            toast.success("Two-factor authentication is now disabled");
+            toast.success(t("dashboard.account.security.disabledSuccess"));
         } catch (error) {
             consola.warn("Failed to remove MFA");
             mfaButtonLoading = false;
@@ -221,13 +222,13 @@
             }
             if (error instanceof CodeError) {
                 consola.warn("Invalid MFA code while removing MFA");
-                toast.error("Invalid code", {
-                    description: "Please refresh and try again",
+                toast.error(t("dashboard.account.security.invalidCode"), {
+                    description: t("dashboard.account.security.refreshAndRetry"),
                 });
                 return;
             }
-            toast.error("An unhandled error occurred.", {
-                description: "Please contact support if this error persists.",
+            toast.error(t("errors.general.unhandledTitle"), {
+                description: t("errors.general.contactSupport"),
             });
         }
     }
@@ -237,9 +238,8 @@
         try {
             await serverContactor.deleteAccount(mfaCode);
             mfaButtonLoading = false;
-            toast.success("Please check your email", {
-                description:
-                    "A link to delete your account has been sent to your email. If you cannot find it, please check the spam folder",
+            toast.success(t("dashboard.account.deleteAccount.emailSentTitle"), {
+                description: t("dashboard.account.deleteAccount.emailSentDesc"),
                 duration: 9000,
             });
         } catch (err) {
@@ -248,10 +248,10 @@
             mfaInvalid = true;
             if (showRateLimitError(err)) return;
             if (err instanceof AuthError) redirectToLogin(460);
-            else if (err instanceof MFAError) toast.error("Invalid two-factor authentication code.");
+            else if (err instanceof MFAError) toast.error(t("auth.mfa.codeError"));
             else
-                toast.error("Failed to delete your account", {
-                    description: "Please contact support if this error persists.",
+                toast.error(t("dashboard.account.deleteAccount.failedDelete"), {
+                    description: t("errors.general.contactSupport"),
                 });
         }
     }
@@ -260,9 +260,9 @@
         try {
             const res = await serverContactor.getGDPR();
             createFile("data.json", JSON.stringify(res));
-            toast.success("Data export downloaded successfully");
+            toast.success(t("dashboard.account.export.success"));
         } catch {
-            toast.error("Failed to download your data");
+            toast.error(t("dashboard.account.export.failed"));
         }
     }
 
@@ -286,11 +286,11 @@
             } else {
                 session.loading = false;
                 sessions = sessions?.filter(sess => sess.hash !== session.hash);
-                toast.success("Session logged out");
+                toast.success(t("dashboard.account.sessions.loggedOut"));
             }
         } catch (err) {
             if (showRateLimitError(err)) return;
-            toast.error("Failed to log out session");
+            toast.error(t("dashboard.account.sessions.failedLogout"));
         }
     }
 
@@ -325,15 +325,15 @@
 </script>
 
 <svelte:head>
-    <title>Account Settings | eepy.page</title>
+    <title>{t("dashboard.account.title")} | eepy.page</title>
     <meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
 <div class="mx-auto w-11/12 max-w-6xl py-8 sm:py-12">
     <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-            <h1 class="text-3xl font-bold text-foreground">Account Settings</h1>
-            <p class="text-sm text-muted-foreground">Manage your profile, security preferences, and more</p>
+            <h1 class="text-3xl font-bold text-foreground">{t("dashboard.account.title")}</h1>
+            <p class="text-sm text-muted-foreground">{t("dashboard.account.subtitle")}</p>
         </div>
     </div>
 
@@ -351,7 +351,7 @@
                     class="flex items-center justify-between gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-all {activeTab === 'profile' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-foreground/80 hover:bg-muted hover:text-foreground'}">
                     <div class="flex items-center gap-2.5">
                         <MaterialSymbolsPersonOutline class="size-5 shrink-0" />
-                        <span>Account</span>
+                        <span>{t("dashboard.account.tabs.profile")}</span>
                     </div>
                 </button>
 
@@ -360,7 +360,7 @@
                     class="flex items-center justify-between gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-all {activeTab === 'security' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-foreground/80 hover:bg-muted hover:text-foreground'}">
                     <div class="flex items-center gap-2.5">
                         <MaterialSymbolsSecurity class="size-5 shrink-0" />
-                        <span>Privacy & Security</span>
+                        <span>{t("dashboard.account.tabs.security")}</span>
                     </div>
                 </button>
 
@@ -369,7 +369,7 @@
                     class="flex items-center justify-between gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-all {activeTab === 'sessions' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-foreground/80 hover:bg-muted hover:text-foreground'}">
                     <div class="flex items-center gap-2.5">
                         <MaterialSymbolsMonitor class="size-5 shrink-0" />
-                        <span>Sessions</span>
+                        <span>{t("dashboard.account.tabs.sessions")}</span>
                     </div>
                     <!-- {#if ((sessions ?? []).length ?? 0) > 0} -->
                         <Badge variant="outline">{(sessions ?? []).length ?? 0}</Badge>
@@ -381,7 +381,7 @@
                     class="flex items-center justify-between gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-all {activeTab === 'referrals' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-foreground/80 hover:bg-muted hover:text-foreground'}">
                     <div class="flex items-center gap-2.5">
                         <MaterialSymbolsLink class="size-5 shrink-0" />
-                        <span>Referrals</span>
+                        <span>{t("dashboard.account.tabs.referrals")}</span>
                     </div>
                     <!-- {#if (data.referredPeople ?? 0) > 0} -->
                         <Badge variant="outline">{data.referredPeople}</Badge>
@@ -398,7 +398,7 @@
                         class="flex items-center justify-between gap-2.5 rounded-lg px-3.5 py-2 text-sm text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
                         <div class="flex items-center gap-2">
                             <MaterialSymbolsKey class="size-4 shrink-0" />
-                            <span>API Keys</span>
+                            <span>{t("dashboard.account.tabs.apiKeys")}</span>
                         </div>
                     </a>
 
@@ -430,7 +430,7 @@
                             onclick={() => logOut()}
                             class="flex w-full items-center gap-2.5">
                             <MaterialSymbolsLogout class="size-4 shrink-0" />
-                            <span>Log out</span>
+                            <span>{t("dashboard.account.tabs.logOut")}</span>
                         </button>
                     </div>
                 </div>
@@ -445,22 +445,22 @@
                 <Tabs.List variant="segmented" class="grid grid-cols-2 sm:grid-cols-4 w-full h-auto p-1 gap-1">
                     <Tabs.Trigger value="profile" class="text-xs py-2 gap-1.5 font-medium">
                         <MaterialSymbolsPersonOutline class="size-4 shrink-0" />
-                        <span>Account</span>
+                        <span>{t("dashboard.account.tabs.profile")}</span>
                     </Tabs.Trigger>
 
                     <Tabs.Trigger value="security" class="text-xs py-2 gap-1.5 font-medium">
                         <MaterialSymbolsSecurity class="size-4 shrink-0" />
-                        <span>Security</span>
+                        <span>{t("dashboard.account.tabs.security")}</span>
                     </Tabs.Trigger>
 
                     <Tabs.Trigger value="sessions" class="text-xs py-2 gap-1.5 font-medium">
                         <MaterialSymbolsMonitor class="size-4 shrink-0" />
-                        <span>Sessions</span>
+                        <span>{t("dashboard.account.tabs.sessions")}</span>
                     </Tabs.Trigger>
 
                     <Tabs.Trigger value="referrals" class="text-xs py-2 gap-1.5 font-medium">
                         <MaterialSymbolsLink class="size-4 shrink-0" />
-                        <span>Referrals</span>
+                        <span>{t("dashboard.account.tabs.referrals")}</span>
                         {#if (data.referredPeople ?? 0) > 0}
                             <Badge variant="secondary" class="ml-1 px-1.5 py-0.2 text-[10px] font-semibold">
                                 {data.referredPeople}
@@ -475,7 +475,7 @@
                     href="/api/dashboard"
                     class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground active:scale-[0.97]">
                     <MaterialSymbolsKey class="size-3.5 shrink-0" />
-                    <span>API Keys</span>
+                    <span>{t("dashboard.account.tabs.apiKeys")}</span>
                     <MaterialSymbolsOpenInNew class="size-3 opacity-60" />
                 </a>
 
@@ -502,7 +502,7 @@
                     onclick={() => logOut()}
                     class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-destructive transition-all hover:bg-destructive/15 active:scale-[0.97]">
                     <MaterialSymbolsLogout class="size-3.5 shrink-0" />
-                    <span>Log out</span>
+                    <span>{t("dashboard.account.tabs.logOut")}</span>
                 </button>
             </div>
         </div>
@@ -512,18 +512,18 @@
                 <div transition:fade={{ duration: 150 }} class="space-y-6">
                     <Card.Root>
                         <Card.Header>
-                            <Card.Title>Account Information</Card.Title>
+                            <Card.Title>{t("dashboard.account.profile.title")}</Card.Title>
                         </Card.Header>
                         <Card.Content class="space-y-4">
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div class="space-y-1.5">
-                                    <Label class="text-xs text-muted-foreground">Username</Label>
+                                    <Label class="text-xs text-muted-foreground">{t("dashboard.account.profile.username")}</Label>
                                     <div class="flex items-center justify-between rounded-lg border border-border bg-muted/40 px-3.5 py-2 text-sm font-medium">
                                         <span>{data.username}</span>
                                     </div>
                                 </div>
                                 <div class="space-y-1.5">
-                                    <Label class="text-xs text-muted-foreground">Email Address</Label>
+                                    <Label class="text-xs text-muted-foreground">{t("dashboard.account.profile.email")}</Label>
                                     <div class="flex items-center justify-between rounded-lg border border-border bg-muted/40 px-3.5 py-2 text-sm font-medium">
                                         <span class="truncate">{data.email}</span>
                                     </div>
@@ -534,23 +534,23 @@
 
                     <Card.Root>
                         <Card.Header>
-                            <Card.Title>Resource Limits & Quotas</Card.Title>
+                            <Card.Title>{t("dashboard.account.quotas.title")}</Card.Title>
                         </Card.Header>
                         <Card.Content>
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div class="flex items-center justify-between rounded-xl border border-border bg-card p-4 shadow-xs">
                                     <div class="space-y-1">
-                                        <p class="text-xs font-medium text-muted-foreground">Maximum Domains</p>
+                                        <p class="text-xs font-medium text-muted-foreground">{t("dashboard.account.quotas.maxDomains")}</p>
                                         <p class="text-2xl font-bold text-foreground">{data.maxDomains}</p>
-                                        <p class="text-xs text-muted-foreground">Amount of domains you can register</p>
+                                        <p class="text-xs text-muted-foreground">{t("dashboard.account.quotas.maxDomainsDesc")}</p>
                                     </div>
                                 </div>
 
                                 <div class="flex items-center justify-between rounded-xl border border-border bg-card p-4 shadow-xs">
                                     <div class="space-y-1">
-                                        <p class="text-xs font-medium text-muted-foreground">Max Subdomains</p>
+                                        <p class="text-xs font-medium text-muted-foreground">{t("dashboard.account.quotas.maxSubdomains")}</p>
                                         <p class="text-2xl font-bold text-foreground">{data.maxSubdomains}</p>
-                                        <p class="text-xs text-muted-foreground">Amount of subdomains you can create across all domains </p>
+                                        <p class="text-xs text-muted-foreground">{t("dashboard.account.quotas.maxSubdomainsDesc")}</p>
                                     </div>
                                 </div>
                             </div>
@@ -559,58 +559,58 @@
 
                     <Card.Root class="border-destructive/30 bg-destructive/5 gap-4">
                         <Card.Header>
-                            <Card.Title class="text-destructive/90">Delete Account</Card.Title>
+                            <Card.Title class="text-destructive/90">{t("dashboard.account.deleteAccount.cardTitle")}</Card.Title>
                             <Card.Description class="text-muted-foreground leading-relaxed">
-                                Permanently deletes your account. Clicking below will open a review dialog to verify your request before any action is taken.
+                                {t("dashboard.account.deleteAccount.cardDesc")}
                             </Card.Description>
                         </Card.Header>
                         <Card.Footer>
                             <AlertDialog.Root onOpenChange={open => (deleteOpen = open)} open={deleteOpen}>
                                 <AlertDialog.Trigger>
-                                    <Button variant="destructive">Review consequences</Button>
+                                    <Button variant="destructive">{t("dashboard.account.deleteAccount.reviewButton")}</Button>
                                 </AlertDialog.Trigger>
                                 <AlertDialog.Content class="sm:max-w-md">
                                     <AlertDialog.Header>
-                                        <AlertDialog.Title class="text-destructive">Permanently Delete Account</AlertDialog.Title>
+                                        <AlertDialog.Title class="text-destructive">{t("dashboard.account.deleteAccount.dialogTitle")}</AlertDialog.Title>
                                         <AlertDialog.Description class="leading-normal">
-                                            Please review the consequences below before confirming your deletion request.
+                                            {t("dashboard.account.deleteAccount.dialogDesc")}
                                         </AlertDialog.Description>
                                     </AlertDialog.Header>
 
                                     <div class="space-y-3 text-sm text-muted-foreground">
                                         <div class="space-y-2">
-                                            <p class="font-semibold text-foreground">What will happen when you delete your account:</p>
+                                            <p class="font-semibold text-foreground">{t("dashboard.account.deleteAccount.whatHappens")}</p>
                                             <ul class="space-y-1.5 list-disc pl-6 text-foreground/80 leading-relaxed">
                                                 <li>
-                                                    <strong class="text-foreground">Domains & DNS:</strong>
-                                                    All registered subdomains and DNS records will be permanently deleted from our nameservers and released for anyone else to claim.
+                                                    <strong class="text-foreground">{t("dashboard.account.deleteAccount.domainsDnsLabel")}</strong>
+                                                    {t("dashboard.account.deleteAccount.domainsDnsDesc")}
                                                 </li>
                                                 <li>
-                                                    <strong class="text-foreground">Tunnels & API:</strong>
-                                                    All active tunnels will disconnect, and all API keys will be revoked.
+                                                    <strong class="text-foreground">{t("dashboard.account.deleteAccount.tunnelsApiLabel")}</strong>
+                                                    {t("dashboard.account.deleteAccount.tunnelsApiDesc")}
                                                 </li>
                                                 <li>
-                                                    <strong class="text-foreground">Account Data:</strong>
-                                                    Your credentials, 2FA settings, session tokens, and referral links will be permanently wiped from our servers.
+                                                    <strong class="text-foreground">{t("dashboard.account.deleteAccount.accountDataLabel")}</strong>
+                                                    {t("dashboard.account.deleteAccount.accountDataDesc")}
                                                 </li>
                                             </ul>
                                         </div>
                                         <p class="text-muted-foreground leading-relaxed">
-                                            A confirmation link will be sent to <strong>{data.email}</strong> to finalize the deletion.
+                                            {t("dashboard.account.deleteAccount.emailSentNotice", { email: data.email })}
                                         </p>
                                     </div>
 
                                     {#if data.mfaEnabled}
                                         <div class="space-y-2 pt-2 border-t border-border">
-                                            <Label class="text-xs">Two-Factor Authentication Required</Label>
+                                            <Label class="text-xs">{t("dashboard.account.deleteAccount.mfaRequired")}</Label>
                                             <p class="text-xs text-muted-foreground leading-normal">
-                                                Enter your 6-digit authenticator code to authorize sending the deletion email.
+                                                {t("dashboard.account.deleteAccount.mfaDesc")}
                                             </p>
 
                                             {#if usingBackupCode}
                                                 <div class="space-y-2 pt-1">
-                                                    <Label for="del-backup-code" class="text-xs">Backup Code</Label>
-                                                    <Input bind:value={mfaCode} id="del-backup-code" placeholder="Enter backup code" />
+                                                    <Label for="del-backup-code" class="text-xs">{t("dashboard.account.deleteAccount.backupCode")}</Label>
+                                                    <Input bind:value={mfaCode} id="del-backup-code" placeholder={t("dashboard.account.deleteAccount.backupCodePlaceholder")} />
                                                 </div>
                                             {:else}
                                                 <div class="py-2">
@@ -634,7 +634,7 @@
                                             {/if}
 
                                             <Button onclick={() => (usingBackupCode = !usingBackupCode)} variant={"ghost"} class="text-xs h-7 px-2">
-                                                {usingBackupCode ? "Use authenticator app code" : "Use a backup code"}
+                                                {usingBackupCode ? t("dashboard.account.deleteAccount.useTotp") : t("dashboard.account.deleteAccount.useBackupCode")}
                                             </Button>
                                         </div>
                                     {/if}
@@ -643,7 +643,7 @@
                                         <div class="flex items-center space-x-2">
                                             <Checkbox bind:checked={deleteAccountChecked} id="understand" />
                                             <Label for="understand" class="text-xs cursor-pointer font-medium text-destructive leading-snug">
-                                                I understand that this action is irreversible and will permanently delete all my domains and account data.
+                                                {t("dashboard.account.deleteAccount.confirmCheckbox")}
                                             </Label>
                                         </div>
                                         <Button
@@ -655,9 +655,9 @@
                                                         (usingBackupCode && mfaCode.length < 16)))}
                                             variant={"destructive"}
                                             class="w-full">
-                                            Send Account Deletion Email
+                                            {t("dashboard.account.deleteAccount.sendEmailButton")}
                                         </Button>
-                                        <AlertDialog.Cancel class="w-full mt-1">Cancel</AlertDialog.Cancel>
+                                        <AlertDialog.Cancel class="w-full mt-1">{t("common.actions.cancel")}</AlertDialog.Cancel>
                                     </AlertDialog.Footer>
                                 </AlertDialog.Content>
                             </AlertDialog.Root>
@@ -672,16 +672,16 @@
                         <Card.Header class="mb-0">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <Card.Title>Two-Factor Authentication (2FA)</Card.Title>
+                                    <Card.Title>{t("dashboard.account.security.twoFactorTitle")}</Card.Title>
                                 </div>
                                 {#if data.mfaEnabled}
                                     <Badge variant="outline" class="gap-1.5 border-emerald-500/30 bg-emerald-500/10 text-emerald-400 font-semibold text-xs">
                                         <MaterialSymbolsCheckCircle class="size-3.5" />
-                                        Enabled
+                                        {t("dashboard.account.security.enabled")}
                                     </Badge>
                                 {:else}
                                     <Badge variant="outline" class="border-amber-500/30 bg-amber-500/10 text-amber-400 font-semibold text-xs">
-                                        Not Enabled
+                                        {t("dashboard.account.security.notEnabled")}
                                     </Badge>
                                 {/if}
                             </div>
@@ -689,11 +689,11 @@
                         <Card.Content class="space-y-4">
                             {#if data.mfaEnabled}
                                 <p class="text-sm text-muted-foreground leading-relaxed">
-                                    Your account is protected by two-factor authentication! You will be prompted for a 6-digit verification code whenever you log in.
+                                    {t("dashboard.account.security.mfaEnabledNotice")}
                                 </p>
                             {:else}
                                 <p class="text-sm text-muted-foreground leading-relaxed">
-                                    Protect your account from unauthorized access by requiring an authenticator app code alongside your password.
+                                    {t("dashboard.account.security.mfaDisabledNotice")}
                                 </p>
                             {/if}
                         </Card.Content>
@@ -701,19 +701,19 @@
                             {#if data.mfaEnabled}
                                 <Dialog.Root onOpenChange={open => (dialogOpen = open)} open={dialogOpen}>
                                     <Dialog.Trigger>
-                                        <Button variant={"destructive"}>Disable two-factor authentication</Button>
+                                        <Button variant={"destructive"}>{t("dashboard.account.security.disableMfaButton")}</Button>
                                     </Dialog.Trigger>
                                     <Dialog.Content>
                                         <Dialog.Header>
-                                            <Dialog.Title>Disable two-factor authentication</Dialog.Title>
+                                            <Dialog.Title>{t("dashboard.account.security.disableMfaButton")}</Dialog.Title>
                                             <Dialog.Description>
-                                                Enter your one-time code or a backup code to confirm.
+                                                {t("dashboard.account.security.disableMfaDesc")}
                                             </Dialog.Description>
 
                                             {#if usingBackupCode}
                                                 <div class="space-y-2 pt-2">
-                                                    <Label for="backup-code">Use a backup code</Label>
-                                                    <Input bind:value={mfaCode} id="backup-code" placeholder="xxxx-xxxx-xxxx-xxxx" />
+                                                    <Label for="backup-code">{t("dashboard.account.security.useBackupCodeLabel")}</Label>
+                                                    <Input bind:value={mfaCode} id="backup-code" placeholder={t("dashboard.account.security.backupCodePlaceholder")} />
                                                 </div>
                                             {:else}
                                                 <div class="py-4">
@@ -737,7 +737,7 @@
                                             {/if}
 
                                             <Button onclick={() => (usingBackupCode = !usingBackupCode)} variant={"ghost"} class="text-xs">
-                                                {usingBackupCode ? "Use authenticator app code instead" : "Use a backup code"}
+                                                {usingBackupCode ? t("dashboard.account.security.useTotpLabel") : t("dashboard.account.security.useBackupCodeLabel")}
                                             </Button>
                                         </Dialog.Header>
 
@@ -747,21 +747,21 @@
                                                 onclick={() => removeMfa(mfaCode)}
                                                 disabled={(!usingBackupCode && mfaCode.length != 6) ||
                                                     (usingBackupCode && mfaCode.length < 16)}
-                                                variant={"destructive"}>Disable 2FA</Button>
+                                                variant={"destructive"}>{t("dashboard.account.security.disableConfirm")}</Button>
                                         </Dialog.Footer>
                                     </Dialog.Content>
                                 </Dialog.Root>
                             {:else}
                                 <Dialog.Root onOpenChange={open => (dialogOpen = open)} open={dialogOpen}>
                                     <Dialog.Trigger>
-                                        <Button onclick={() => mfaSetup()}>Enable two-factor authentication</Button>
+                                        <Button onclick={() => mfaSetup()}>{t("dashboard.account.security.enableMfaButton")}</Button>
                                     </Dialog.Trigger>
                                     <Dialog.Content class="sm:max-w-xl">
                                         {#if mfaIsVerified}
                                             <Dialog.Header>
-                                                <Dialog.Title class="text-xl font-bold">Two-Factor Authentication Enabled</Dialog.Title>
+                                                <Dialog.Title class="text-xl font-bold">{t("dashboard.account.security.mfaSuccessTitle")}</Dialog.Title>
                                                 <Dialog.Description class="leading-relaxed">
-                                                    Please save these backup codes somewhere safe. If you lose your authenticator app, these are the only way to recover your account.
+                                                    {t("dashboard.account.security.mfaSuccessDesc")}
                                                 </Dialog.Description>
                                             </Dialog.Header>
 
@@ -780,25 +780,25 @@
                                                     variant={"outline"}
                                                     onclick={() => {
                                                         copy(backupCodes.join("\n"));
-                                                        toast.success("Backup codes copied to clipboard!");
+                                                        toast.success(t("dashboard.account.security.copiedCodes"));
                                                     }}>
-                                                    Copy codes
+                                                    {t("dashboard.account.security.copyCodes")}
                                                 </Button>
-                                                <Button onclick={() => (dialogOpen = false)}>Done</Button>
+                                                <Button onclick={() => (dialogOpen = false)}>{t("common.actions.close")}</Button>
                                             </Dialog.Footer>
                                         {:else if !mfaUrl}
                                             <Dialog.Header>
-                                                <Dialog.Title class="text-xl font-bold">Enable two-factor authentication</Dialog.Title>
-                                                <Dialog.Description class="leading-normal">Make your account safer in just 3 easy steps:</Dialog.Description>
+                                                <Dialog.Title class="text-xl font-bold">{t("dashboard.account.security.enableMfaButton")}</Dialog.Title>
+                                                <Dialog.Description class="leading-normal">{t("dashboard.account.security.mfaStepLead")}</Dialog.Description>
                                             </Dialog.Header>
                                             <div class="flex flex-col items-center justify-center gap-3 py-12">
                                                 <div class="border-primary size-6 animate-spin rounded-full border-2 border-t-transparent"></div>
-                                                <span class="text-muted-foreground text-sm">Starting two-factor authentication setup...</span>
+                                                <span class="text-muted-foreground text-sm">{t("dashboard.account.security.mfaStarting")}</span>
                                             </div>
                                         {:else}
                                             <Dialog.Header>
-                                                <Dialog.Title class="text-xl font-bold">Enable two-factor authentication</Dialog.Title>
-                                                <Dialog.Description class="leading-normal">Make your account safer in just 3 simple steps!</Dialog.Description>
+                                                <Dialog.Title class="text-xl font-bold">{t("dashboard.account.security.enableMfaButton")}</Dialog.Title>
+                                                <Dialog.Description class="leading-normal">{t("dashboard.account.security.mfaStepLead")}</Dialog.Description>
                                             </Dialog.Header>
 
                                             <div class="flex flex-col gap-4 py-2">
@@ -808,15 +808,10 @@
                                                     </div>
                                                     <div class="flex-1 space-y-1">
                                                         <h3 class="text-foreground text-sm font-semibold sm:text-base">
-                                                            Download an authenticator app
+                                                            {t("dashboard.account.security.step1Title")}
                                                         </h3>
                                                         <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                                                            Download and install an authenticator app of your choice, such as 
-                                                            <a
-                                                                href="https://support.google.com/accounts/answer/1066447"
-                                                                target="_blank"
-                                                                rel="noreferrer"
-                                                                class="text-primary font-medium hover:underline">Google Authenticator</a> (available on iOS and Android).
+                                                            {t("dashboard.account.security.step1Desc")}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -829,14 +824,14 @@
                                                     </div>
                                                     <div class="min-w-0 flex-1 space-y-1">
                                                         <h3 class="text-foreground text-sm font-semibold sm:text-base">
-                                                            Scan the QR code
+                                                            {t("dashboard.account.security.step2Title")}
                                                         </h3>
                                                         <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                                                            Open your authenticator app and scan the QR code to the left using your phone's camera.
+                                                            {t("dashboard.account.security.step2Desc")}
                                                         </p>
                                                         <div class="pt-1">
                                                             <h4 class="text-foreground text-xs font-medium">
-                                                                Or manually enter the TOTP key:
+                                                                {t("dashboard.account.security.step2Manual")}
                                                             </h4>
                                                             <Codeblock
                                                                 variant="inline"
@@ -856,10 +851,10 @@
                                                     </div>
                                                     <div class="min-w-0 flex-1 space-y-1">
                                                         <h3 class="text-foreground text-sm font-semibold sm:text-base">
-                                                            Log in with your code
+                                                            {t("dashboard.account.security.step3Title")}
                                                         </h3>
                                                         <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                                                            Enter the 6-digit verification code, generated by your authenticator app.
+                                                            {t("dashboard.account.security.step3Desc")}
                                                         </p>
                                                         <div class="flex flex-wrap items-center gap-3 pt-2">
                                                             <InputOTP.Root
@@ -888,7 +883,7 @@
                                                                 loading={mfaButtonLoading}
                                                                 disabled={mfaCode.length !== 6}
                                                                 onclick={() => verifyMfa(mfaCode)}>
-                                                                Activate
+                                                                {t("dashboard.account.security.activate")}
                                                             </Button>
                                                         </div>
                                                     </div>
@@ -902,13 +897,13 @@
                     </Card.Root>
                     <Card.Root>
                         <Card.Header>
-                            <Card.Title>Data Export</Card.Title>
-                            <Card.Description>Download an archive of your account data</Card.Description>
+                            <Card.Title>{t("dashboard.account.export.title")}</Card.Title>
+                            <Card.Description>{t("dashboard.account.export.description")}</Card.Description>
                         </Card.Header>
                         <Card.Footer>
                             <Button variant="outline" onclick={() => gdprData()} class="gap-2">
                                 <MaterialSymbolsDownload class="size-4" />
-                                Download Data
+                                {t("dashboard.account.export.downloadButton")}
                             </Button>
                         </Card.Footer>
                     </Card.Root>
@@ -919,8 +914,8 @@
                 <div transition:fade={{ duration: 150 }} class="space-y-6">
                     <Card.Root>
                         <Card.Header>
-                            <Card.Title>Active Sessions</Card.Title>
-                            <Card.Description>These are the devices and browsers currently authenticated to your account.</Card.Description>
+                            <Card.Title>{t("dashboard.account.sessions.title")}</Card.Title>
+                            <Card.Description>{t("dashboard.account.sessions.description")}</Card.Description>
                         </Card.Header>
                         <Card.Content>
                             {#if sessions && sessions.length > 0}
@@ -949,9 +944,9 @@
                                                 </div>
 
                                                 <div class="space-y-1 text-xs text-muted-foreground">
-                                                    <p><span class="font-medium text-foreground/70">IP:</span> {session.ip}</p>
-                                                    <p><span class="font-medium text-foreground/70">Expires:</span> {formatLocalDateTime(expires)}</p>
-                                                    <p class="font-mono!"><span class="font-medium text-foreground/70">Hash:</span> {session.hash}</p>
+                                                    <p><span class="font-medium text-foreground/70">{t("dashboard.account.sessions.ip")}</span> {session.ip}</p>
+                                                    <p><span class="font-medium text-foreground/70">{t("dashboard.account.sessions.expires")}</span> {formatLocalDateTime(expires)}</p>
+                                                    <p class="font-mono!"><span class="font-medium text-foreground/70">{t("dashboard.account.sessions.hash")}</span> {session.hash}</p>
                                                 </div>
                                             </div>
 
@@ -965,7 +960,7 @@
                                                         session.loading = true;
                                                         logOut(session);
                                                     }}>
-                                                    Revoke
+                                                    {t("dashboard.account.sessions.revoke")}
                                                 </Button>
                                             </div>
                                         </div>
@@ -974,7 +969,7 @@
                             {:else}
                                 <div class="flex flex-col items-center justify-center py-12 text-center">
                                     <MaterialSymbolsMonitor class="size-12 text-muted-foreground/50 mb-2" />
-                                    <p class="text-sm font-medium text-foreground">No active sessions found</p>
+                                    <p class="text-sm font-medium text-foreground">{t("dashboard.account.sessions.empty")}</p>
                                 </div>
                             {/if}
                         </Card.Content>
@@ -986,8 +981,8 @@
                 <div transition:fade={{ duration: 150 }} class="space-y-6">
                     <Card.Root>
                         <Card.Header>
-                            <Card.Title>Referral Program</Card.Title>
-                            <Card.Description>Invite new users to eepy.page and earn rewards!</Card.Description>
+                            <Card.Title>{t("dashboard.account.referrals.title")}</Card.Title>
+                            <Card.Description>{t("dashboard.account.referrals.description")}</Card.Description>
                         </Card.Header>
                         <Card.Content class="space-y-6">
                             <div class="rounded-xl border border-primary/20 bg-primary/5 p-4 sm:p-5">
@@ -996,9 +991,9 @@
                                         <MaterialSymbolsGift class="size-6" />
                                     </IconBadge>
                                     <div class="space-y-1">
-                                        <h4 class="text-base font-semibold text-foreground">Earn 1 Domain per 2 Verified Referrals</h4>
+                                        <h4 class="text-base font-semibold text-foreground">{t("dashboard.account.referrals.perkTitle")}</h4>
                                         <p class="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                                            For every 2 people who sign up with your referral link and verify their account, you'll automatically receive an extra domain (up to a maximum of 5 bonus domains).
+                                            {t("dashboard.account.referrals.perkDesc")}
                                         </p>
                                     </div>
                                 </div>
@@ -1006,11 +1001,11 @@
 
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div class="rounded-xl border border-border bg-card p-4 shadow-xs">
-                                    <p class="text-sm text-muted-foreground">Referred Users</p>
+                                    <p class="text-sm text-muted-foreground">{t("dashboard.account.referrals.referredUsers")}</p>
                                     <p class="mt-1 text-3xl font-medium text-foreground">{data.referredPeople || 0}</p>
                                 </div>
                                 <div class="rounded-xl border border-border bg-card p-4 shadow-xs">
-                                    <p class="text-sm text-muted-foreground">Bonus Domains Earned</p>
+                                    <p class="text-sm text-muted-foreground">{t("dashboard.account.referrals.bonusEarned")}</p>
                                     <p class="mt-1 text-3xl font-medium text-foreground">{bonusDomainsEarned} / 5</p>
                                 </div>
                             </div>
@@ -1018,7 +1013,7 @@
                             {#if data.referralCode}
                                 {@const link = `${window.origin}/login?ref=${data.referralCode}`}
                                 <div class="space-y-3">
-                                    <Label class="text-sm font-semibold">Your Referral Link</Label>
+                                    <Label class="text-sm font-semibold">{t("dashboard.account.referrals.yourLink")}</Label>
                                     <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
                                         <div class="flex-1 rounded-lg border border-border bg-muted/40 px-3.5 py-2.5 font-mono text-xs sm:text-sm break-all select-all">
                                             {link}
@@ -1026,19 +1021,19 @@
                                         <Button
                                             onclick={() => {
                                                 copy(link);
-                                                toast.success("Referral link copied to clipboard!");
+                                                toast.success(t("dashboard.account.referrals.copiedLink"));
                                             }}
                                             class="gap-1.5 shrink-0">
                                             <MaterialSymbolsContentCopy class="size-4" />
-                                            Copy Link
+                                            {t("dashboard.account.referrals.copyLink")}
                                         </Button>
                                     </div>
                                 </div>
                             {:else}
                                 <div class="space-y-4">
                                     <div class="space-y-2">
-                                        <Label for="referral" class="text-sm font-semibold">Choose Your Custom Referral Code</Label>
-                                        <p class="text-xs text-muted-foreground leading-normal">Only letters, numbers, and dashes (3 to 50 characters).</p>
+                                        <Label for="referral" class="text-sm font-semibold">{t("dashboard.account.referrals.customCodeTitle")}</Label>
+                                        <p class="text-xs text-muted-foreground leading-normal">{t("dashboard.account.referrals.customCodeHint")}</p>
                                         <Input
                                             disabled={referralCreating}
                                             bind:value={referralCode}
@@ -1046,7 +1041,7 @@
                                             aria-invalid={referralInvalid}
                                             class="max-w-md font-mono"
                                             id="referral"
-                                            placeholder="my-cool-link" />
+                                            placeholder={t("dashboard.account.referrals.placeholder")} />
                                     </div>
                                     <Button
                                         onclick={async () => {
@@ -1057,11 +1052,11 @@
                                             } catch (err) {
                                                 if (showRateLimitError(err)) return;
                                                 if (err instanceof UserError || err instanceof TypeError) {
-                                                    alertTitle = "An unhandled error occurred.";
-                                                    alertDescription = "Please contact support if this error persists.";
+                                                    alertTitle = t("errors.general.unhandledTitle");
+                                                    alertDescription = t("errors.general.contactSupport");
                                                 } else if (err instanceof CodeError) {
-                                                    alertTitle = "Failed to create a referral code";
-                                                    alertDescription = "Referral code already exists!";
+                                                    alertTitle = t("dashboard.account.referrals.createFailed");
+                                                    alertDescription = t("dashboard.account.referrals.codeExists");
                                                 }
                                                 alertTrigger++;
                                             } finally {
@@ -1070,7 +1065,7 @@
                                         }}
                                         loading={referralCreating}
                                         disabled={referralInvalid || !referralCode}>
-                                        Create Referral Link
+                                        {t("dashboard.account.referrals.createButton")}
                                     </Button>
                                 </div>
                             {/if}

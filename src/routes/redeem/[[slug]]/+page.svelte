@@ -1,6 +1,7 @@
 <script lang="ts">
     import { browser } from "$app/environment";
     import { AuthError, getAuthToken, redirectToLogin, ServerContactor } from "$lib";
+    import { t } from "$lib/i18n";
     import Holder from "$lib/components/Holder.svelte";
     import Button from "$lib/components/ui/button/button.svelte";
     import { IconBadge } from "$lib/components/ui/icon-badge";
@@ -67,8 +68,8 @@
         {#if loading || success === undefined && !inputRequired}
             <div class="flex flex-col items-center justify-center py-8 text-center space-y-4">
                 <Loader asForeground={true} />
-                <h1 class="text-2xl font-bold tracking-tight">Activating perk...</h1>
-                <p class="text-muted-foreground text-sm">Please wait while we verify your activation code.</p>
+                <h1 class="text-2xl font-bold tracking-tight">{t("dashboard.redemption.activating")}</h1>
+                <p class="text-muted-foreground text-sm">{t("dashboard.redemption.activatingDesc")}</p>
             </div>
         {:else if success === true}
             <div class="flex flex-col items-center justify-center py-8 text-center space-y-4 relative">
@@ -83,33 +84,33 @@
                 <IconBadge variant="primary" size="xl" shape="circle">
                     <MaterialSymbolsCheckCircle class="size-8" />
                 </IconBadge>
-                <h1 class="text-2xl font-bold tracking-tight">Successfully activated!</h1>
-                <p class="text-muted-foreground text-sm">Thank you for your support. Your perks are now active on your account.</p>
+                <h1 class="text-2xl font-bold tracking-tight">{t("dashboard.redemption.successTitle")}</h1>
+                <p class="text-muted-foreground text-sm">{t("dashboard.redemption.successDesc")}</p>
                 <div class="pt-2">
-                    <Button href="/dashboard">Go to Dashboard</Button>
+                    <Button href="/dashboard">{t("dashboard.redemption.goToDashboard")}</Button>
                 </div>
             </div>
         {:else}
             <div class="space-y-6">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight">Service Activation</h1>
-                    <p class="text-muted-foreground text-sm">Enter your activation code below to claim perks or domain upgrades.</p>
+                    <h1 class="text-2xl font-bold tracking-tight">{t("dashboard.redemption.title")}</h1>
+                    <p class="text-muted-foreground text-sm">{t("dashboard.redemption.lead")}</p>
                 </div>
 
                 {#if success === false}
                     <InlineAlert
                         variant="error"
-                        title="Activation failed"
-                        description="The code may be invalid, expired, or already redeemed. If you believe this is a mistake, please reach out to support." />
+                        title={t("dashboard.redemption.failedTitle")}
+                        description={t("dashboard.redemption.failedDesc")} />
                 {/if}
 
                 <form onsubmit={(e) => { e.preventDefault(); redeem(inputValue); }} class="space-y-4">
                     <div class="space-y-2">
-                        <Label for="redeem-code">Activation code</Label>
+                        <Label for="redeem-code">{t("dashboard.redemption.codeLabel")}</Label>
                         <Input
                             id="redeem-code"
                             bind:value={inputValue}
-                            placeholder="Enter your code..."
+                            placeholder={t("dashboard.redemption.codePlaceholder")}
                             autocomplete="off"
                             autocorrect="off"
                             autocapitalize="none"
@@ -121,9 +122,9 @@
                         <Button
                             type="submit"
                             disabled={loading || !inputValue.trim()}>
-                            {loading ? "Activating..." : "Activate"}
+                            {loading ? t("dashboard.redemption.submitting") : t("dashboard.redemption.submit")}
                         </Button>
-                        <Button variant="ghost" href="mailto:support@eepy.page">Contact Support</Button>
+                        <Button variant="ghost" href="mailto:support@eepy.page">{t("dashboard.redemption.contactSupport")}</Button>
                     </div>
                 </form>
             </div>

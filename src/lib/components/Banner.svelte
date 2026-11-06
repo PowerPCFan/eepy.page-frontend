@@ -1,5 +1,6 @@
 <script lang="ts">
     import { browser } from "$app/environment";
+    import { t } from "$lib/i18n";
     import consola from "consola";
     import MaterialSymbolsInfo from "~icons/material-symbols/info";
     import MaterialSymbolsClose from "~icons/material-symbols/close";
@@ -15,7 +16,7 @@
         .catch(err => {
             consola.error(err);
             danger = true;
-            message = "We are experiencing server difficulties.";
+            message = t("common.banner.serverDifficulties");
             return;
         })
         .then(status => {
@@ -59,7 +60,7 @@
 
         <button
             type="button"
-            aria-label="Dismiss banner"
+            aria-label={t("common.banner.dismiss")}
             onclick={setHidden}
             class="flex size-8 shrink-0 items-center justify-center rounded-md hover:bg-black/10 active:scale-95 transition-transform cursor-pointer">
             <MaterialSymbolsClose class="size-4" />

@@ -10,6 +10,7 @@
     import MaterialSymbolsQuestionMark from "~icons/material-symbols/quiz-outline";
     import MaterialSymbolsArrowForward from "~icons/material-symbols/arrow-forward";
     import Codeblock from "$lib/components/ui/codeblock/codeblock.svelte";
+    import { t } from "$lib/i18n";
 </script>
 
 <svelte:head>
@@ -33,7 +34,7 @@
 
 <div class="mx-auto w-11/12 max-w-6xl py-8 sm:py-12">
     <div class="mb-8 max-w-2xl">
-        <h1 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">eepy.page support center</h1>
+        <h1 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">{t("support.center.title")}</h1>
     </div>
 
     <div class="mb-8 rounded-2xl border border-primary/20 bg-primary/5 p-6 sm:p-8 backdrop-blur-sm">
@@ -43,15 +44,15 @@
                     <MaterialSymbolsQuestionMark class="size-6" />
                 </IconBadge>
                 <div class="space-y-1">
-                    <h2 class="text-lg font-semibold text-foreground">Have a question? Check the FAQ first</h2>
+                    <h2 class="text-lg font-semibold text-foreground">{t("support.center.faqPrompt")}</h2>
                     <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed max-w-xl">
-                        Most common questions about eepy.page are answered in our FAQ. However, don't be afraid to reach out if you have a more specific issue that's not covered!
+                        {t("support.center.faqDesc")}
                     </p>
                 </div>
             </div>
             <div class="shrink-0 pt-2 sm:pt-0">
                 <Button href="/faq" class="w-full sm:w-auto">
-                    <span>Browse FAQ</span>
+                    <span>{t("support.center.browseFaq")}</span>
                     <MaterialSymbolsArrowForward class="size-4" />
                 </Button>
             </div>
@@ -64,7 +65,7 @@
                 <IconBadge variant="primary" size="md">
                     <MaterialSymbolsMail class="size-5" />
                 </IconBadge>
-                <h3 class="text-lg font-semibold text-foreground">General Inquiries</h3>
+                <h3 class="text-lg font-semibold text-foreground">{t("support.center.generalTitle")}</h3>
                 <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
                     Have questions regarding your account, DNS setup, or custom domains?
                     Reach out directly via email at <Codeblock variant="inline" class="px-px text-inherit" text="support@eepy.page" />.
@@ -73,7 +74,7 @@
             <div class="pt-4 border-t border-border">
                 <Button variant="secondary" class="w-full" href="mailto:support@eepy.page">
                     <MaterialSymbolsMail class="size-4" />
-                    Email Support
+                    {t("support.center.emailSupport")}
                 </Button>
             </div>
         </div>
@@ -83,15 +84,15 @@
                 <IconBadge variant="primary" size="md">
                     <MaterialSymbolsShield class="size-5" />
                 </IconBadge>
-                <h3 class="text-lg font-semibold text-foreground">Security & Abuse</h3>
+                <h3 class="text-lg font-semibold text-foreground">{t("support.center.securityTitle")}</h3>
                 <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                    Need to report any malicious subdomains, phishing, malware, or security vulnerabilities? Use our Report Hub.
+                    {t("support.center.securityDesc")}
                 </p>
             </div>
             <div class="mt-6 pt-4 border-t border-border">
                 <Button variant="secondary" class="w-full" href="/report">
                     <MaterialSymbolsShield class="size-4" />
-                    Visit Report Hub
+                    {t("support.center.visitReportHub")}
                 </Button>
             </div>
         </div>
@@ -101,15 +102,15 @@
                 <IconBadge variant="primary" size="md">
                     <MaterialSymbolsBugReport class="size-5" />
                 </IconBadge>
-                <h3 class="text-lg font-semibold text-foreground">Software Bugs & Feature Requests</h3>
+                <h3 class="text-lg font-semibold text-foreground">{t("support.center.bugsTitle")}</h3>
                 <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                    Want to report UI glitches, request features, suggest improvements, or report other bugs? Open a GitHub issue via our Report Hub!
+                    {t("support.center.bugsDesc")}
                 </p>
             </div>
             <div class="mt-6 pt-4 border-t border-border">
                 <Button variant="secondary" class="w-full" href="/report">
                     <MaterialSymbolsBugReport class="size-4" />
-                    Visit Report Hub
+                    {t("support.center.visitReportHub")}
                 </Button>
             </div>
         </div>
@@ -117,31 +118,31 @@
         <div class="border-border bg-card/75 flex flex-col justify-between rounded-2xl border p-6 backdrop-blur-sm transition-all shadow-xs col-span-3">
             <div class="space-y-6">
                 <div>
-                    <h3 class="text-lg font-semibold text-foreground">Terms & Privacy Policy</h3>
+                    <h3 class="text-lg font-semibold text-foreground">{t("support.center.termsPrivacyTitle")}</h3>
                     <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                        Review our terms of service and privacy policy to understand our rules and policies.
+                        {t("support.center.termsPrivacyDesc")}
                     </p>
                     <div class="flex flex-wrap gap-3 pt-2">
                         <Button variant="ghost" size="sm" href="/terms">
                             <MaterialSymbolsGavel class="size-4" />
-                            Terms of Service
+                            {t("support.center.termsButton")}
                         </Button>
                         <Button variant="ghost" size="sm" href="/privacy">
                             <MaterialSymbolsLock class="size-4" />
-                            Privacy Policy
+                            {t("support.center.privacyButton")}
                         </Button>
                     </div>
                 </div>
 
                 <div>
-                    <h3 class="text-lg font-semibold text-foreground">Diagnostic Info</h3>
+                    <h3 class="text-lg font-semibold text-foreground">{t("support.center.diagTitle")}</h3>
                     <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                        View diagnostic information about your setup. We would appreciate if you include this information when submitting bug reports!
+                        {t("support.center.diagDesc")}
                     </p>
                     <div class="flex flex-wrap gap-3 pt-2">
                         <Button variant="ghost" size="sm" href="/support/info">
                             <MaterialSymbolsInfo class="size-4" />
-                            View Diagnostics
+                            {t("support.center.diagButton")}
                         </Button>
                     </div>
                 </div>

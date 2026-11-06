@@ -2,3 +2,4 @@
 
 export * from "../helperFuncs";
 export * from "../serverContactor";
+export * from "./i18n";

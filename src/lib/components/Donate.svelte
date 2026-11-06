@@ -2,6 +2,7 @@
     import Button from "$lib/components/ui/button/button.svelte";
     import { IconBadge } from "$lib/components/ui/icon-badge";
     import { CONSENT_COOKIE_NAME } from "$lib/consent";
+    import { t } from "$lib/i18n";
     import MaterialSymbolsHeart from "~icons/material-symbols/favorite-rounded";
     import MaterialSymbolsOpenInNew from "~icons/material-symbols/open-in-new";
     import { onMount } from "svelte";
@@ -44,7 +45,7 @@
 {#if showDonationBanner && !localSponsorHidden}
     <aside
         transition:slide={{ duration: 200 }}
-        aria-label="Donation appeal"
+        aria-label={t("common.donate.ariaLabel")}
         class="border-border/60 bg-card/75 border-b backdrop-blur-md px-4 py-4 sm:px-8">
         <div class="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div class="flex items-start gap-3.5 min-w-0">
@@ -52,16 +53,16 @@
                     <MaterialSymbolsHeart class="size-5" />
                 </IconBadge>
                 <div class="min-w-0 text-sm">
-                    <h2 class="text-foreground font-semibold">Support eepy.page</h2>
+                    <h2 class="text-foreground font-semibold">{t("common.donate.title")}</h2>
                     <p class="text-muted-foreground mt-0.5 text-xs sm:text-sm leading-relaxed">
-                        eepy.page is a free community service. We rely on donations to keep servers running and domains active.
+                        {t("common.donate.description")}
                     </p>
                     <a
                         href="https://ko-fi.com/powerpcfan"
                         target="_blank"
                         rel="noreferrer"
                         class="text-primary hover:underline inline-flex items-center gap-1 mt-1 text-xs font-medium">
-                        <span>Donate on Ko-fi</span>
+                        <span>{t("common.donate.kofi")}</span>
                         <MaterialSymbolsOpenInNew class="size-3" />
                     </a>
                 </div>
@@ -74,14 +75,14 @@
                     onclick={() => {
                         localSponsorHidden = true;
                         localStorage.setItem("already-donated", Date.now().toString());
-                    }}>I already donated</Button>
+                    }}>{t("common.donate.alreadyDonated")}</Button>
                 <Button
                     size="sm"
                     variant="secondary"
                     onclick={() => {
                         localSponsorHidden = true;
                         localStorage.setItem("donation-dismissed", Date.now().toString());
-                    }}>Remind me later</Button>
+                    }}>{t("common.donate.remindLater")}</Button>
             </div>
         </div>
     </aside>

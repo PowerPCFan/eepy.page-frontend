@@ -367,6 +367,9 @@ export async function login(
         }
     }
 
+    if (!data) {
+        throw new Error("No response data received from server.");
+    }
     return data;
 }
 
@@ -411,6 +414,9 @@ export async function register(
         }
     }
 
+    if (!data) {
+        throw new Error("No response data received from server.");
+    }
     return data;
 }
 
@@ -423,6 +429,9 @@ export async function getStatus(): Promise<
         throw new Error(`Failed to get status.`);
     }
 
+    if (!data) {
+        throw new Error("No response data received from server.");
+    }
     return data;
 }
 
@@ -448,6 +457,9 @@ export async function sendForgotCode(
         }
     }
 
+    if (!data) {
+        throw new Error("No response data received from server.");
+    }
     return data;
 }
 
@@ -474,6 +486,9 @@ export async function confirmPasswordChange(
         }
     }
 
+    if (!data) {
+        throw new Error("No response data received from server.");
+    }
     return data;
 }
 
@@ -497,6 +512,9 @@ export async function resendEmail(
         }
     }
 
+    if (!data) {
+        throw new Error("No response data received from server.");
+    }
     return data;
 }
 
@@ -518,6 +536,9 @@ export async function verifyEmail(
                 throw new Error(`Failed to verify. Status code: ${response.status}`);
         }
     }
+    if (!data) {
+        throw new Error("No response data received from server.");
+    }
     return data;
 }
 
@@ -538,6 +559,9 @@ export async function verifyDeletion(
             default:
                 throw new Error(`Failed to delete. Status code: ${response.status}`);
         }
+    }
+    if (!data) {
+        throw new Error("No response data received from server.");
     }
     return data;
 }
@@ -570,6 +594,9 @@ export async function recoverMfaCode(username: string, password: string, backupC
         }
     }
 
+    if (!data) {
+        throw new Error("No response data received from server.");
+    }
     return data;
 }
 
@@ -624,7 +651,10 @@ export class ServerContactor {
                     throw new Error(`Failed to modify domain. Status code: ${response.status}`);
             }
         }
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async registerDomain(domain: string, type: string): Promise<string[]> {
@@ -700,7 +730,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async deleteAccount(
@@ -724,7 +757,10 @@ export class ServerContactor {
             throw new Error(`Failed to delete account. Status code: ${response.status}`);
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async getAccountSettings(): Promise<
@@ -746,7 +782,10 @@ export class ServerContactor {
             throw new Error(`Failed to get account details. Status code: ${response.status}`);
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async getGDPR(): Promise<
@@ -764,7 +803,10 @@ export class ServerContactor {
             );
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async createInvite(): Promise<
@@ -789,7 +831,10 @@ export class ServerContactor {
         }
 
         //@ts-ignore
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async getDomains(): Promise<
@@ -813,7 +858,10 @@ export class ServerContactor {
         }
 
         //@ts-ignore
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async logOut(id?: string | undefined): Promise<void> {
@@ -897,7 +945,10 @@ export class ServerContactor {
             throw new Error("Failed to get api keys");
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async getApiKey(hash: string) {
@@ -922,7 +973,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async deleteApiKey(hash: string) {
@@ -947,7 +1001,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async createApiKey(
@@ -987,7 +1044,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async createMfaCode() {
@@ -1011,7 +1071,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async verifyMfaCode(code: string) {
@@ -1038,7 +1101,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async deleteMfaCode(code?: string, backupCode?: string) {
@@ -1064,7 +1130,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async findById(id: string) {
@@ -1093,7 +1162,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async findByUsername(username: string) {
@@ -1122,7 +1194,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async findByIps(
@@ -1153,6 +1228,9 @@ export class ServerContactor {
             }
         }
 
+        if (!data) {
+            throw new Error("No response data received from server.");
+        }
         // @ts-ignore
         return data;
     }
@@ -1183,7 +1261,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async findByReferral(referral: string) {
@@ -1212,7 +1293,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async findByEmail(email: string) {
@@ -1241,7 +1325,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async deleteAccountAdmin(account: string, reasons: string[]) {
@@ -1274,7 +1361,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async reinstateAccount(account: string) {
@@ -1307,7 +1397,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async updatePermission(account: string, permission: string, value: string | boolean | number) {
@@ -1338,7 +1431,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async addTld(account: string, tld: string) {
@@ -1366,7 +1462,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async removeTld(account: string, tld: string) {
@@ -1394,7 +1493,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async verify(account: string) {
@@ -1421,7 +1523,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async adminDeleteDomain(account: string, domain: string, type: string, reason: string) {
@@ -1454,7 +1559,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async canUseAdminPanel() {
@@ -1503,7 +1611,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async getWrapped() {
@@ -1528,7 +1639,10 @@ export class ServerContactor {
             }
         }
 
-        return data;
+        if (!data) {
+        throw new Error("No response data received from server.");
+    }
+    return data;
     }
 
     async serveoTunnels(): Promise<ServeoTunnelsResponse> {

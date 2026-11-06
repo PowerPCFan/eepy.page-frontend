@@ -5,6 +5,7 @@
     import Header from "$lib/components/Header.svelte";
     import { Toaster } from "$lib/components/ui/sonner";
     import "$lib/nprogress.css";
+    import { initClientLocale, t } from "$lib/i18n";
     import { sidebarOpen } from "$lib/store";
     import consola from "consola";
     import NProgress from "nprogress";
@@ -21,6 +22,11 @@
     import Donate from "$lib/components/Donate.svelte";
 
     let { children, data } = $props();
+    $effect(() => {
+        if (data?.locale) {
+            initClientLocale(data.locale);
+        }
+    });
     let innerWidth = $state(0);
     let navigationTrigger = $state(0);
 
@@ -104,13 +110,13 @@
 <Toaster />
 
 <Header>
-    {@render navbarLink(MSHomeRounded, "/", "Home")}
-    {@render navbarLink(MSTeamDashboard, "/dashboard", "Dashboard", false)}
-    {@render navbarLink(MSArrowSplit, "/dashboard/tunneling", "Tunneling", false)}
-    {@render navbarLink(MSAccountCircle, "/account/manage", "Account", false)}
-    {@render navbarLink(MSFlagRounded, "/report", "Report")}
-    {@render navbarLink(MSHelp, "/support", "Support")}
-    {@render navbarLink(MSMenuBook, "https://docs.eepy.page/", "Docs", false)}
+    {@render navbarLink(MSHomeRounded, "/", t("common.nav.home"))}
+    {@render navbarLink(MSTeamDashboard, "/dashboard", t("common.nav.dashboard"), false)}
+    {@render navbarLink(MSArrowSplit, "/dashboard/tunneling", t("common.nav.tunneling"), false)}
+    {@render navbarLink(MSAccountCircle, "/account/manage", t("common.nav.account"), false)}
+    {@render navbarLink(MSFlagRounded, "/report", t("common.nav.report"))}
+    {@render navbarLink(MSHelp, "/support", t("common.nav.support"))}
+    {@render navbarLink(MSMenuBook, "https://docs.eepy.page/", t("common.nav.docs"), false)}
 </Header>
 
 <Banner />

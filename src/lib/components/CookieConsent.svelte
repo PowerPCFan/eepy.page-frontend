@@ -2,6 +2,7 @@
     import { afterNavigate } from "$app/navigation";
     import { browser, dev } from "$app/environment";
     import { CONSENT_CATEGORIES, CONSENT_COOKIE_NAME, hasConsentCategory } from "$lib/consent";
+    import { t, getLocale } from "$lib/i18n";
     import { injectSpeedInsights } from "@vercel/speed-insights/sveltekit";
     import { onMount } from "svelte";
     import * as CookieConsent from "vanilla-cookieconsent";
@@ -137,74 +138,72 @@
                 translations: {
                     en: {
                         consentModal: {
-                            title: "Cookies and privacy settings",
-                            description: "eepy.page uses cookies for login, security, storage, and site behavior. Some cookies are optional, and are used to enhance performance and provide analytics. You can manage your cookie preferences below.",
-                            acceptAllBtn: "Accept all",
-                            acceptNecessaryBtn: "Decline optional",
-                            showPreferencesBtn: "Manage settings",
+                            title: t("common.cookieConsent.modal.title"),
+                            description: t("common.cookieConsent.modal.description"),
+                            acceptAllBtn: t("common.cookieConsent.modal.acceptAllBtn"),
+                            acceptNecessaryBtn: t("common.cookieConsent.modal.acceptNecessaryBtn"),
+                            showPreferencesBtn: t("common.cookieConsent.modal.showPreferencesBtn"),
                             footer: '<a href="/privacy">Privacy Policy</a>',
                         },
                         preferencesModal: {
-                            title: "Cookie preferences",
-                            acceptAllBtn: "Accept all",
-                            acceptNecessaryBtn: "Decline optional",
-                            savePreferencesBtn: "Save settings",
-                            closeIconLabel: "Close settings",
-                            serviceCounterLabel: "service|services",
+                            title: t("common.cookieConsent.preferences.title"),
+                            acceptAllBtn: t("common.cookieConsent.preferences.acceptAllBtn"),
+                            acceptNecessaryBtn: t("common.cookieConsent.preferences.acceptNecessaryBtn"),
+                            savePreferencesBtn: t("common.cookieConsent.preferences.savePreferencesBtn"),
+                            closeIconLabel: t("common.cookieConsent.preferences.closeIconLabel"),
+                            serviceCounterLabel: t("common.cookieConsent.preferences.serviceCounterLabel"),
                             sections: [
                                 {
-                                    title: "Necessary",
-                                    description:
-                                        "Required for the proper operation of eepy.page. These cannot be disabled.",
+                                    title: t("common.cookieConsent.preferences.necessaryTitle"),
+                                    description: t("common.cookieConsent.preferences.necessaryDesc"),
                                     linkedCategory: "necessary",
                                     cookieTable: {
                                         headers: {
-                                            name: "Name",
-                                            domain: "Provider",
-                                            description: "Purpose",
+                                            name: t("common.cookieConsent.preferences.headers.name"),
+                                            domain: t("common.cookieConsent.preferences.headers.domain"),
+                                            description: t("common.cookieConsent.preferences.headers.description"),
                                         },
                                         body: [
                                             {
-                                                name: "eepy.page required cookies/storage",
+                                                name: t("common.cookieConsent.preferences.cookies.eepyName"),
                                                 domain: "eepy.page",
-                                                description: "Authentication, state (login), abuse-prevention tokens, setting storage (cookie consent, theme, dismissed notices/prompts, other site behavior)",
+                                                description: t("common.cookieConsent.preferences.cookies.eepyDesc"),
                                             },
                                             {
-                                                name: "Sentry",
+                                                name: t("common.cookieConsent.preferences.cookies.sentryName"),
                                                 domain: "sentry.io",
-                                                description: "Frontend error monitoring/logging, necessary for debugging and service reliability",
+                                                description: t("common.cookieConsent.preferences.cookies.sentryDesc"),
                                             },
                                         ],
                                     },
                                 },
                                 {
-                                    title: "Analytics",
-                                    description:
-                                        "Analytics gather information such as page views, feature usage, and site performance, allowing us to improve our service where it is needed the most.",
+                                    title: t("common.cookieConsent.preferences.analyticsTitle"),
+                                    description: t("common.cookieConsent.preferences.analyticsDesc"),
                                     linkedCategory: "analytics",
                                     cookieTable: {
                                         headers: {
-                                            name: "Name",
-                                            domain: "Provider",
-                                            description: "Purpose",
+                                            name: t("common.cookieConsent.preferences.headers.name"),
+                                            domain: t("common.cookieConsent.preferences.headers.domain"),
+                                            description: t("common.cookieConsent.preferences.headers.description"),
                                         },
                                         body: [
                                             {
-                                                name: "Google Analytics cookies",
+                                                name: t("common.cookieConsent.preferences.cookies.gaName"),
                                                 domain: "Google Analytics",
-                                                description: "Measures website usage and statistics as you interact with the site",
+                                                description: t("common.cookieConsent.preferences.cookies.gaDesc"),
                                             },
                                             {
-                                                name: "Vercel Speed Insights",
+                                                name: t("common.cookieConsent.preferences.cookies.speedInsightsName"),
                                                 domain: "Vercel",
-                                                description: "Measures performance of the frontend site",
+                                                description: t("common.cookieConsent.preferences.cookies.speedInsightsDesc"),
                                             },
                                         ],
                                     },
                                 },
                                 {
-                                    title: "Cookie settings",
-                                    description: "You can change these settings at any time by clicking the cookie icon in the bottom left corner of the page.",
+                                    title: t("common.cookieConsent.preferences.settingsTitle"),
+                                    description: t("common.cookieConsent.preferences.settingsDesc"),
                                 },
                             ],
                         },
@@ -222,9 +221,9 @@
 </script>
 
 <button
-    aria-label="Cookie settings"
+    aria-label={t("common.cookieConsent.buttonLabel")}
     class="cookie-settings sentry-unmask"
-    title="Cookie settings"
+    title={t("common.cookieConsent.buttonTitle")}
     type="button"
     onclick={openCookiePreferences}>
     <MaterialSymbolsCookie aria-hidden="true" />

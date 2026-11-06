@@ -1,5 +1,6 @@
 <script lang="ts">
     import { getAuthToken } from "$lib";
+    import { t } from "$lib/i18n";
     import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
     import { Badge } from "$lib/components/ui/badge/index.js";
     import Button from "$lib/components/ui/button/button.svelte";
@@ -464,8 +465,8 @@
         let newDesc = null;
 
         if (isEepy) {
-            newTitle = 'Please remove the ".eepy.page" suffix.';
-            newDesc = 'eepy.page automatically adds the ".eepy.page" portion of your domain';
+            newTitle = t("dashboard.notes.removeSuffixTitle");
+            newDesc = t("dashboard.notes.removeSuffixDesc");
         }
 
         const changed = registerNoteTitle !== newTitle || registerNoteDescription !== newDesc;
@@ -488,8 +489,8 @@
 </svelte:head>
 
 <div class="domain-holder bg-card/90 backdrop-blur-md border border-border/70 shadow-sm max-w-8xl sentry-unmask mt-8 mr-auto ml-auto w-11/12 rounded-2xl p-6 sm:p-8">
-    <h1 class="text-3xl font-semibold tracking-tight">Your domains</h1>
-    <p class="mb-4 text-muted-foreground">These are all of your domains. Click "Edit" on any domain to modify its record type or target values.</p>
+    <h1 class="text-3xl font-semibold tracking-tight">{t("dashboard.yourDomains")}</h1>
+    <p class="mb-4 text-muted-foreground">{t("dashboard.yourDomainsDesc")}</p>
 
     <InlineAlert
         variant={"error"}
@@ -500,18 +501,18 @@
 
     {#if domainsLoaded && domains.length === 0}
         <div class="rounded-xl border border-dashed border-border/80 p-8 text-center bg-muted/20">
-            <h2 class="text-xl font-semibold">No domains registered</h2>
-            <p class="text-muted-foreground mt-1 text-sm">You don't have any domains yet.<br>Register one below to get started!</p>
+            <h2 class="text-xl font-semibold">{t("dashboard.emptyTitle")}</h2>
+            <p class="text-muted-foreground mt-1 text-sm">{@html t("dashboard.emptyDesc")}</p>
         </div>
     {:else}
         <div>
             <Table.Root>
                 <Table.TableHeader class="bg-secondary/10">
                     <Table.TableRow class="hover:bg-secondary/0">
-                        <Table.TableHead>Type</Table.TableHead>
-                        <Table.TableHead>Name</Table.TableHead>
-                        <Table.TableHead>Value</Table.TableHead>
-                        <Table.TableHead class="w-24">Action</Table.TableHead>
+                        <Table.TableHead>{t("dashboard.table.headers.type")}</Table.TableHead>
+                        <Table.TableHead>{t("dashboard.table.headers.domain")}</Table.TableHead>
+                        <Table.TableHead>{t("dashboard.table.headers.target")}</Table.TableHead>
+                        <Table.TableHead class="w-24">{t("dashboard.table.headers.actions")}</Table.TableHead>
                     </Table.TableRow>
                 </Table.TableHeader>
                 <Table.TableBody>
@@ -563,7 +564,7 @@
                                         class="h-8 px-3 font-medium text-xs w-full"
                                         disabled={domain.serveoTunnel}
                                         onclick={() => toggleEdit(domain)}>
-                                        {domain.isEditing ? "Close" : "Edit"}
+                                        {domain.isEditing ? t("common.actions.close") : t("dashboard.table.edit")}
                                     </Button>
                                 {:else}
                                     <Skeleton class="h-8 w-full" />
@@ -577,7 +578,7 @@
                                     <div transition:slide={{ duration: 160 }} class="space-y-3">
                                         <div class="flex flex-col md:flex-row gap-3 items-start">
                                             <div class="w-full md:w-32 shrink-0 space-y-1">
-                                                <Label class="text-xs text-muted-foreground font-medium">Record Type</Label>
+                                                <Label class="text-xs text-muted-foreground font-medium">{t("dashboard.recordType")}</Label>
                                                 <Select.Root
                                                     type="single"
                                                     name="domain"
@@ -593,7 +594,7 @@
                                             </div>
 
                                             <div class="w-full flex-1 space-y-1">
-                                                <Label class="text-xs text-muted-foreground font-medium">Record Values</Label>
+                                                <Label class="text-xs text-muted-foreground font-medium">{t("dashboard.recordValues")}</Label>
                                                 <div class="space-y-1.5">
                                                     {#if domain.draftValues}
                                                         {#each domain.draftValues as _, i}
@@ -609,13 +610,13 @@
                                                                             class="text-base hover:brightness-125 font-semibold w-1/2 min-w-0 rounded-none px-0 transition-all!"
                                                                             onclick={() => addDraftValue(domain)}
                                                                             variant="secondary"
-                                                                            title="Add record">+</Button>
+                                                                            title={t("dashboard.addRecord")}>+</Button>
                                                                         <Button
                                                                             class="text-base font-semibold bg-destructive/65 text-white hover:bg-destructive/90 w-1/2 min-w-0 rounded-l-none px-0 transition-all!"
                                                                             onclick={() => removeDraftValue(domain, i)}
                                                                             disabled={domain.draftValues.length <= 1}
                                                                             variant="ghost"
-                                                                            title="Remove record">–</Button>
+                                                                            title={t("dashboard.removeRecord")}>–</Button>
                                                                     </div>
                                                                 {/if}
                                                             </div>
@@ -630,7 +631,7 @@
                                                 <Tooltip.Provider>
                                                     <Tooltip.Root>
                                                         <Tooltip.Trigger class="cursor-not-allowed">
-                                                            <Button size="sm" disabled={true} variant="destructive">Delete</Button>
+                                                            <Button size="sm" disabled={true} variant="destructive">{t("common.actions.delete")}</Button>
                                                         </Tooltip.Trigger>
                                                         <Tooltip.Content class="max-w-xs text-xs">
                                                             Delete the {domain.name.startsWith("_serveo") ? domain.name.replaceAll("_serveo-authkey.", "") : domain.name}.eepy.page tunnel first to remove this domain
@@ -640,24 +641,24 @@
                                             {:else}
                                                 <AlertDialog.Root bind:open={domain.dialogOpen}>
                                                     <AlertDialog.Trigger>
-                                                        <Button size="sm" variant="destructive">Delete</Button>
+                                                        <Button size="sm" variant="destructive">{t("common.actions.delete")}</Button>
                                                     </AlertDialog.Trigger>
                                                     <AlertDialog.Content>
                                                         <AlertDialog.Header>
-                                                            <AlertDialog.Title>Delete {domain.domain}?</AlertDialog.Title>
+                                                            <AlertDialog.Title>{t("dashboard.dialogs.delete.title", { domain: domain.domain })}</AlertDialog.Title>
                                                             <AlertDialog.Description>
-                                                                This will permanently delete this {domain.type} record. This action cannot be undone.
+                                                                {t("dashboard.dialogs.delete.description")}
                                                             </AlertDialog.Description>
                                                         </AlertDialog.Header>
                                                         <AlertDialog.Footer>
-                                                            <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+                                                            <AlertDialog.Cancel>{t("dashboard.dialogs.delete.cancel")}</AlertDialog.Cancel>
                                                             <AlertDialog.Action
                                                                 class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                                                 onclick={_ => {
                                                                     domain.deletionLoading = true;
                                                                     deleteDomain(domain.domain, domain.type, domain);
                                                                 }}>
-                                                                Delete
+                                                                {t("dashboard.dialogs.delete.confirm")}
                                                             </AlertDialog.Action>
                                                         </AlertDialog.Footer>
                                                     </AlertDialog.Content>
@@ -669,22 +670,22 @@
                                                     <AlertDialog.Root bind:open={domain.discardDialogOpen}>
                                                         <AlertDialog.Trigger>
                                                             <Button variant="destructive" class="w-20" size="sm">
-                                                                Discard
+                                                                {t("dashboard.discard")}
                                                             </Button>
                                                         </AlertDialog.Trigger>
                                                         <AlertDialog.Content>
                                                             <AlertDialog.Header>
-                                                                <AlertDialog.Title>Discard unsaved changes?</AlertDialog.Title>
+                                                                <AlertDialog.Title>{t("dashboard.dialogs.discard.title")}</AlertDialog.Title>
                                                                 <AlertDialog.Description>
-                                                                    You have unsaved changes to this record. Discarding will revert the record back to its saved state.
+                                                                    {t("dashboard.dialogs.discard.description")}
                                                                 </AlertDialog.Description>
                                                             </AlertDialog.Header>
                                                             <AlertDialog.Footer>
-                                                                <AlertDialog.Cancel>Keep Editing</AlertDialog.Cancel>
+                                                                <AlertDialog.Cancel>{t("dashboard.keepEditing")}</AlertDialog.Cancel>
                                                                 <AlertDialog.Action
                                                                     class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                                                     onclick={() => cancelEdit(domain)}>
-                                                                    Discard Changes
+                                                                    {t("dashboard.discardChanges")}
                                                                 </AlertDialog.Action>
                                                             </AlertDialog.Footer>
                                                         </AlertDialog.Content>
@@ -695,7 +696,7 @@
                                                         size="sm"
                                                         class="w-20"
                                                         onclick={() => cancelEdit(domain)}>
-                                                        Cancel
+                                                        {t("common.actions.cancel")}
                                                     </Button>
                                                 {/if}
 
@@ -706,7 +707,7 @@
                                                     loading={domain.isLoading}
                                                     onclick={() => saveDomainEdit(domain)}
                                                 >
-                                                    {isDomainDirty(domain) ? "Save Changes" : "All Changes Saved"}
+                                                    {isDomainDirty(domain) ? t("dashboard.saveChanges") : t("dashboard.allChangesSaved")}
                                                 </Button>
                                             </div>
                                         </div>
@@ -722,8 +723,8 @@
 </div>
 
 <div class="registrar bg-card/90 backdrop-blur-md border border-border/70 shadow-sm max-w-8xl sentry-unmask mt-8 mr-auto mb-8 ml-auto w-11/12 rounded-2xl p-6 sm:p-8">
-    <h1 class="text-3xl font-semibold tracking-tight">Register a domain</h1>
-    <p class="mb-4 text-muted-foreground">You can register a new domain here. <em>Tip: Pick something short, memorable, and easy to type.</em></p>
+    <h1 class="text-3xl font-semibold tracking-tight">{t("dashboard.registerTitle")}</h1>
+    <p class="mb-4 text-muted-foreground">{@html t("dashboard.registerDesc")}</p>
     <div class="content flex gap-2 items-center">
         <Select.Root bind:value={newDomainType} type="single" name="domain">
             <Select.Trigger class="w-20 shrink-0 font-mono font-medium">{newDomainType}</Select.Trigger>
@@ -739,7 +740,7 @@
             <Input
                 bind:value={newDomain}
                 class="max-w-2xl min-w-0 rounded-r-none font-mono"
-                placeholder="enter a domain..." />
+                placeholder={t("dashboard.enterDomainPlaceholder")} />
             <Select.Root
                 onValueChange={val => {
                     if (!ownedTlds.includes(val.slice(1))) {
@@ -777,7 +778,7 @@
                 registerDomain(newDomain, newDomainType, newDomainTld);
             }}
             disabled={!newDomain}
-            class="w-28 font-medium">Register</Button>
+            class="w-28 font-medium">{t("dashboard.registerButton")}</Button>
     </div>
 
     <InlineAlert

@@ -30,6 +30,7 @@
         RateLimitError,
         ServerContactor
     } from "../../../serverContactor";
+    import { t } from "$lib/i18n";
 
     interface Domain {
         type: string;
@@ -58,11 +59,11 @@
 
     const Permissions = ["register", "modify", "delete", "list", "userdetails"] as const;
     const PermissionLabels: Record<string, string> = {
-        register: "Register domains",
-        modify: "Modify DNS",
-        delete: "Delete domains",
-        list: "View domains",
-        userdetails: "View account details"
+        register: t("dashboard.api.permissions.register"),
+        modify: t("dashboard.api.permissions.modify"),
+        delete: t("dashboard.api.permissions.delete"),
+        list: t("dashboard.api.permissions.list"),
+        userdetails: t("dashboard.api.permissions.userdetails")
     };
 
     let apiKeys: Key[] = $state([]);
@@ -134,7 +135,7 @@
             if (secret) {
                 await copy(secret);
                 copiedKeyHash = key.hash;
-                toast.success("API key copied to clipboard");
+                toast.success(t("dashboard.api.messages.copied"));
                 setTimeout(() => {
                     if (copiedKeyHash === key.hash) {
                         copiedKeyHash = null;
@@ -142,7 +143,7 @@
                 }, 2000);
             }
         } catch (e) {
-            toast.error("Failed to copy API key");
+            toast.error(t("dashboard.api.messages.copyFailed"));
         }
     }
 
@@ -164,27 +165,27 @@
                 if (error instanceof AuthError) {
                     redirectToLogin(460);
                 }
-                toast.error("Failed to delete API key");
+                toast.error(t("dashboard.api.messages.deleteFailed"));
             })
             .then(data => {
                 key.deletionLoading = false;
                 key.dialogOpen = false;
                 apiKeys = apiKeys.filter(apiKey => apiKey.hash !== key.hash);
-                toast.success("API key deleted");
+                toast.success(t("dashboard.api.messages.deleted"));
             });
     }
 
     async function registerKey() {
         if (!comment.trim()) {
-            toast.error("Please enter a name or description for the key");
+            toast.error(t("dashboard.api.messages.enterName"));
             return;
         }
         if (selectedDomains.length === 0) {
-            toast.error("Please select at least one domain scope");
+            toast.error(t("dashboard.api.messages.selectDomain"));
             return;
         }
         if (selectedPermissions.length === 0) {
-            toast.error("Please select at least one permission");
+            toast.error(t("dashboard.api.messages.selectPermission"));
             return;
         }
 
@@ -197,8 +198,8 @@
                 selectedPermissions
             );
             apiCreationLoading = false;
-            toast.success("API key created", {
-                description: "Refreshing..."
+            toast.success(t("dashboard.api.messages.created"), {
+                description: t("dashboard.api.messages.refreshing")
             });
             window.location.reload();
         } catch (error) {
@@ -209,24 +210,24 @@
                 return;
             }
             if (error instanceof ConflictError) {
-                creationErrorTitle = "API Key Limit Reached";
+                creationErrorTitle = t("dashboard.api.messages.limitReachedTitle");
                 creationErrorDescription =
                     error.message ||
-                    "Only one API key is allowed per account. Please delete your existing key before creating a new one.";
+                    t("dashboard.api.messages.limitReachedDesc");
                 creationAlertUpdate++;
                 return;
             }
             if (error instanceof PermissionError) {
-                creationErrorTitle = "Domain Permission Error";
-                creationErrorDescription = error.message || "You do not own all of the specified domains.";
+                creationErrorTitle = t("dashboard.api.messages.permissionErrorTitle");
+                creationErrorDescription = error.message || t("dashboard.api.messages.permissionErrorDesc");
                 creationAlertUpdate++;
                 return;
             }
-            creationErrorTitle = "Failed to Create API Key";
+            creationErrorTitle = t("dashboard.api.messages.createFailedTitle");
             creationErrorDescription =
                 error instanceof Error && error.message
                     ? error.message
-                    : "An unexpected error occurred.";
+                    : t("errors.general.unhandledTitle");
             creationAlertUpdate++;
         }
     }
@@ -237,29 +238,29 @@
 
     function getKeyValue(key: Key): string {
         if (key.visible) {
-            return key.decrypted || "Loading...";
+            return key.decrypted || t("common.actions.loading");
         }
         return getHiddenDots(key.decrypted);
     }
 
     function getDomainsLabel(selected: string[]): string {
         if (selected.length === 0) {
-            return "Select domains";
+            return t("dashboard.api.labels.selectDomains");
         }
 
         if (selected.includes("*")) {
-            return "All domains (*)";
+            return t("dashboard.api.labels.allDomains");
         }
 
         if (selected.length < 3) {
             return selected.join(", ");
         }
 
-        return `${selected[0]}, ${selected[1]}, +${selected.slice(2).length} more`;
+        return `${selected[0]}, ${selected[1]}, ${t("dashboard.api.labels.moreDomains", { count: selected.slice(2).length })}`;
     }
 
     function getPermissionsLabel(selected: string[]): string {
-        if (selected.length === 0) return "Select permissions";
+        if (selected.length === 0) return t("dashboard.api.labels.selectPermissions");
         return selected.map(p => PermissionLabels[p] || p).join(", ");
     }
 
@@ -346,7 +347,7 @@
 </script>
 
 <svelte:head>
-    <title>API Keys | eepy.page</title>
+    <title>{t("dashboard.api.title")} | eepy.page</title>
 </svelte:head>
 
 <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 space-y-8">
@@ -357,7 +358,7 @@
             size="sm"
             class="gap-1.5 text-muted-foreground hover:text-foreground">
             <MaterialSymbolsArrowBackRounded class="size-4" />
-            Back to Account Settings
+            {t("dashboard.api.backToAccount")}
         </Button>
     </div>
 
@@ -368,9 +369,9 @@
                     <MaterialSymbolsKeyRounded class="size-6" />
                 </IconBadge>
                 <div>
-                    <h1 class="text-3xl font-bold">API Keys</h1>
+                    <h1 class="text-3xl font-bold">{t("dashboard.api.title")}</h1>
                     <p class="text-muted-foreground text-sm">
-                        Manage your eepy.page API keys here!
+                        {t("dashboard.api.subtitle")}
                     </p>
                 </div>
             </div>
@@ -385,7 +386,7 @@
                 variant="default"
                 size="sm"
             >
-                Create API Key
+                {t("dashboard.api.createButton")}
             </Button>
         {/if}
     </div>
@@ -397,7 +398,7 @@
         trigger={pageAlertUpdate} />
 
     <section class="space-y-4">
-        <h2 class="text-lg font-semibold">Your Keys</h2>
+        <h2 class="text-lg font-semibold">{t("dashboard.api.yourKeys")}</h2>
 
         {#if !keysLoaded}
             <div class="space-y-4">
@@ -428,9 +429,9 @@
                         <MaterialSymbolsKeyRounded class="size-7" />
                     </IconBadge>
                     <div class="space-y-1 max-w-md">
-                        <h3 class="text-base font-semibold">No keys</h3>
+                        <h3 class="text-base font-semibold">{t("dashboard.api.emptyTitle")}</h3>
                         <p class="text-muted-foreground text-sm">
-                            You haven't generated any API keys. Create one below to use the eepy.page API in your projects!
+                            {t("dashboard.api.emptyDesc")}
                         </p>
                     </div>
                 </Card.Content>
@@ -463,28 +464,27 @@
                                         size="sm"
                                         class="text-destructive hover:bg-destructive/10 hover:text-destructive gap-1.5">
                                         <MaterialSymbolsDeleteOutlineRounded class="size-4" />
-                                        <span class="hidden sm:inline">Delete</span>
+                                        <span class="hidden sm:inline">{t("common.actions.delete")}</span>
                                     </Button>
                                 </Dialog.Trigger>
                                 <Dialog.Content>
                                     <Dialog.Header>
-                                        <Dialog.Title>Delete API Key?</Dialog.Title>
+                                        <Dialog.Title>{t("dashboard.api.deleteDialog.title")}</Dialog.Title>
                                         <Dialog.Description>
-                                            Are you sure you want to delete <strong class="text-foreground font-semibold">{key.comment || "this key"}</strong>?
-                                            Any applications using this key will immediately lose access.
+                                            {t("dashboard.api.deleteDialog.description", { name: key.comment || "this key" })}
                                         </Dialog.Description>
                                     </Dialog.Header>
                                     <Dialog.Footer class="gap-2 sm:gap-0">
                                         <Button
                                             variant="outline"
                                             onclick={() => (key.dialogOpen = false)}>
-                                            Cancel
+                                            {t("common.actions.cancel")}
                                         </Button>
                                         <Button
                                             onclick={() => deleteKey(key)}
                                             loading={key.deletionLoading}
                                             variant="destructive">
-                                            Delete Key
+                                            {t("dashboard.api.deleteDialog.confirm")}
                                         </Button>
                                     </Dialog.Footer>
                                 </Dialog.Content>
@@ -493,7 +493,7 @@
 
                         <Card.Content class="space-y-4">
                             <div class="space-y-1.5">
-                                <Label class="text-xs font-medium text-muted-foreground">API Key</Label>
+                                <Label class="text-xs font-medium text-muted-foreground">{t("dashboard.api.labels.key")}</Label>
                                 <div class="flex items-center gap-2">
                                     <div class="relative flex-1">
                                         <Input
@@ -535,7 +535,7 @@
                                 <div class="space-y-1.5">
                                     <div class="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                                         <MaterialSymbolsShieldOutline class="size-3.5" />
-                                        <span>Permissions</span>
+                                        <span>{t("dashboard.api.labels.permissions")}</span>
                                     </div>
                                     <div class="flex flex-wrap gap-1.5">
                                         {#if key.perms && key.perms.length > 0}
@@ -546,7 +546,7 @@
                                                 </span>
                                             {/each}
                                         {:else}
-                                            <span class="text-xs text-muted-foreground italic">None</span>
+                                            <span class="text-xs text-muted-foreground italic">{t("dashboard.api.labels.none")}</span>
                                         {/if}
                                     </div>
                                 </div>
@@ -554,17 +554,17 @@
                                 <div class="space-y-1.5">
                                     <div class="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                                         <MaterialSymbolsLanguage class="size-3.5" />
-                                        <span>Domains</span>
+                                        <span>{t("dashboard.api.labels.domains")}</span>
                                     </div>
                                     <div class="flex flex-wrap gap-1.5">
                                         {#if key.domains && key.domains.length > 0}
                                             {#each key.domains as domain}
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-mono font-medium bg-muted text-muted-foreground border border-border/50">
-                                                    {domain === "*" ? "All domains (*)" : domain}
+                                                    {domain === "*" ? t("dashboard.api.labels.allDomains") : domain}
                                                 </span>
                                             {/each}
                                         {:else}
-                                            <span class="text-xs text-muted-foreground italic">None</span>
+                                            <span class="text-xs text-muted-foreground italic">{t("dashboard.api.labels.none")}</span>
                                         {/if}
                                     </div>
                                 </div>
@@ -580,7 +580,7 @@
         <Card.Root>
             <Card.Header>
                 <div class="flex items-center gap-2.5">
-                    <Card.Title class="text-lg font-semibold">Create an API Key</Card.Title>
+                    <Card.Title class="text-lg font-semibold">{t("dashboard.api.createForm.title")}</Card.Title>
                 </div>
             </Card.Header>
 
@@ -592,19 +592,19 @@
                     }}
                     class="space-y-5">
                     <div class="space-y-2">
-                        <Label for="key-comment" class="text-sm font-medium">Name</Label>
+                        <Label for="key-comment" class="text-sm font-medium">{t("dashboard.api.createForm.nameLabel")}</Label>
                         <Input
                             id="key-comment"
-                            placeholder="e.g. My very cool app"
+                            placeholder={t("dashboard.api.createForm.namePlaceholder")}
                             bind:value={comment}
                             class="w-full max-w-xl" />
                         <p class="text-muted-foreground text-xs">
-                            Give your API key a name so you can identify it later. Has no impact on functionality.
+                            {t("dashboard.api.createForm.nameHint")}
                         </p>
                     </div>
 
                     <div class="space-y-2">
-                        <Label class="text-sm font-medium">Domains</Label>
+                        <Label class="text-sm font-medium">{t("dashboard.api.createForm.domainsLabel")}</Label>
                         <div class="w-full max-w-xl">
                             <Select.Root bind:value={selectedDomains} type="multiple">
                                 <Select.Trigger class="w-full">
@@ -613,7 +613,7 @@
                                     </span>
                                 </Select.Trigger>
                                 <Select.Content class="max-h-60 overflow-y-auto">
-                                    <Select.Item value="*">All domains (*)</Select.Item>
+                                    <Select.Item value="*">{t("dashboard.api.labels.allDomains")}</Select.Item>
                                     {#each domains as domain}
                                         <Select.Item value={domain.domain} disabled={selectedDomains.includes('*')}>
                                             {domain.domain}
@@ -623,12 +623,12 @@
                             </Select.Root>
                         </div>
                         <p class="text-muted-foreground text-xs">
-                            Restrict this API key to specific domains
+                            {t("dashboard.api.createForm.domainsHint")}
                         </p>
                     </div>
 
                     <div class="space-y-2">
-                        <Label class="text-sm font-medium">Permissions</Label>
+                        <Label class="text-sm font-medium">{t("dashboard.api.createForm.permissionsLabel")}</Label>
                         <div class="w-full max-w-xl">
                             <Select.Root bind:value={selectedPermissions} type="multiple">
                                 <Select.Trigger class="w-full">
@@ -646,7 +646,7 @@
                             </Select.Root>
                         </div>
                         <p class="text-muted-foreground text-xs">
-                            Select the actions you would like this API key to allow
+                            {t("dashboard.api.createForm.permissionsHint")}
                         </p>
                     </div>
 
@@ -662,7 +662,7 @@
                             type="submit"
                             disabled={!comment.trim() || selectedDomains.length === 0 || selectedPermissions.length === 0}
                             loading={apiCreationLoading}
-                        >Create API Key</Button>
+                        >{t("dashboard.api.createForm.submit")}</Button>
                     </div>
                 </form>
             </Card.Content>

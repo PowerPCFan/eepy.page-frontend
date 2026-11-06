@@ -1,6 +1,7 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import { domainAvailable } from "$lib";
+    import { t } from "$lib/i18n";
     import GitHub from "$lib/assets/github.svg";
     import Gift from "$lib/assets/gift.svg";
     import Globe from "$lib/assets/click-globe.svg";
@@ -83,20 +84,20 @@
         </div>
 
         <h1 class="hero-title text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
-            <div class="text-foreground">Free subdomains,</div>
-            <div class="text-primary">made simple</div>
+            <div class="text-foreground">{t("common.landing.hero.freeSubdomains")}</div>
+            <div class="text-primary">{t("common.landing.hero.madeSimple")}</div>
         </h1>
 
         <p class="about-us mt-6 max-w-2xl text-lg leading-relaxed font-medium text-foreground/85 sm:text-xl md:text-2xl">
-            A modern, free subdomain service for everyone—whether you're a developer, hobbyist, or somewhere in between.
+            {t("common.landing.hero.tagline")}
         </p>
 
         <div class="actions mt-9 flex w-full max-w-md flex-col items-center justify-center gap-3.5 sm:max-w-none sm:flex-row sm:gap-4">
             <Button size="lg" onclick={_ => goto("/login?register=true")} class="h-12 w-full px-8 text-base font-semibold sm:w-auto">
-                Sign up now
+                {t("common.landing.hero.signUp")}
             </Button>
             <Button size="lg" variant={"secondary"} onclick={_ => goto("/dashboard")} class="h-12 w-full px-8 text-base font-semibold sm:w-auto">
-                Go to the dashboard
+                {t("common.landing.hero.dashboard")}
             </Button>
         </div>
 
@@ -105,19 +106,19 @@
                 <div class="rounded-full bg-[radial-gradient(circle,#ffffff_50%,transparent_50%)]">
                     <MaterialSymbolsCheckCircleRounded class="h-5 w-5 shrink-0 text-primary" />
                 </div>
-                <Label class="text-base font-medium">100% free</Label>
+                <Label class="text-base font-medium">{t("common.landing.features.free")}</Label>
             </div>
             <div class="item flex items-center gap-2">
                 <div class="rounded-full bg-[radial-gradient(circle,#ffffff_50%,transparent_50%)]">
                     <MaterialSymbolsCheckCircleRounded class="h-5 w-5 shrink-0 text-primary" />
                 </div>
-                <Label class="text-base font-medium">Modern UI</Label>
+                <Label class="text-base font-medium">{t("common.landing.features.modernUi")}</Label>
             </div>
             <div class="item flex items-center gap-2">
                 <div class="rounded-full bg-[radial-gradient(circle,#ffffff_50%,transparent_50%)]">
                     <MaterialSymbolsCheckCircleRounded class="h-5 w-5 shrink-0 text-primary" />
                 </div>
-                <Label class="text-base font-medium">User-friendly</Label>
+                <Label class="text-base font-medium">{t("common.landing.features.userFriendly")}</Label>
             </div>
         </div>
     </section>
@@ -128,8 +129,8 @@
                 <img class="w-3/5 max-w-[280px]" alt="Icon depicting a user's mouse clicking on a globe, symbolizing a website" src={Globe} />
             </div>
             <div class="text bg-card/80 backdrop-blur-md border border-border/70 shadow-sm w-3/5 rounded-2xl p-6 sm:p-8">
-                <h2 class="mb-2 text-3xl sm:text-4xl font-semibold tracking-tight">Claim a piece of the internet</h2>
-                <p class="text-base sm:text-lg text-muted-foreground">Let's start from the basics. <b>Try out a domain you'd like to own!</b></p>
+                <h2 class="mb-2 text-3xl sm:text-4xl font-semibold tracking-tight">{t("common.landing.claim.title")}</h2>
+                <p class="text-base sm:text-lg text-muted-foreground">{t("common.landing.claim.desc")} <b>{t("common.landing.claim.descHighlight")}</b></p>
 
                 <div class="domain-tester flex items-center pt-4 pb-2">
                     <div class="domain-input relative flex-1 max-w-md">
@@ -148,7 +149,7 @@
                 {#if checkingDomainAvailability}
                     <div class="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
                         <Loader className="w-5 h-5" asForeground={true} />
-                        <span>Checking availability...</span>
+                        <span>{t("common.landing.claim.checking")}</span>
                     </div>
                 {:else if testDomain && latestCheckedDomain === testDomain}
                     <div class="domain-results mt-4">
@@ -156,12 +157,12 @@
                             <h3 class="text-xl font-semibold text-foreground">
                                 The domain <span class="text-primary font-bold">{testDomain}.eepy.page</span> is available!
                             </h3>
-                            <Button size="lg" class="mt-3 w-full" onclick={_ => goto("/login?register=true")}>Claim domain now</Button>
+                            <Button size="lg" class="mt-3 w-full" onclick={_ => goto("/login?register=true")}>{t("common.landing.claim.claimBtn")}</Button>
                         {:else}
                             <h3 class="text-lg font-medium text-foreground">
                                 Unfortunately, <span class="font-bold">{testDomain}.eepy.page</span> is already taken or invalid.
                             </h3>
-                            <p class="text-sm text-muted-foreground mt-1">Try another subdomain!</p>
+                            <p class="text-sm text-muted-foreground mt-1">{t("common.landing.claim.tryAnother")}</p>
                         {/if}
                     </div>
                 {/if}
@@ -172,12 +173,10 @@
     <div class="selling-points mt-20 sm:mt-32 px-6 sm:px-16 lg:px-32">
         <div class="flex items-center gap-8">
             <div class="text w-3/5 bg-card/60 backdrop-blur-xs border border-border/50 rounded-2xl p-6 sm:p-8 shadow-xs">
-                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">Always free</h2>
+                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">{t("common.landing.alwaysFree.title")}</h2>
                 <p class="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
-                    eepy.page will always be completely free for anyone to use.<br><br>
-                    Our goal is to provide a reliable, convenient service to anyone,
-                    which means that regardless of whether you own a domain or not,
-                    you are more than welcome to use our service!
+                    {t("common.landing.alwaysFree.paragraph1")}<br><br>
+                    {t("common.landing.alwaysFree.paragraph2")}
                 </p>
             </div>
             <div class="visual flex w-2/5 items-center justify-end">
@@ -192,27 +191,26 @@
                 <img class="w-3/5 max-w-[280px]" alt="Icon representing multiple services, in a tree-like format" src={Services} />
             </div>
             <div class="text w-3/5 bg-card/60 backdrop-blur-xs border border-border/50 rounded-2xl p-6 sm:p-8 shadow-xs">
-                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">Support for many services</h2>
+                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">{t("common.landing.servicesSupport.title")}</h2>
                 <p class="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
-                    Since you have full control over DNS records, most services that simply require a domain are supported!
-                    eepy.page supports:
+                    {t("common.landing.servicesSupport.lead")}
                 </p>
                 <ul class="mt-1 list-disc space-y-1 pl-6 text-base sm:text-lg text-muted-foreground">
-                    <li><strong>GitHub Pages</strong> sites</li>
-                    <li><strong>Codeberg Pages</strong> sites</li>
-                    <li><strong>Neocities</strong> sites &lpar;requires <em class="mr-0.5 font-medium">Supporter</em> tier&rpar;</li>
-                    <li><strong>Nekoweb</strong> sites &lpar;requires <em class="mr-0.5 font-medium">Cute kitty</em> tier&rpar;</li>
+                    <li>{t("common.landing.servicesSupport.ghPages")}</li>
+                    <li>{t("common.landing.servicesSupport.codeberg")}</li>
+                    <li>{t("common.landing.servicesSupport.neocities")}</li>
+                    <li>{t("common.landing.servicesSupport.nekoweb")}</li>
                     <li>
-                        ...and more! Services that only require a <strong>standard DNS record</strong> and a <strong>subdomain-scoped TXT record</strong> will work.
+                        {t("common.landing.servicesSupport.andMore")}
                     </li>
                 </ul>
                 <p class="mt-4 text-base sm:text-lg text-muted-foreground">
-                    Additionally, you can add your eepy.page domain to your socials:
+                    {t("common.landing.servicesSupport.socialsLead")}
                 </p>
                 <ul class="mt-1 list-disc space-y-1 pl-6 text-base sm:text-lg text-muted-foreground">
-                    <li><strong>Discord</strong> (displayed as a "Connection" on your profile)</li>
-                    <li><strong>Bluesky</strong> (can be used as a custom handle, e.g. @example.eepy.page instead of @example.bsky.social)</li>
-                    <li><strong>Twitter/X</strong> (added as your "Website" on your profile)</li>
+                    <li>{t("common.landing.servicesSupport.discord")}</li>
+                    <li>{t("common.landing.servicesSupport.bluesky")}</li>
+                    <li>{t("common.landing.servicesSupport.twitter")}</li>
                 </ul>
             </div>
         </div>
@@ -221,11 +219,11 @@
     <div class="selling-points mt-20 sm:mt-32 px-6 sm:px-16 lg:px-32">
         <div class="flex items-center gap-8">
             <div class="text w-3/5 bg-card/60 backdrop-blur-xs border border-border/50 rounded-2xl p-6 sm:p-8 shadow-xs">
-                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">Independent domain management</h2>
+                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">{t("common.landing.management.title")}</h2>
                 <p class="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
-                    You can register, delete, and modify domains straight from our dashboard, designed to be convenient and user-friendly.<br><br>
-                    There is no need to use a convoluted CLI or a request form, and you don't have to wait for any domain verification.<br><br>
-                    Subdomain registrations are seamlessly added to our database and DNS servers the second you register them.
+                    {t("common.landing.management.paragraph1")}<br><br>
+                    {t("common.landing.management.paragraph2")}<br><br>
+                    {t("common.landing.management.paragraph3")}
                 </p>
             </div>
             <div class="visual flex w-2/5 items-center justify-end">
@@ -240,12 +238,11 @@
                 <img class="w-3/5 max-w-[280px]" alt="Icon representing eepy.page tunneling" src={Split} />
             </div>
             <div class="text w-3/5 bg-card/60 backdrop-blur-xs border border-border/50 rounded-2xl p-6 sm:p-8 shadow-xs">
-                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">Robust tunneling</h2>
+                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">{t("common.landing.tunneling.title")}</h2>
                 <p class="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
-                    No port forwarding? No public IP? Fear not, eepy.page provides a seamless tunneling experience, allowing you to forward your local services to the internet!
+                    {t("common.landing.tunneling.paragraph1")}
                     <br><br>
-                    Our tunneling service is powered by Serveo.
-                    Simply visit our simple dashboard for easy instructions on attaching your local services to an eepy.page subdomain.
+                    {t("common.landing.tunneling.paragraph2")}
                 </p>
             </div>
         </div>
@@ -254,21 +251,20 @@
     <div class="selling-points mt-20 sm:mt-32 px-6 sm:px-16 lg:px-32">
         <div class="flex items-center gap-8">
             <div class="text w-3/5 bg-card/60 backdrop-blur-xs border border-border/50 rounded-2xl p-6 sm:p-8 shadow-xs">
-                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">Completely open-source</h2>
+                <h2 class="w-fit text-3xl sm:text-4xl font-semibold tracking-tight">{t("common.landing.openSource.title")}</h2>
                 <p class="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
-                    Our frontend and backend are both completely open-source and open to contributions. Our backend is
-                    written in Python (FastAPI), and our frontend uses SvelteKit.<br><br>
-                    The authoritative nameservers running our infrastructure are powered by PowerDNS, which is also open-source.
+                    {t("common.landing.openSource.paragraph1")}<br><br>
+                    {t("common.landing.openSource.paragraph2")}
                 </p>
 
                 <Separator class="mt-6 mb-6 opacity-60" />
                 <div class="flex flex-col gap-2.5">
-                    <p class="text-sm font-medium text-foreground">Check out our repositories on GitHub:</p>
+                    <p class="text-sm font-medium text-foreground">{t("common.landing.openSource.reposLead")}</p>
                     <a class="text-primary hover:underline font-medium text-sm" href="https://github.com/PowerPCFan/eepy.page-frontend">
-                        Our frontend (PowerPCFan/eepy.page-frontend)
+                        {t("common.landing.openSource.frontendRepo")}
                     </a>
                     <a class="text-primary hover:underline font-medium text-sm" href="https://github.com/PowerPCFan/eepy.page-backend">
-                        Our backend (PowerPCFan/eepy.page-backend)
+                        {t("common.landing.openSource.backendRepo")}
                     </a>
                 </div>
             </div>

@@ -3,7 +3,10 @@
 declare global {
     namespace App {
         // interface Error {}
-        // interface Locals {}
+        interface Locals {
+            locale: string;
+            i18n: typeof import("@powerpcfan/eepy-page-i18n").rootI18n;
+        }
         // interface PageData {}
         // interface PageState {}
         // interface Platform {}

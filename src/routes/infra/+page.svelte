@@ -1,5 +1,6 @@
 <script lang="ts">
     import Holder from "$lib/components/Holder.svelte";
+    import { t } from "$lib/i18n";
 
     interface InfraDomain {
         hostname: string;
@@ -67,39 +68,39 @@
         }
     ];
 
-    const sections: Section[] = [
+    let sections: Section[] = $derived([
         {
-            title: "Web Applications",
+            title: t("support.infra.sections.web"),
             list: publicDomains,
         },
         {
-            title: "Backend/APIs",
+            title: t("support.infra.sections.api"),
             list: apiDomains,
         },
         {
-            title: "Authoritative Nameservers",
+            title: t("support.infra.sections.dns"),
             list: dnsDomains,
         },
         {
-            title: "Email Infrastructure",
+            title: t("support.infra.sections.mail"),
             list: mailDomains,
         }
-    ]
+    ]);
 </script>
 
 <svelte:head>
-    <title>Infrastructure & Domains | eepy.page</title>
+    <title>{t("support.infra.title")} | eepy.page</title>
     <meta
         name="description"
         content="List of official eepy.page domains to distinguish genuine services from user-registered subdomains." />
     <link rel="canonical" href="https://www.eepy.page/infra" />
-    <meta property="og:title" content="Infrastructure & Domains | eepy.page" />
+    <meta property="og:title" content="{t("support.infra.title")} | eepy.page" />
     <meta
         property="og:description"
         content="List of official eepy.page domains to distinguish genuine services from user-registered subdomains." />
     <meta property="og:url" content="https://www.eepy.page/infra" />
     <meta property="og:type" content="website" />
-    <meta name="twitter:title" content="Infrastructure & Domains | eepy.page" />
+    <meta name="twitter:title" content="{t("support.infra.title")} | eepy.page" />
     <meta
         name="twitter:description"
         content="List of official eepy.page domains to distinguish genuine services from user-registered subdomains." />
@@ -109,12 +110,9 @@
 <Holder>
     <div class="space-y-8 p-2 sm:p-4 text-foreground">
         <div class="space-y-3">
-            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Official Domains</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">{t("support.infra.title")}</h1>
             <p class="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                Because eepy.page allows users to register arbitrary subdomains, it is possible for abuse to occur.
-                In the case that this happens, it's important to know which domains are part of our official infrastructure.
-                This page lists all of our official domains to help you verify genuine eepy.page services and avoid phishing or impersonation.
-                Unless a domain is explicitly listed below, you can assume that it is user-generated content that has zero connection to official eepy.page services.
+                {t("support.infra.description")}
             </p>
         </div>
 

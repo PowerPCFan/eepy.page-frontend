@@ -8,6 +8,7 @@
     import MaterialSymbolsQuestionMark from "~icons/material-symbols/question-mark";
     import MaterialSymbolsContentCopy from "~icons/material-symbols/content-copy";
     import MaterialSymbolsCheckRounded from "~icons/material-symbols/check-rounded";
+    import { t } from "$lib/i18n";
 
     let latestCopied: string | null = $state(null);
 
@@ -37,7 +38,7 @@ Any additional context necessary (this may vary depending on the situation)
 
     async function copy(text: string, desc: string) {
         await window.navigator.clipboard.writeText(text);
-        toast.success(`${desc} copied to clipboard!`);
+        toast.success(t("support.abuseVuln.templateCopied", { desc }));
         latestCopied = desc;
         setTimeout(() => {
             latestCopied = null;
@@ -46,18 +47,18 @@ Any additional context necessary (this may vary depending on the situation)
 </script>
 
 <svelte:head>
-    <title>Report Abuse & Security Vulnerabilities | eepy.page</title>
+    <title>{t("support.abuseVuln.title")} | eepy.page</title>
     <meta
         name="description"
         content="Report subdomain abuse, malware, phishing, or security vulnerabilities to the eepy.page security team." />
     <link rel="canonical" href="https://www.eepy.page/report/abuse-vuln" />
-    <meta property="og:title" content="Report Abuse & Security Vulnerabilities | eepy.page" />
+    <meta property="og:title" content="{t("support.abuseVuln.title")} | eepy.page" />
     <meta
         property="og:description"
         content="Report subdomain abuse, malware, phishing, or security vulnerabilities to the eepy.page security team." />
     <meta property="og:url" content="https://www.eepy.page/report/abuse-vuln" />
     <meta property="og:type" content="website" />
-    <meta name="twitter:title" content="Report Abuse & Security Vulnerabilities | eepy.page" />
+    <meta name="twitter:title" content="{t("support.abuseVuln.title")} | eepy.page" />
     <meta
         name="twitter:description"
         content="Report subdomain abuse, malware, phishing, or security vulnerabilities to the eepy.page security team." />
@@ -65,7 +66,7 @@ Any additional context necessary (this may vary depending on the situation)
 </svelte:head>
 
 <main class="mx-auto w-11/12 max-w-4xl py-8 sm:py-12">
-    <h1 class="text-3xl font-bold tracking-tight text-foreground">Report Abuse & Vulnerabilities</h1>
+    <h1 class="text-3xl font-bold tracking-tight text-foreground">{t("support.abuseVuln.title")}</h1>
 
     <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
         <div class="border-border bg-card/60 flex flex-col justify-between rounded-2xl border p-6 backdrop-blur-sm">
@@ -74,26 +75,26 @@ Any additional context necessary (this may vary depending on the situation)
                     <IconBadge variant="primary" size="md">
                         <MaterialSymbolsShield class="size-6" />
                     </IconBadge>
-                    <h2 class="text-lg font-semibold text-foreground">Report Vulnerabilities</h2>
+                    <h2 class="text-lg font-semibold text-foreground">{t("support.abuseVuln.vulnTitle")}</h2>
                 </div>
 
                 <p class="text-muted-foreground text-xs leading-relaxed">
-                    Please provide the following details when submitting a vulnerability report:
+                    {t("support.abuseVuln.vulnPrompt")}
                 </p>
 
                 <ul class="text-muted-foreground list-disc space-y-1.5 pl-4 text-xs leading-relaxed">
-                    <li>The feature that's vulnerable</li>
-                    <li>A description of the vulnerability</li>
-                    <li>Expected vs actual behavior</li>
-                    <li>Reproduction steps</li>
-                    <li>How an attacker could use the vulnerability</li>
+                    <li>{t("support.abuseVuln.vulnItems.item1")}</li>
+                    <li>{t("support.abuseVuln.vulnItems.item2")}</li>
+                    <li>{t("support.abuseVuln.vulnItems.item3")}</li>
+                    <li>{t("support.abuseVuln.vulnItems.item4")}</li>
+                    <li>{t("support.abuseVuln.vulnItems.item5")}</li>
                 </ul>
             </div>
 
             <div class="mt-6 pt-4 border-t border-border">
                 <Button class="w-full" target="_blank" href={createMailtoLink("eepy.page Security Vulnerability Report", vulnBody)}>
                     <MaterialSymbolsMail class="size-4" />
-                    Report Vulnerability
+                    {t("support.abuseVuln.vulnButton")}
                 </Button>
             </div>
         </div>
@@ -104,24 +105,24 @@ Any additional context necessary (this may vary depending on the situation)
                     <IconBadge size="md">
                         <MaterialSymbolsReport class="size-6" />
                     </IconBadge>
-                    <h2 class="text-lg font-semibold text-foreground">Abuse & Phishing</h2>
+                    <h2 class="text-lg font-semibold text-foreground">{t("support.abuseVuln.abuseTitle")}</h2>
                 </div>
 
                 <p class="text-muted-foreground text-xs leading-relaxed">
-                    To report malicious subdomains, phishing, malware, or illicit hosting:
+                    {t("support.abuseVuln.abusePrompt")}
                 </p>
 
                 <ul class="text-muted-foreground list-disc space-y-1.5 pl-4 text-xs leading-relaxed">
-                    <li>Target subdomain (e.g. <span class="font-mono!">example.eepy.page</span>)</li>
-                    <li>Evidence of policy violation or phishing (e.g. screenshots)</li>
-                    <li>Any additional context necessary (this may vary depending on the situation)</li>
+                    <li>{t("support.abuseVuln.abuseItems.item1", { example: "example.eepy.page" })}</li>
+                    <li>{t("support.abuseVuln.abuseItems.item2")}</li>
+                    <li>{t("support.abuseVuln.abuseItems.item3")}</li>
                 </ul>
             </div>
 
             <div class="mt-6 pt-4 border-t border-border">
                 <Button class="w-full" target="_blank" href={createMailtoLink("eepy.page Abuse Report", abuseBody)}>
                     <MaterialSymbolsMail class="size-4" />
-                    Report Abuse
+                    {t("support.abuseVuln.abuseButton")}
                 </Button>
             </div>
         </div>
@@ -131,29 +132,27 @@ Any additional context necessary (this may vary depending on the situation)
                 <div class="flex items-start gap-4">
                     <IconBadge variant="primary" size="md"><MaterialSymbolsQuestionMark class="size-6" /></IconBadge>
                     <div>
-                        <h2 class="text-lg font-semibold text-foreground">Prefer sending an email manually?</h2>
+                        <h2 class="text-lg font-semibold text-foreground">{t("support.abuseVuln.emailSectionTitle")}</h2>
                         <p class="text-muted-foreground text-sm leading-relaxed">
-                            Please send us a report at <a href="mailto:support@eepy.page" class="text-primary hover:underline">report@eepy.page</a>.
-                            Make sure to follow the guidelines listed above to ensure your report can be handled quickly and properly.
-                            Copy the report templates using the buttons to the right.
+                            {t("support.abuseVuln.emailSectionDesc", { email: "report@eepy.page" })}
                         </p>
                     </div>
                 </div>
                 <div class="flex-col space-y-3">
-                    <Button size="sm" class="min-w-full px-4!" variant="outline" onclick={() => copy(vulnBody, "Vulnerability report template")}>
-                        {#if latestCopied === "Vulnerability report template"}
+                    <Button size="sm" class="min-w-full px-4!" variant="outline" onclick={() => copy(vulnBody, t("support.abuseVuln.copyVulnTemplate"))}>
+                        {#if latestCopied === t("support.abuseVuln.copyVulnTemplate")}
                             <MaterialSymbolsCheckRounded class="size-4 text-green-500" />
                         {:else}
                             <MaterialSymbolsContentCopy class="size-4" />
-                            Copy Vulnerability Report Template
+                            {t("support.abuseVuln.copyVulnTemplate")}
                         {/if}
                     </Button>
-                    <Button size="sm" class="min-w-full px-4!" variant="outline" onclick={() => copy(abuseBody, "Abuse report template")}>
-                        {#if latestCopied === "Abuse report template"}
+                    <Button size="sm" class="min-w-full px-4!" variant="outline" onclick={() => copy(abuseBody, t("support.abuseVuln.copyAbuseTemplate"))}>
+                        {#if latestCopied === t("support.abuseVuln.copyAbuseTemplate")}
                             <MaterialSymbolsCheckRounded class="size-4 text-green-500" />
                         {:else}
                             <MaterialSymbolsContentCopy class="size-4" />
-                            Copy Abuse Report Template
+                            {t("support.abuseVuln.copyAbuseTemplate")}
                         {/if}
                     </Button>
                 </div>

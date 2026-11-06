@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { t } from "$lib/i18n";
     import { ZxcvbnFactory } from "@zxcvbn-ts/core";
     import * as zxcvbnEnPackage from "@zxcvbn-ts/language-en";
 
@@ -31,23 +32,34 @@
 
     function getSentence(score: number): string {
         switch (score) {
-            case 0: return "Your password is too weak.";
-            case 1: return "Your password is too weak.";
-            case 2: return "Good start, can be stronger.";
-            case 3: return "Strong password.";
-            case 4: return "Very secure password!";
-            default: return "Uh-oh, something went wrong.";
+            case 0:
+            case 1:
+                return t("common.passwordStrength.sentences.tooWeak");
+            case 2:
+                return t("common.passwordStrength.sentences.fair");
+            case 3:
+                return t("common.passwordStrength.sentences.strong");
+            case 4:
+                return t("common.passwordStrength.sentences.veryStrong");
+            default:
+                return t("common.passwordStrength.sentences.unknown");
         }
     }
 
     function getDescriptor(score: number): string {
         switch (score) {
-            case 0: return "Very weak";
-            case 1: return "Weak";
-            case 2: return "Fair";
-            case 3: return "Strong";
-            case 4: return "Very strong";
-            default: return "Unknown";
+            case 0:
+                return t("common.passwordStrength.descriptors.veryWeak");
+            case 1:
+                return t("common.passwordStrength.descriptors.weak");
+            case 2:
+                return t("common.passwordStrength.descriptors.fair");
+            case 3:
+                return t("common.passwordStrength.descriptors.strong");
+            case 4:
+                return t("common.passwordStrength.descriptors.veryStrong");
+            default:
+                return t("common.passwordStrength.descriptors.unknown");
         }
     }
 

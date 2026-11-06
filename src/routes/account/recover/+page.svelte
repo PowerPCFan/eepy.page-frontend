@@ -3,6 +3,7 @@
 <script lang="ts">
     import { browser } from "$app/environment";
     import { redirectToLogin } from "$lib";
+    import { t } from "$lib/i18n";
     import Holder from "$lib/components/Holder.svelte";
     import { Button } from "$lib/components/ui/button";
     import InlineAlert from "$lib/components/ui/inline-alert/inline-alert.svelte";
@@ -45,54 +46,52 @@
         if (generatingNew) {
             if (password !== cPassword) {
                 loading = false;
-                errorTitle = "Passwords don't match";
-                errorDescription = "Please confirm that your passwords match.";
+                errorTitle = t("auth.recovery.passwordsDoNotMatchTitle");
+                errorDescription = t("auth.recovery.passwordsDoNotMatchDesc");
                 return;
             }
 
             confirmPasswordChange(code ?? "", password)
                 .catch(err => {
                     loading = false;
-                    errorTitle = "Failed to change password";
+                    errorTitle = t("auth.recovery.failedChangeTitle");
                     if (err instanceof CodeError)
-                        errorDescription = "Perhaps the code has expired?";
+                        errorDescription = t("auth.recovery.codeExpired");
                     else if (err instanceof UserError) redirectToLogin(404);
                     else if (err instanceof RateLimitError)
                         errorDescription = err.message;
-                    else errorDescription = "An unexpected error occurred.";
+                    else errorDescription = t("errors.network.UNEXPECTED", { status: 500 });
 
                     throw new Error("Failed to reset password");
                 })
                 .then(() => {
                     loading = false;
-                    noteTitle = "Successfully changed password!";
-                    noteDescription = "You can now log in using your new password.";
+                    noteTitle = t("auth.recovery.successChangeTitle");
+                    noteDescription = t("auth.recovery.successChangeDesc");
                     setTimeout(() => redirectToLogin(200, 2), 1500);
                 });
         } else {
             if (!username.trim()) {
                 loading = false;
-                errorTitle = "Username required";
-                errorDescription = "Please enter your username.";
+                errorTitle = t("auth.recovery.usernameRequiredTitle");
+                errorDescription = t("auth.recovery.usernameRequiredDesc");
                 return;
             }
 
             sendForgotCode(username)
                 .catch(err => {
                     loading = false;
-                    errorTitle = "Failed to send verification code";
+                    errorTitle = t("auth.recovery.failedSendTitle");
                     if (err instanceof UserError) redirectToLogin(404);
                     else if (err instanceof RateLimitError) errorDescription = err.message;
                     else
-                        errorDescription =
-                            "Did you double-check your username? eepy.page usernames are case-sensitive.";
+                        errorDescription = t("auth.recovery.checkUsername");
                     throw new Error("Failed to send password reset");
                 })
                 .then(() => {
                     loading = false;
-                    noteTitle = "Verification email sent";
-                    noteDescription =
-                        "A verification email has been sent to your inbox. If you can't find it, please check your spam folder.";
+                    noteTitle = t("auth.recovery.successSendTitle");
+                    noteDescription = t("auth.recovery.successSendDesc");
                 });
         }
     }
@@ -110,12 +109,12 @@
 <Holder>
     <div class="space-y-4">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight">Account Recovery</h1>
+            <h1 class="text-2xl font-bold tracking-tight">{t("auth.recovery.title")}</h1>
             <p class="text-sm text-muted-foreground mt-1">
                 {#if generatingNew}
-                    Enter your new password below to finish resetting your account.
+                    {t("auth.recovery.descNew")}
                 {:else}
-                    Enter your eepy.page username. A verification link will be sent to your registered email address.
+                    {t("auth.recovery.descUsername")}
                 {/if}
             </p>
         </div>
@@ -126,28 +125,28 @@
         <form onsubmit={(e) => { e.preventDefault(); handleButton(); }} class="space-y-4 pt-2">
             {#if generatingNew}
                 <div class="space-y-1.5">
-                    <Label for="new-pass">New Password</Label>
+                    <Label for="new-pass">{t("auth.recovery.newPassword")}</Label>
                     <Input
                         id="new-pass"
                         type="password"
                         autocomplete="new-password"
                         bind:value={password}
-                        placeholder="Enter new password"
+                        placeholder="••••••••••••"
                         required />
                 </div>
                 <div class="space-y-1.5">
-                    <Label for="confirm-pass">Confirm New Password</Label>
+                    <Label for="confirm-pass">{t("auth.recovery.confirmNewPassword")}</Label>
                     <Input
                         id="confirm-pass"
                         type="password"
                         autocomplete="new-password"
                         bind:value={cPassword}
-                        placeholder="Confirm new password"
+                        placeholder="••••••••••••"
                         required />
                 </div>
             {:else}
                 <div class="space-y-1.5">
-                    <Label for="recover-user">Username</Label>
+                    <Label for="recover-user">{t("auth.fields.username")}</Label>
                     <Input
                         id="recover-user"
                         type="text"
@@ -155,18 +154,18 @@
                         autocapitalize="none"
                         autocorrect="off"
                         bind:value={username}
-                        placeholder="Enter your eepy.page username"
+                        placeholder={t("auth.fields.usernamePlaceholder")}
                         required />
                 </div>
             {/if}
 
             <Button {loading} type="submit" class="w-full mt-2">
-                {generatingNew ? "Update Password" : "Send Recovery Email"}
+                {generatingNew ? t("auth.recovery.updatePassword") : t("auth.recovery.sendEmail")}
             </Button>
         </form>
 
         {#if !generatingNew}
-            <Button href="/login" variant="link" class="w-full text-primary! py-0! -mt-2!">Back to log in</Button>
+            <Button href="/login" variant="link" class="w-full text-primary! py-0! -mt-2!">{t("auth.recovery.backToLogin")}</Button>
         {/if}
     </div>
 </Holder>

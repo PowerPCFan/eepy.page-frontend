@@ -5,7 +5,10 @@ import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 const config = {
     preprocess: vitePreprocess(),
     kit: {
-        adapter: adapter({maxDuration: 10})
+        adapter: adapter({maxDuration: 10}),
+        alias: {
+            $locales: "locales"
+        }
     }
 };
 
