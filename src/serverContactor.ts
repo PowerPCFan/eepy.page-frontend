@@ -1,4 +1,5 @@
 import { browser, dev } from "$app/environment";
+import { getLocale } from "$lib/i18n";
 import consola from "consola";
 import Cookies from "js-cookie";
 import createClient, { type Middleware } from "openapi-fetch";
@@ -106,6 +107,20 @@ const DeviceIdMiddleware: Middleware = {
     }
 };
 
+const LocaleMiddleware: Middleware = {
+    async onRequest({ request }) {
+        if (browser) {
+            try {
+                const locale = getLocale();
+                if (locale) {
+                    request.headers.set("X-Locale", locale);
+                }
+            } catch {}
+        }
+        return request;
+    }
+};
+
 const JWTAuthMiddleware: Middleware = {
     async onResponse({ request, response, options }) {
         if (response.status === 429) {
@@ -139,6 +154,7 @@ const JWTAuthMiddleware: Middleware = {
 
 // Automatically attach device identifier and refresh auth tokens
 client.use(DeviceIdMiddleware);
+client.use(LocaleMiddleware);
 client.use(JWTAuthMiddleware);
 
 export async function tryRefreshToken(): Promise<string | false> {
@@ -147,6 +163,14 @@ export async function tryRefreshToken(): Promise<string | false> {
         const deviceId = getDeviceId();
         if (deviceId) {
             headers["X-Device-Id"] = deviceId;
+        }
+        if (browser) {
+            try {
+                const locale = getLocale();
+                if (locale) {
+                    headers["X-Locale"] = locale;
+                }
+            } catch {}
         }
         const res = await fetch(`${serverURL}/refresh`, {
             method: "POST",

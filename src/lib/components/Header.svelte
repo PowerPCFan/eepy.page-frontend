@@ -8,18 +8,18 @@
     import MaterialSymbolsDarkModeRounded from "~icons/material-symbols/dark-mode-rounded";
     import MaterialSymbolsLightModeRounded from "~icons/material-symbols/light-mode-rounded";
     import MaterialSymbolsMenuRounded from "~icons/material-symbols/menu-rounded";
-    import CircleFlagsUs from "~icons/circle-flags/us";
-    import CircleFlagsFi from "~icons/circle-flags/fi";
-    import CircleFlagsEs from "~icons/circle-flags/es";
-    import CircleFlagsIt from "~icons/circle-flags/it";
+    import CircleFlagsUs from "~icons/cif/us";
+    import CircleFlagsFi from "~icons/cif/fi";
+    import CircleFlagsEs from "~icons/cif/es";
+    import CircleFlagsIt from "~icons/cif/it";
     import { changeTheme } from "../../helperFuncs";
     import Label from "./ui/label/label.svelte";
 
     const LANGUAGES = [
         { code: "en", label: "English", icon: CircleFlagsUs },
-        { code: "fi", label: "Suomi", icon: CircleFlagsFi },
         { code: "es", label: "Español", icon: CircleFlagsEs },
-        { code: "it", label: "Italiano", icon: CircleFlagsIt }
+        { code: "it", label: "Italiano", icon: CircleFlagsIt },
+        { code: "fi", label: "Suomi", icon: CircleFlagsFi },
     ] as const;
 
     let { children } = $props();
@@ -75,16 +75,16 @@
                 name="Language">
                 <Select.Trigger class="flex w-32 items-center gap-2 h-9 rounded-lg border-border/80 bg-background/50 hover:bg-background transition-colors text-xs font-medium">
                     {#if $currentLocale === "fi"}
-                        <CircleFlagsFi class="h-4 w-4 shrink-0 rounded-full" />
+                        <CircleFlagsFi class="size-5 shrink-0 rounded-full" />
                         <span class="truncate">Suomi</span>
                     {:else if $currentLocale === "es"}
-                        <CircleFlagsEs class="h-4 w-4 shrink-0 rounded-full" />
+                        <CircleFlagsEs class="size-5 shrink-0 rounded-full" />
                         <span class="truncate">Español</span>
                     {:else if $currentLocale === "it"}
-                        <CircleFlagsIt class="h-4 w-4 shrink-0 rounded-full" />
+                        <CircleFlagsIt class="size-5 shrink-0 rounded-full" />
                         <span class="truncate">Italiano</span>
                     {:else}
-                        <CircleFlagsUs class="h-4 w-4 shrink-0 rounded-full" />
+                        <CircleFlagsUs class="size-5 shrink-0 rounded-full" />
                         <span class="truncate">English</span>
                     {/if}
                 </Select.Trigger>
@@ -92,7 +92,7 @@
                     {#each LANGUAGES as lang}
                         {@const Icon = lang.icon}
                         <Select.Item aria-selected={$currentLocale === lang.code} value={lang.code} label={lang.label}>
-                            <Icon class="h-4 w-4 shrink-0 rounded-full" />
+                            <Icon class="size-5 shrink-0 rounded-full" />
                             <span>{lang.label}</span>
                         </Select.Item>
                     {/each}
@@ -164,16 +164,16 @@
                     <Select.Trigger class="w-full justify-between">
                         <span class="flex items-center gap-2">
                             {#if $currentLocale === "fi"}
-                                <CircleFlagsFi class="h-4 w-4 shrink-0 rounded-full" />
+                                <CircleFlagsFi class="size-5 shrink-0 rounded-full" />
                                 <span>Suomi</span>
                             {:else if $currentLocale === "es"}
-                                <CircleFlagsEs class="h-4 w-4 shrink-0 rounded-full" />
+                                <CircleFlagsEs class="size-5 shrink-0 rounded-full" />
                                 <span>Español</span>
                             {:else if $currentLocale === "it"}
-                                <CircleFlagsIt class="h-4 w-4 shrink-0 rounded-full" />
+                                <CircleFlagsIt class="size-5 shrink-0 rounded-full" />
                                 <span>Italiano</span>
                             {:else}
-                                <CircleFlagsUs class="h-4 w-4 shrink-0 rounded-full" />
+                                <CircleFlagsUs class="size-5 shrink-0 rounded-full" />
                                 <span>English</span>
                             {/if}
                         </span>
