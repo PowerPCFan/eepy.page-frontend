@@ -37,6 +37,8 @@
     import MaterialSymbolsVisibilityOff from "~icons/material-symbols/visibility-off";
     import Zxcvbn from "$lib/components/Zxcvbn.svelte";
 
+    const TURNSTILE_DISABLED = true;
+
     let { data } = $props();
 
     let isLoggingIn: boolean = $state(true);
@@ -83,6 +85,7 @@
     };
 
     function resetTurnstile() {
+        if (TURNSTILE_DISABLED) return;
         if (turnstileInstance && currentWidgetId) {
             captchaDone = false;
             turnstileInstance.reset(currentWidgetId);
@@ -244,7 +247,7 @@
     });
 
     $effect(() => {
-        if (!captchaDone) {
+        if (!TURNSTILE_DISABLED && !captchaDone) {
             consola.warn("Captcha not done...");
             actionButtonDisabled = true;
             return;
@@ -549,12 +552,12 @@
                                 <Checkbox bind:checked={agreementsChecked} class="mr-2" id="agreements" />
                                 <Label
                                     class="text-muted-foreground cursor-pointer gap-1 text-xs font-normal"
-                                    for="agreements">
-                                    {t("auth.fields.agreement.agreeTo")} <a href="/terms" class="text-foreground font-bold hover:underline"
-                                        >{t("auth.fields.agreement.terms")}</a>
-                                    {t("auth.fields.agreement.and")}
-                                    <a href="/privacy" class="text-foreground font-bold hover:underline"
-                                        >{t("auth.fields.agreement.privacy")}</a>
+                                    for="agreements"
+                                >
+                                    <p>
+                                        {t("auth.fields.agreement.agreeTo")} <a href="/terms" class="text-foreground font-bold hover:underline">{t("auth.fields.agreement.terms")}</a>
+                                        {t("auth.fields.agreement.and")} <a href="/privacy" class="text-foreground font-bold hover:underline">{t("auth.fields.agreement.privacy")}</a>
+                                    </p>
                                 </Label>
                             </div>
                         {/if}
@@ -569,18 +572,20 @@
             </form>
         {/if}
 
-        <div class="mt-8 mx-auto w-min">
-            <div
-                use:turnstile
-                // turnstile-sitekey={dev ? "1x00000000000000000000AA" : "0x4AAAAAADviUbGPh--ynweX"}
-                turnstile-sitekey="0x4AAAAAADviUbGPh--ynweX"
-                turnstile-theme={$activeTheme}
-                turnstile-size="normal"
-                turnstile-language="en"
-                turnstile-response-field-name="turnstile"
-                turnstile-response-field
-                onturnstile={handleTurnstile}>
+        {#if !TURNSTILE_DISABLED}
+            <div class="mt-8 mx-auto w-min">
+                <div
+                    use:turnstile
+                    turnstile-sitekey="0x4AAAAAADviUbGPh--ynweX"
+                    turnstile-theme={$activeTheme}
+                    turnstile-size="normal"
+                    turnstile-language="en"
+                    turnstile-response-field-name="turnstile"
+                    turnstile-response-field
+                    onturnstile={handleTurnstile}
+                    onturnstileerror={(e) => consola.error("Turnstile error:", e.detail)}
+                ></div>
             </div>
-        </div>
+        {/if}
     </div>
 </div>
