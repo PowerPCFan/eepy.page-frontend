@@ -400,7 +400,7 @@
                 <form
                     onsubmit={(e) => {
                         e.preventDefault();
-                        if (captchaDone && mfaCode.length === 6) {
+                        if ((TURNSTILE_DISABLED || captchaDone) && mfaCode.length === 6) {
                             buttonLoadingState = true;
                             logIn();
                         }
@@ -421,7 +421,7 @@
 
                     <Button
                         loading={buttonLoadingState}
-                        disabled={!captchaDone || mfaCode.length != 6}
+                        disabled={(!TURNSTILE_DISABLED && !captchaDone) || mfaCode.length != 6}
                         type="submit"
                         class="mt-6 w-full">{t("auth.mfa.submit")}</Button>
                 </form>
