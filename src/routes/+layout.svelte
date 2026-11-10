@@ -9,12 +9,9 @@
     import { sidebarOpen } from "$lib/store";
     import consola from "consola";
     import NProgress from "nprogress";
-    import MSAccountCircle from "~icons/material-symbols/account-circle";
-    import MSFlagRounded from "~icons/material-symbols/flag-rounded";
-    import MSHomeRounded from "~icons/material-symbols/home-rounded";
-    import MSTeamDashboard from "~icons/material-symbols/team-dashboard";
-    import MSHelp from "~icons/material-symbols/help";
+    import MSTeamDashboard from "~icons/material-symbols/dashboard-2";
     import MSArrowSplit from "~icons/material-symbols/arrow-split";
+    import MSHelp from "~icons/material-symbols/help";
     import MSMenuBook from "~icons/material-symbols/menu-book";
     import { onMount, type Component } from "svelte";
 
@@ -97,7 +94,7 @@
     {@const preloadValue = preload ? "hover" : "off"}
 
     <a
-        class="hover:text-accent flex flex-row items-center justify-start gap-1.5 text-xl font-medium"
+        class="flex items-center gap-1.5 px-3 py-1.5 text-md font-medium text-primary hover:opacity-85 transition-opacity"
         href={href}
         data-sveltekit-preload-data={preloadValue}
         target={href.startsWith("http") ? "_blank" : undefined}
@@ -106,24 +103,6 @@
         <Icon />{text}
     </a>
 {/snippet}
-
-<Toaster />
-
-<Header>
-    {@render navbarLink(MSHomeRounded, "/", t("common.nav.home"))}
-    {@render navbarLink(MSTeamDashboard, "/dashboard", t("common.nav.dashboard"), false)}
-    {@render navbarLink(MSArrowSplit, "/dashboard/tunneling", t("common.nav.tunneling"), false)}
-    {@render navbarLink(MSAccountCircle, "/account/manage", t("common.nav.account"), false)}
-    {@render navbarLink(MSFlagRounded, "/report", t("common.nav.report"))}
-    {@render navbarLink(MSHelp, "/support", t("common.nav.support"))}
-    {@render navbarLink(MSMenuBook, "https://docs.eepy.page/", t("common.nav.docs"), false)}
-</Header>
-
-<Banner />
-
-<CookieConsent consentMode={data.consent.mode} />
-
-<Donate />
 
 <svelte:head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -134,9 +113,26 @@
 
 <svelte:window bind:innerWidth={innerWidth} />
 
-<main class="h-full min-h-screen">
-    {@render children()}
-</main>
+<Toaster />
+
+<div class="flex min-h-screen flex-col">
+    <Header>
+        {@render navbarLink(MSTeamDashboard, "/dashboard", t("common.nav.dashboard"), false)}
+        {@render navbarLink(MSArrowSplit, "/dashboard/tunneling", t("common.nav.tunneling"), false)}
+        {@render navbarLink(MSMenuBook, "https://docs.eepy.page/", t("common.nav.docs"), false)}
+        {@render navbarLink(MSHelp, "/support", t("common.nav.support"))}
+    </Header>
+
+    <Banner />
+
+    <CookieConsent consentMode={data.consent.mode} />
+
+    <Donate />
+
+    <main class="flex-1">
+        {@render children()}
+    </main>
+</div>
 
 <style>
     @font-face {

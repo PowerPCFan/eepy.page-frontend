@@ -165,7 +165,11 @@
 
                 setAuthToken(sessionId);
                 Cookies.set("logged-in", "yes");
-                localStorage.setItem("logged-in", "y");
+                if (username) {
+                    try {
+                        localStorage.setItem("navbarAuthState", JSON.stringify({ username }));
+                    } catch {}
+                }
 
                 if (!getAuthToken()) {
                     console.error("Browser did not accept cookies...");

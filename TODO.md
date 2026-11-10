@@ -2,6 +2,5 @@
 - Fix the fact that Ko-fi somewhat doxxes me
   - Figure out a better solution than ko-fi, it has a lot of other issues too
 - Get on the PSL?
-- Reference the new docs/guides in other places (e.g. support page)
-- Clean up navbar it's quite cluttered
-- Add pfp icon in upper right corner / sign in button or something
+- dashboard mobile styles
+- homepage tweak mobile styles with new macos-style card thingies

@@ -280,8 +280,6 @@
                 if (dev) {
                     Cookies.remove("auth-token", { path: "/" });
                 }
-                localStorage.removeItem("logged-in");
-                localStorage.removeItem("auth-token");
                 redirectToLogin(200);
             } else {
                 session.loading = false;
@@ -713,7 +711,7 @@
                                             {#if usingBackupCode}
                                                 <div class="space-y-2 pt-2">
                                                     <Label for="backup-code">{t("dashboard.account.security.useBackupCodeLabel")}</Label>
-                                                    <Input bind:value={mfaCode} id="backup-code" placeholder={t("dashboard.account.security.backupCodePlaceholder")} />
+                                                    <Input bind:value={mfaCode} id="backup-code" placeholder="xxxx-xxxx-xxxx-xxxx" />
                                                 </div>
                                             {:else}
                                                 <div class="py-4">

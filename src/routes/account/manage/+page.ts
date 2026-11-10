@@ -24,6 +24,11 @@ export const load = async () => {
 
     const username = accountSettings.username;
     const email = accountSettings.email;
+    if (typeof localStorage !== "undefined" && username) {
+        try {
+            localStorage.setItem("navbarAuthState", JSON.stringify({ username }));
+        } catch {}
+    }
     const permissions = accountSettings.permissions as {
         admin?: { enabled?: boolean; [key: string]: unknown };
         limits?: Record<string, number>;
