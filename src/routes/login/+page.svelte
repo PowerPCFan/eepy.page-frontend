@@ -36,6 +36,7 @@
     import MaterialSymbolsVisibility from "~icons/material-symbols/visibility";
     import MaterialSymbolsVisibilityOff from "~icons/material-symbols/visibility-off";
     import Zxcvbn from "$lib/components/Zxcvbn.svelte";
+    import EmailDomainChecker from "$lib/components/EmailDomainChecker.svelte";
 
     const TURNSTILE_DISABLED = true;
 
@@ -479,6 +480,7 @@
                                     autocorrect="off"
                                     placeholder={t("auth.fields.emailPlaceholder")}
                                     required />
+                                <EmailDomainChecker bind:email />
                             </div>
                         {/if}
                         <div class="space-y-1.5">

@@ -4,3 +4,4 @@
 - Get on the PSL?
 - dashboard mobile styles
 - homepage tweak mobile styles with new macos-style card thingies
+- localize stuff in serverContactor.ts and backend

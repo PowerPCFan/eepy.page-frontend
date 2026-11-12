@@ -368,15 +368,15 @@
                     <div class="p-5 gap-1 flex flex-row font-sans text-xs justify-around w-full">
                         <div class="w-20 flex flex-col items-center gap-2">
                             <img alt="emoji" class="w-17" src={Nice} />
-                            <span class="text-center">eepy.page is 100% free!</span>
+                            <span class="text-center">{t("common.landing.alwaysFree.graphicText1")}</span>
                         </div>
                         <div class="w-18 flex flex-col items-center gap-2">
                             <img alt="emoji" class="w-17 brightness-110" src={Shrug} />
-                            <span class="text-center">So why not give it a try?</span>
+                            <span class="text-center">{t("common.landing.alwaysFree.graphicText2")}</span>
                         </div>
                         <div class="w-18 flex flex-col items-center gap-2">
                             <img alt="emoji" class="w-17" src={Bucktooth} />
-                            <span class="text-center">We know you'll like it!</span>
+                            <span class="text-center">{t("common.landing.alwaysFree.graphicText3")}</span>
                         </div>
                     </div>
                 </MacOSWindow>

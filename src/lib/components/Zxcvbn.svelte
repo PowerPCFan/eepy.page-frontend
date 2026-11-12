@@ -1,13 +1,30 @@
 <script lang="ts">
-    import { t } from "$lib/i18n";
+    import { t, currentLocale, type SupportedLocale } from "$lib/i18n";
     import { ZxcvbnFactory } from "@zxcvbn-ts/core";
     import * as zxcvbnEnPackage from "@zxcvbn-ts/language-en";
+    import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common";
 
-    const zxcvbnInstance = new ZxcvbnFactory({
-        translations: zxcvbnEnPackage.translations,
-        dictionary: zxcvbnEnPackage.dictionary,
-    });
+    async function loadZxcvbn(locale: SupportedLocale) {
+        const languageLoaders = {
+            fi: () => import('@zxcvbn-ts/language-fi'),
+            es: () => import('@zxcvbn-ts/language-es-es'),
+            it: () => import('@zxcvbn-ts/language-it'),
+        };
 
+        // always use common package + english dictionaries
+        let mergedDictionary = {...zxcvbnCommonPackage.dictionary, ...zxcvbnEnPackage.dictionary};
+
+        let translations = zxcvbnEnPackage.translations;
+        if (locale !== 'en' && languageLoaders[locale]) {
+            const localePackage = await languageLoaders[locale]();
+            mergedDictionary = {...mergedDictionary, ...localePackage.dictionary};
+            translations = localePackage.translations;
+        }
+
+        return new ZxcvbnFactory({graphs: zxcvbnCommonPackage.adjacencyGraphs, dictionary: mergedDictionary, translations});
+    }
+
+    
     let {
         password = "",
         score = $bindable(-1),
@@ -20,8 +37,11 @@
         class?: string;
     } = $props();
 
+    let zxcvbnInstance: ZxcvbnFactory | null = $state(null);
+
     function computePwScore(): number {
         if (!password) return -1;
+        if (!zxcvbnInstance) return -1;
 
         try {
             return zxcvbnInstance.check(password).score;
@@ -98,6 +118,13 @@
     $effect(() => {
         score = computedScore;
         tooWeak = computedTooWeak;
+    });
+
+    $effect(() => {
+        let locale = $currentLocale as SupportedLocale;
+        loadZxcvbn((locale)).then(instance => {
+            zxcvbnInstance = instance;
+        });
     });
 </script>
 
