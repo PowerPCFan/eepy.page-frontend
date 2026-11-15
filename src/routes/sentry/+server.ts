@@ -1,9 +1,13 @@
+import { dev } from "$app/environment";
 import { json } from "@sveltejs/kit";
 
 const SENTRY_HOST = "o4511644088139776.ingest.us.sentry.io";
 const SENTRY_PROJECT_ID = "4511644093775872";
 
-export async function POST({ request }) {
+export async function POST({ request, url }) {
+    if (dev || url.hostname === "localhost" || url.hostname === "127.0.0.1") {
+        return json({}, { status: 200 });
+    }
     console.log("Sending over sentry envelope");
     try {
         const envelopeBytes = await request.arrayBuffer();
