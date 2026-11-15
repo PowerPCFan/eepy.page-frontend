@@ -62,6 +62,8 @@
 
     let errorTitle: string = $state("");
     let errorDescription: string = $state("");
+    let renderErrorDescHTML: boolean = $state(false);
+    let errorPermanent: boolean = $state(false);
 
     let alertTitle: string = $state("");
     let alertDescription: string = $state("");
@@ -94,6 +96,7 @@
     }
 
     let accountNeedsEmailVerification: boolean = $state(false);
+    let accountIsDisabled: boolean = $state(false);
     let resendEmailClicked: boolean = $state(false);
 
     function validateUsername(username: string) {
@@ -114,6 +117,7 @@
         alertTitle = "";
         alertDescription = "";
         accountNeedsEmailVerification = false;
+        accountIsDisabled = false;
     }
 
     function switchAuthMode() {
@@ -136,7 +140,11 @@
                 if (error instanceof AuthError || error instanceof UserError)
                     errorDescription = t("auth.alerts.credentialsMismatch");
                 else if (error instanceof AccountDisabledError) {
-                    errorDescription = error.message;
+                    accountIsDisabled = true;
+                    renderErrorDescHTML = true;
+                    errorPermanent = true;
+                    errorTitle = t("auth.alerts.accountDisabledTitle");
+                    errorDescription = t("auth.alerts.accountDisabledNotice", { email: `<a href="mailto:support@eepy.page?subject=${encodeURIComponent(`Account Appeal for ${username}`)}&body=${encodeURIComponent(`Hello eepy.page support,\n\nMy account, "${username}", was disabled. Please review my account.\n---You can add more details here, or remove this line---\n\nThank you!`)}">support@eepy.page</a>` })
                 } else if (error instanceof PermissionError) {
                     errorDescription = t("auth.alerts.verifyAccountNotice");
                     accountNeedsEmailVerification = true;
@@ -374,8 +382,9 @@
             </h1>
         </div>
 
-        <InlineAlert title={errorTitle} description={errorDescription} variant={"error"} className="mt-4" />
+        <InlineAlert title={errorTitle} description={errorDescription} variant={"error"} className="mt-4" renderDescriptionAsHTML={renderErrorDescHTML} permanent={errorPermanent} />
         <InlineAlert title={alertTitle} description={alertDescription} variant={"note"} className="mt-4" />
+
         {#if accountNeedsEmailVerification}
             <Button
                 variant={"ghost"}

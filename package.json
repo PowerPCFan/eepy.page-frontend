@@ -50,7 +50,7 @@
     },
     "type": "module",
     "dependencies": {
-        "@powerpcfan/eepy-page-i18n": "0.1.6",
+        "@powerpcfan/eepy-page-i18n": "^0.1.7",
         "@sentry/sveltekit": "^10.8.0",
         "@svelte-put/cloudflare-turnstile": "^1.2.0",
         "@svelte-put/qr": "^1.2.1",

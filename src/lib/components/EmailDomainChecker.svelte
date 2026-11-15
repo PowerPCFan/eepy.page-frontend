@@ -257,7 +257,7 @@
 {#if suggestion}
     <div transition:fade={{ duration: 150 }} class="flex items-center justify-between gap-1 text-xs text-muted-foreground pt-0.5">
         <span>
-            {const [question, punctuation] = t("auth.fields.didYouMean", { suggestion: "\u0000" }).split("\u0000")}
+            {const [question, punctuation] = (t("auth.fields.didYouMean", { suggestion: "\u0000" }) ?? "Did you mean \u0000?").split("\u0000")}
 
             {question} <button
                 type="button"
