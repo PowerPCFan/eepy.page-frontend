@@ -108,7 +108,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet">
-    <link rel="preload" as="font" href="/fonts/InterVariable.woff2" type="font/woff2" crossorigin="anonymous" />
+    <!-- <link rel="preload" as="font" href="/fonts/InterVariable.woff2" type="font/woff2" crossorigin="anonymous" /> -->
 </svelte:head>
 
 <svelte:window bind:innerWidth={innerWidth} />
@@ -135,13 +135,13 @@
 </div>
 
 <style>
-    @font-face {
+    /* @font-face {
         font-family: "Inter";
         src: url("/fonts/InterVariable.woff2") format("woff2");
         font-weight: 100 600;
         font-style: normal;
         font-display: swap;
-    }
+    } */
 
     :global(*, *::before, *::after) {
         font-family: var(--font-sans);

@@ -182,9 +182,9 @@ export async function tryRefreshToken(): Promise<string | false> {
 
         const data = await res.json();
 
-        if (data["auth-token"]) {
+        if (data["auth_token"]) {
             // refresh token gets set with the request itself as Set-Cookie header
-            return data["auth-token"];
+            return data["auth_token"];
         }
 
         return false;

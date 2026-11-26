@@ -1111,10 +1111,7 @@ export interface components {
             email: string;
             /** Lang */
             lang: string;
-            /** Country */
-            country: components["schemas"]["CountryType"] | {
-                [key: string]: unknown;
-            };
+            country: components["schemas"]["CountryInfo"];
             /** Created */
             created: number;
             /** Verified */
@@ -1123,30 +1120,30 @@ export interface components {
             permissions: {
                 [key: string]: unknown;
             };
-            /** Beta-Enroll */
-            "beta-enroll": boolean;
+            /** Domains */
+            domains: components["schemas"]["DomainRecord"][];
             /** Sessions */
-            sessions: components["schemas"]["NewSessionType"][];
+            sessions: {
+                [key: string]: unknown;
+            }[];
             /** Invites */
             invites: {
                 [key: string]: components["schemas"]["InviteType"];
             };
             /** Mfa Enabled */
             mfa_enabled: boolean;
-            /** Referral-Code */
-            "referral-code": string | null;
-            /** Referred-People */
-            "referred-people": number | null;
-            /** Owned-Tlds */
-            "owned-tlds": string[];
-            /** Domains */
-            domains: components["schemas"]["DomainRecord"][];
+            /** Referral Code */
+            referral_code: string | null;
+            /** Referred People */
+            referred_people: number | null;
+            /** Owned Tlds */
+            owned_tlds: string[];
             /** Id */
             id: string;
             /** Banned */
             banned: boolean;
             /** Ban Reasons */
-            ban_reasons: string[] | string[][] | null;
+            ban_reasons: string[] | null;
             /** Last Login */
             last_login: number;
             /** Api Key Amount */
@@ -1184,7 +1181,7 @@ export interface components {
              * @default both
              * @enum {string}
              */
-            mode: "both" | "mongo" | "pdns";
+            mode: "both" | "postgres" | "db" | "pdns";
         };
         /** AdminStatusMessage */
         AdminStatusMessage: {
@@ -1235,62 +1232,62 @@ export interface components {
             /** Data */
             data: string;
         };
-        /** CountryType */
-        CountryType: {
+        /** CountryInfo */
+        CountryInfo: {
             /** Ip */
-            ip: string;
+            ip?: string | null;
             /** Hostname */
-            hostname?: string;
+            hostname?: string | null;
             /** City */
-            city: string;
+            city?: string | null;
             /** Region */
-            region: string;
+            region?: string | null;
             /** Country */
-            country: string;
+            country?: string | null;
             /** Loc */
-            loc: string;
+            loc?: string | null;
             /** Org */
-            org: string;
+            org?: string | null;
             /** Postal */
-            postal: string;
+            postal?: string | null;
             /** Timezone */
-            timezone: string;
+            timezone?: string | null;
             /** Country Name */
-            country_name: string;
+            country_name?: string | null;
             /** Iseu */
-            isEU: boolean;
+            isEU?: boolean | null;
             /** Country Flag Url */
-            country_flag_url: string;
+            country_flag_url?: string | null;
             /** Country Flag */
-            country_flag: {
+            country_flag?: {
                 [key: string]: unknown;
-            };
+            } | null;
             /** Country Currency */
-            country_currency: {
+            country_currency?: {
                 [key: string]: unknown;
-            };
+            } | null;
             /** Continent */
-            continent: {
+            continent?: {
                 [key: string]: unknown;
-            };
+            } | null;
             /** Latitude */
-            latitude: string;
+            latitude?: string | null;
             /** Longitude */
-            longitude: string;
+            longitude?: string | null;
         };
         /** DomainRecord */
         DomainRecord: {
-            /** Ip */
-            ip: string[] | string;
-            /** Registered */
-            registered: number;
+            /** Name */
+            name: string;
             /**
              * Type
              * @enum {string}
              */
             type: "A" | "AAAA" | "CNAME" | "TXT";
-            /** Name */
-            name: string;
+            /** Ip */
+            ip: string[];
+            /** Registered */
+            registered: number;
         };
         /** DomainRetrieve */
         DomainRetrieve: {
@@ -1328,9 +1325,14 @@ export interface components {
             /** Used */
             used: boolean;
             /** Used By */
-            used_by?: string;
+            used_by?: string | null;
             /** Used At */
-            used_at?: number;
+            used_at?: number | null;
+            /**
+             * Created
+             * @default 0
+             */
+            created: number;
         };
         /** IpFind */
         IpFind: {
@@ -1364,24 +1366,6 @@ export interface components {
             username: string;
             /** Password */
             password: string;
-        };
-        /** NewSessionType */
-        NewSessionType: {
-            /** Owner */
-            owner: string;
-            /**
-             * Type
-             * @enum {string}
-             */
-            type: "refresh" | "access";
-            /** Created */
-            created: number;
-            /** Expires */
-            expires: number;
-            /** Agent */
-            agent: string;
-            /** Ip */
-            ip: string;
         };
         /** PasswordReset */
         PasswordReset: {
@@ -1457,6 +1441,11 @@ export interface components {
             disabled: boolean;
             /** Reason */
             reason?: string | null;
+            /**
+             * Send Email
+             * @default false
+             */
+            send_email: boolean;
         };
         /** UserPageType */
         UserPageType: {
@@ -1466,10 +1455,7 @@ export interface components {
             email: string;
             /** Lang */
             lang: string;
-            /** Country */
-            country: components["schemas"]["CountryType"] | {
-                [key: string]: unknown;
-            };
+            country: components["schemas"]["CountryInfo"];
             /** Created */
             created: number;
             /** Verified */
@@ -1478,22 +1464,24 @@ export interface components {
             permissions: {
                 [key: string]: unknown;
             };
-            /** Beta-Enroll */
-            "beta-enroll": boolean;
+            /** Domains */
+            domains: components["schemas"]["DomainRecord"][];
             /** Sessions */
-            sessions: components["schemas"]["NewSessionType"][];
+            sessions: {
+                [key: string]: unknown;
+            }[];
             /** Invites */
             invites: {
                 [key: string]: components["schemas"]["InviteType"];
             };
             /** Mfa Enabled */
             mfa_enabled: boolean;
-            /** Referral-Code */
-            "referral-code": string | null;
-            /** Referred-People */
-            "referred-people": number | null;
-            /** Owned-Tlds */
-            "owned-tlds": string[];
+            /** Referral Code */
+            referral_code: string | null;
+            /** Referred People */
+            referred_people: number | null;
+            /** Owned Tlds */
+            owned_tlds: string[];
         };
         /** UserRisk */
         UserRisk: {
@@ -3286,7 +3274,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         /** @description Access token used for authentication. */
-                        "auth-token": string;
+                        auth_token: string;
                     };
                 };
             };
@@ -3350,7 +3338,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         /** @description Access token used for authentication. */
-                        "auth-token": string;
+                        auth_token: string;
                     };
                 };
             };
@@ -3507,6 +3495,7 @@ export interface operations {
                 domain: string;
                 userid: string;
                 reason: string;
+                type?: string | null;
                 send_email?: boolean;
             };
             header?: {
@@ -4532,7 +4521,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description MongoDB/PowerDNS synchronization report */
+            /** @description PostgreSQL/PowerDNS synchronization report */
             200: {
                 headers: {
                     [name: string]: unknown;

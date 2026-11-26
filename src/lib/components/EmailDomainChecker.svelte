@@ -257,14 +257,18 @@
 {#if suggestion}
     <div transition:fade={{ duration: 150 }} class="flex items-center justify-between gap-1 text-xs text-muted-foreground pt-0.5">
         <span>
-            {const [question, punctuation] = (t("auth.fields.didYouMean", { suggestion: "\u0000" }) ?? "Did you mean \u0000?").split("\u0000")}
+            {#if true}
+                <!-- svelte 5 uses const without the @, but svelte-check was complaining so we're using {#if true} as a workaround -->
+                <!-- i could just move this up to <script> but i could care less since it works fine -->
+                {@const [question, punctuation] = (t("auth.fields.didYouMean", { suggestion: "\u0000" }) ?? "Did you mean \u0000?").split("\u0000")}
 
-            {question} <button
-                type="button"
-                onclick={accept}
-                class="font-medium text-primary underline decoration-primary/50 underline-offset-2 hover:decoration-primary cursor-pointer transition-colors focus:outline-none"
-            >{suggestion.full}</button>{punctuation}
+                {question} <button
+                    type="button"
+                    onclick={accept}
+                    class="font-medium text-primary underline decoration-primary/50 underline-offset-2 hover:decoration-primary cursor-pointer transition-colors focus:outline-none"
+                >{suggestion.full}</button>{punctuation}
 
+            {/if}
         </span>
 
         <button
