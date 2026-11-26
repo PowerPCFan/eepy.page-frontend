@@ -259,7 +259,7 @@
     }
 
     :global(#cc-main) {
-        --cc-font-family: "Inter", sans-serif;
+        --cc-font-family: var(--font-sans), system-ui, sans-serif;
         --cc-bg: var(--card);
         --cc-footer-bg: var(--card);
         --cc-footer-border-color: var(--border);

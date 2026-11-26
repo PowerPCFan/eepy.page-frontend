@@ -37,6 +37,7 @@
     import MaterialSymbolsVisibilityOff from "~icons/material-symbols/visibility-off";
     import Zxcvbn from "$lib/components/Zxcvbn.svelte";
     import EmailDomainChecker from "$lib/components/EmailDomainChecker.svelte";
+    import { pushState, replaceState } from "$app/navigation";
 
     const TURNSTILE_DISABLED = true;
 
@@ -169,7 +170,7 @@
             })
             .then((session) => {
                 // @ts-expect-error: no types implemented for this
-                const sessionId: string = session["auth-token"];
+                const sessionId: string = session["auth_token"];
                 window.gtag?.("event", "log_in");
 
                 setAuthToken(sessionId);
@@ -253,9 +254,15 @@
                 }
             }
 
-            const url = page.url;
-            url.searchParams.delete("c");
-            history.pushState({ data }, "", url.href);
+            // const url = page.url;
+            // url.searchParams.delete("c");
+            // history.pushState({ data }, "", url.href);
+            setTimeout(() => {
+                const url = new URL(page.url);
+                url.searchParams.delete("c");
+                // pushState(url, { data });
+                replaceState(url, { data });
+            }, 0);
         }
     });
 

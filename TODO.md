@@ -6,3 +6,4 @@
 - homepage tweak mobile styles with new macos-style card thingies
 - localize stuff in serverContactor.ts and backend
 - weird trailing period bug with how the domain is displayed on dashboard immediately after registering domain (goes away on refresh)
+- finish converting object["key"] to object.key (bracket -> dot notation) since it looks nicer and now with snake_case keys it's easier

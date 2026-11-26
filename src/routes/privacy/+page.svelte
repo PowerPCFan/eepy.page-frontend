@@ -23,7 +23,7 @@
 
 <Holder>
     <h1>Privacy Policy</h1>
-    <p>Last updated: July 25, 2026</p>
+    <p>Last updated: November 25, 2026</p>
 
     <p>
         This Privacy Policy explains how eepy.page collects, uses, stores, and shares information when you use
@@ -134,7 +134,6 @@
     <h2>Third-Party Services</h2>
     <p>eepy.page uses third-party providers to operate the service:</p>
     <ul>
-        <li><strong>MongoDB</strong> for database storage.</li>
         <li><strong>Vercel</strong> for frontend hosting and speed insights.</li>
         <li><strong>Sentry</strong> for error monitoring and debug logs.</li>
         <li><strong>Google Analytics</strong> for website analytics.</li>
@@ -146,11 +145,7 @@
             such as purchase type, purchased item data, and email address so we can issue reward codes.
         </li>
         <li>
-            <strong>Discord</strong> for internal signup notifications containing minimal information for debugging.
-        </li>
-        <li>
-            <strong>DNS infrastructure providers</strong>, including PowerDNS-compatible APIs, to publish and manage DNS
-            records.
+            <strong>Discord</strong> for internal notifications containing minimal debug information.
         </li>
         <li>
             <strong>Serveo</strong> as the third-party provider used for optional SSH reverse tunneling. You create and

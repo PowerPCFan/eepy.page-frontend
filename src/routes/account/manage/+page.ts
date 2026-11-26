@@ -35,8 +35,8 @@ export const load = async () => {
     };
     const admin = permissions?.admin;
     const limits = (permissions?.limits ?? {}) as Record<string, number>;
-    const maxDomains = limits["max-domains"] ?? 3;
-    const maxSubdomains = limits["max-subdomains"] ?? 50;
+    const maxDomains = limits.max_domains ?? 3;
+    const maxSubdomains = limits.max_subdomains ?? 50;
     const mfaEnabled = accountSettings.mfa_enabled;
     const sessionObject = accountSettings.sessions;
 
@@ -44,13 +44,10 @@ export const load = async () => {
 
     sessionObject.forEach(element => {
         sessions.push({
-            expires: element["expires"],
-
-            // @ts-ignore
-            hash: element["_id"],
-            ip: element["ip"],
-            // @ts-ignore
-            user_agent: element["user-agent"] ?? element["agent"],
+            expires: Number(element.expires ?? 0),
+            hash: String(element.id ?? ""),
+            ip: String(element.ip ?? ""),
+            user_agent: String(element.user_agent ?? element.agent ?? ""),
             loading: false
         });
     });
@@ -64,8 +61,8 @@ export const load = async () => {
         maxSubdomains,
         admin: admin as { enabled?: boolean } | undefined,
         limits: new Map(Object.entries(limits)),
-        referralCode: accountSettings["referral-code"],
-        referredPeople: accountSettings["referred-people"] ?? 0,
+        referralCode: accountSettings.referral_code,
+        referredPeople: accountSettings.referred_people ?? 0,
     };
 };
 

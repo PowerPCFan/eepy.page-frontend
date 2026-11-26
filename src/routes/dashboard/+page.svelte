@@ -393,8 +393,7 @@
             })
             .then(async data => {
                 if (!data) return;
-                // @ts-expect-error
-                ownedTlds = data["owned-tlds"];
+                ownedTlds = data.owned_tlds;
 
                 const userDomains = data["domains"] as unknown as DomainRecord[];
 

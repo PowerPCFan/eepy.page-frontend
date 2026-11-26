@@ -6,12 +6,6 @@ node_modules
 .env
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-pnpm-lock.yaml
-private.todo
-.agents/
-.codex/
-
-# Sentry Config File
+*private.todo
 .env.sentry-build-plugin
-
 locales

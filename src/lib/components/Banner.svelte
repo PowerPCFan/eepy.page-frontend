@@ -21,11 +21,11 @@
         })
         .then(status => {
             //@ts-ignore
-            if (status && status["message"]) {
+            if (status && status.message) {
                 hidden = false;
                 danger = true;
                 // @ts-ignore
-                message = status["message"];
+                message = status.message;
             }
 
             hidden = calcIsHidden();
